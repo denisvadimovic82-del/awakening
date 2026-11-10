@@ -14,16 +14,13 @@ body.light{--bg:#eef4fb;--panel:#fff;--panel2:#f3f8ff;--line:#c5d8ea;--text:#102
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#142b49 0,#07111f 55%);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
 body.light{background:radial-gradient(ellipse at top,#dbeafe 0,#eef4fb 55%)}
 button{font:inherit;color:inherit;border:1px solid var(--line);background:#172b45;border-radius:12px;padding:11px 13px;cursor:pointer}body.light button{background:#e6effa}button:active{transform:scale(.98)}button.primary{background:linear-gradient(135deg,#1764a8,#173e70);border-color:#438acb}body.light button.primary{background:linear-gradient(135deg,#3b9ae0,#1a5f9e);color:#fff}button:disabled{opacity:.4}
-
 header{position:sticky;top:0;z-index:9999;background:#07111fef;border-bottom:1px solid #1c3652;padding:12px 14px;backdrop-filter:blur(12px)}body.light header{background:#ffffffef;border-bottom:1px solid #c5d8ea}
-
 .brand{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .brand strong{letter-spacing:2px;color:#dff3ff;font-size:15px}body.light .brand strong{color:#0f2b44}
 .rank-wrap{display:flex;align-items:center;gap:8px}
 .rank{font-size:11px;color:var(--cyan);border:1px solid #32628c;border-radius:20px;padding:5px 9px;white-space:nowrap}
 .themebtn{width:28px;height:28px;padding:0;border-radius:50%;font-size:14px;display:grid;place-items:center;background:#0e1e31;border:1px solid #3b6c98;flex:none;}
 body.light .themebtn{background:#fff;border-color:#a9c8e4;}
-
 .xpwrap{height:6px;background:#243b55;border-radius:9px;margin-top:10px;overflow:hidden}body.light .xpwrap{background:#d6e6f4}.xpbar{height:100%;background:linear-gradient(90deg,#278bff,#77e4ff);width:0;transition:width .3s}
 .statsline{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:5px}
 .hud-bars{display:flex;flex-direction:column;gap:4px;margin-top:8px}
@@ -32,7 +29,6 @@ body.light .themebtn{background:#fff;border-color:#a9c8e4;}
 .hud-bar.hp>i{display:block;height:100%;background:linear-gradient(90deg,#d83e61,#ff8d91);transition:width .3s}
 .hud-bar.mp>i{display:block;height:100%;background:linear-gradient(90deg,#4d65e8,#a28cff);transition:width .3s}
 .hud-text{font-size:10px;color:var(--muted);min-width:50px;text-align:right}
-
 main{max-width:760px;margin:auto;padding:12px 12px 90px}.tabs{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:#081321f5;border-top:1px solid #29415e;backdrop-filter:blur(12px)}body.light .tabs{background:#ffffffef;border-top:1px solid #c5d8ea}
 .tab{border:0;background:transparent;color:#819bb8;padding:7px 2px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px}.tab span:first-child{font-size:19px}.tab.active{color:var(--cyan);background:#17304b;border-radius:10px}body.light .tab.active{background:#dceaf8}
 .page{display:none}.page.active{display:block}.card{background:linear-gradient(145deg,#12243a,#0d1a2b);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 8px 25px #0002}body.light .card{background:#fff;box-shadow:0 6px 18px #1a3a5e12}.card h2,.card h3{margin:0 0 10px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--cyan);text-transform:uppercase}.muted{color:var(--muted)}.small{font-size:11px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pill{padding:5px 8px;border:1px solid #355575;border-radius:30px;color:#b9d8f6;font-size:11px}body.light .pill{color:#1a5f9e;border-color:#a9c8e4}.bar{height:9px;border-radius:10px;background:#263d57;overflow:hidden;margin:6px 0}body.light .bar{background:#d6e6f4}.bar>i{display:block;height:100%;background:linear-gradient(90deg,#2589ff,#75e7ff);transition:width .25s}.bar.hp>i{background:linear-gradient(90deg,#d83e61,#ff8d91)}.bar.mp>i{background:linear-gradient(90deg,#4d65e8,#a28cff)}
@@ -73,7 +69,6 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  </div>
  <div class="xpwrap"><div class="xpbar" id="xpbar"></div></div>
  <div class="statsline"><span id="levelText">УРОВЕНЬ 1</span><span id="xpText">0 / 100 XP</span><span id="goldText">◈ 0 золота</span></div>
- 
  <div class="hud-bars">
    <div class="hud-row">
      <div class="hud-bar hp"><i id="hudHpBar" style="width:100%"></i></div>
@@ -111,7 +106,6 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
    <div class="systemhead">▣ ОБЩИЕ ХАРАКТЕРИСТИКИ</div>
    <div class="statgrid" style="margin-top:10px" id="totalStatsGrid"></div>
  </div>
-
  <div class="card"><h3>Базовые характеристики</h3><div class="statgrid" id="statsGrid"></div><p class="muted small">Свободные очки: <b id="pointsText">0</b></p><div class="grid2" id="statButtons"></div></div>
  <div class="card"><h3>Экипировка</h3><div id="equipmentList" class="actionlist"></div></div>
  <div class="card"><h3>Дерево навыков</h3><div id="skillTree" class="actionlist" style="max-height:300px; overflow-y:auto;"></div></div>
@@ -156,7 +150,12 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
      <button id="createArenaBtn" style="width:50%; background:#3a2a1a; border-color:#ffd36a; color:#ffd36a;">🏟 Создать</button>
    </div>
  </div>
- 
+ <div class="card">
+   <h3>Открытые арены</h3>
+   <div id="arenaList" class="actionlist">
+     <p class="muted small" style="text-align:center; padding:10px;">Загрузка...</p>
+   </div>
+ </div>
  <div class="card">
    <h3>Чат</h3>
    <div id="chatBox" style="height:150px; overflow-y:auto; border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:8px; background:#0b1929; font-size:12px;"></div>
@@ -165,12 +164,11 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
      <button id="sendChatBtn" style="width:20%;">➤</button>
    </div>
  </div>
-
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;">
    <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.5.0 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.5.1 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -187,7 +185,6 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, set, onValue, remove, update, push, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyBZ0l0wbtUao4Drg8PtzP87-b7qwvscnj8",
     authDomain: "awakening-game.firebaseapp.com",
@@ -197,10 +194,8 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
     messagingSenderId: "80461481570",
     appId: "1:80461481570:web:73e139c4d5a1f8047a333b"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  
   window.FB = { db, ref, set, onValue, remove, update, push, query, orderByChild, limitToLast };
 </script>
 <script>
@@ -211,7 +206,6 @@ const safe=(id,fn)=>{const el=document.getElementById(id);if(el)try{fn(el)}catch
 const safeHTML=(id,html)=>safe(id,el=>{el.innerHTML=html});
 const safeText=(id,txt)=>safe(id,el=>{el.textContent=txt});
 const safeStyle=(id,prop,val)=>safe(id,el=>{el.style[prop]=val});
-
 const slots=['Шлем','Нагрудник','Перчатки','Поножи','Сапоги','Оружие','Щит','Кольцо','Амулет','Артефакт'];
 const icons={Шлем:'⛑️',Нагрудник:'🦺',Перчатки:'🧤',Поножи:'🥋',Сапоги:'🥾',Оружие:'⚔️',Щит:'🛡️',Кольцо:'💍',Амулет:'📿',Артефакт:'🔮'};
 const rarity=['Обычный','Необычный','Редкий','Эпический','Легендарный','Мифический'];
@@ -364,15 +358,13 @@ const itemNames={
  Амулет:['Потускневший амулет','Амулет стойкости','Сердце разлома','Слеза Богини'],
  Артефакт:['Осколок маны','Печать охотника','Ядро древнего','Око Вселенной']
 };
-
 const defaultState=()=>({
   level:1,xp:0,gold:0,hp:100,mp:30,points:0,stats:{Сила:5,Ловкость:5,Интеллект:5,Выносливость:5},
   inventory:[],equipment:{},kills:0,scans:0,steps:0,seen:[],quests:{kills:0,scans:0,level:0},
   objects:[],position:null,history:[],lastRegen:Date.now(),elo:1000,
   daily:{date:'',pool:[],progress:{}},counters:{chests:0,wins:0,levelups:0,crafts:0,pvpWins:0,goblin:0,wolf:0,boss:0},
   skills:{},pet:null,class:null,name:"Охотник",achievements:{},dailyGift:{last:'',streak:0},theme:'dark',chainIdx:0,
-  deadZones: [],
-  lastStory: 0
+  deadZones:[],lastStory:0
 });
 let state;
 try{
@@ -380,10 +372,9 @@ try{
   state.stats={...defaultState().stats,...(state.stats||{})};state.equipment=state.equipment||{};state.inventory=state.inventory||[];state.history=state.history||[];
   state.counters={...defaultState().counters,...(state.counters||{})};state.quests={...defaultState().quests,...(state.quests||{})};
   state.daily=state.daily||{date:'',pool:[],progress:{}};state.skills=state.skills||{};state.achievements=state.achievements||{};state.dailyGift=state.dailyGift||{last:'',streak:0};
-  state.deadZones=state.deadZones||[];
-  state.lastStory=state.lastStory||0;
+  state.deadZones=state.deadZones||[];state.lastStory=state.lastStory||0;
 }catch(e){state=defaultState()}
-let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[],arenaZoneMarkers=[];
+let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[];
 const save=()=>{try{localStorage.setItem('awakeningSave',JSON.stringify(state))}catch(e){}try{renderAll()}catch(e){console.warn('renderAll fail',e)}};
 const applySkills=()=>{let s={};for(let [id,lvl] of Object.entries(state.skills||{})){let sk=skills.find(x=>x.id===id);if(sk)for(let i=0;i<lvl;i++)sk.apply(s)}return s};
 const classBonus=key=>state.class?classes[state.class].stats[key]||0:0;
@@ -420,20 +411,13 @@ const makeShard=()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Оск�
 function itemBonus(it){return Object.entries(it.bonus||{}).map(([k,v])=>`${k==='atk'?'Атака':k==='def'?'Защита':k==='hp'?'HP':k==='mp'?'MP':k}: +${v}`).join(' · ')}
 function countBySlot(slot){return state.inventory.filter(i=>i.slot===slot).reduce((sum,item)=>sum+(item.qty||1),0)}
 function checkAchievements(){for(let a of achievements){if(state.achievements[a.id])continue;try{if(a.check(state)){state.achievements[a.id]=true;if(a.reward.gold)state.gold+=a.reward.gold;if(a.reward.xp)addXp(a.reward.xp);toast('🏆 '+a.name);beep(1200,150,'sine',.08)}}catch(e){}}}
-
 function addToInventory(item) {
   let isStackable = [POTION, BIG_POTION, MANA_POTION, XP_SCROLL, SHARD].includes(item.slot);
   if (isStackable) {
     let existing = state.inventory.find(i => i.slot === item.slot);
-    if (existing) {
-      existing.qty = (existing.qty || 1) + 1;
-      return;
-    }
-    item.qty = 1;
-    state.inventory.push(item);
-  } else {
-    state.inventory.push(item);
-  }
+    if (existing) { existing.qty = (existing.qty || 1) + 1; return; }
+    item.qty = 1; state.inventory.push(item);
+  } else { state.inventory.push(item); }
 }
 function renderAll(){
   let need=xpNeed();
@@ -453,9 +437,7 @@ function renderAll(){
   safeStyle('hudMpBar','width',(Math.max(0,state.mp)/maxMp()*100)+'%');
   safeText('pointsText',state.points);
   safeText('eloText',state.elo);
-  safeText('classText',state.class?classes[state.class].name:'Не выбран');
   safeText('heroEmoji',state.class?classes[state.class].emoji:'🧙');
-
   let s={};
   for(let k of ['Сила','Ловкость','Интеллект','Выносливость']) s[k] = totalStat(k);
   safeHTML('totalStatsGrid', `
@@ -468,88 +450,40 @@ function renderAll(){
     <div class="stat"><small>Крит шанс</small><b>${Math.floor(critChance()*100)}%</b></div>
     <div class="stat"><small>Уклонение</small><b>${Math.floor(dodgeChance()*100)}%</b></div>
   `);
-
   safeHTML('statsGrid',Object.entries(state.stats).map(([k,v])=>`<div class="stat"><small>${k}</small><b>${v}</b></div>`).join(''));
   safeHTML('statButtons',Object.keys(state.stats).map(k=>`<button data-stat="${k}" ${state.points<=0?'disabled':''}>+ ${k}</button>`).join(''));
-
   safeHTML('equipmentList', slots.map(s => {
     let it = state.equipment[s];
     let sb = setBonus('atk')||setBonus('def')||setBonus('mp') ? `<br><span class="set-bonus">Сет: +${setBonus('atk')?setBonus('atk')+' атк ':''}${setBonus('def')?setBonus('def')+' защ ':''}${setBonus('mp')?setBonus('mp')+' MP':''}</span>` : '';
-    return `<div class="item">
-      <div class="iconbox">${icons[s]}</div>
-      <div class="iteminfo">
-        <strong>${s}</strong>
-        <small>${it 
-          ? `<span class="rarity ${rarityClass[it.rarity]}">${it.name} · ${rarity[it.rarity]}</span><br>${itemBonus(it)}${sb}` 
-          : 'Пусто'}</small>
-      </div>
-      ${it ? `<span class="pill" style="border-color:#73e0a1;color:#73e0a1;font-size:10px">Надето</span><button data-unequip="${s}">Снять</button>` : '<span class="muted small">—</span>'}
-    </div>`;
+    return `<div class="item"><div class="iconbox">${icons[s]}</div><div class="iteminfo"><strong>${s}</strong><small>${it ? `<span class="rarity ${rarityClass[it.rarity]}">${it.name} · ${rarity[it.rarity]}</span><br>${itemBonus(it)}${sb}` : 'Пусто'}</small></div>${it ? `<span class="pill" style="border-color:#73e0a1;color:#73e0a1;font-size:10px">Надето</span><button data-unequip="${s}">Снять</button>` : '<span class="muted small">—</span>'}</div>`;
   }).join(''));
-
   safeHTML('skillTree', skills.map(sk => {
     let lvl = state.skills[sk.id] || 0;
     let maxed = lvl >= sk.max;
     let canAfford = state.points >= sk.cost;
     return `<div class="skillrow ${lvl?'on':''}"><div class="iconbox">📘</div><div class="iteminfo"><strong>${sk.name}</strong><small>${sk.desc} · ур. ${lvl}/${sk.max}</small></div><button data-skill="${sk.id}" ${maxed||!canAfford?'disabled':''}>${maxed?'MAX':'+ '+sk.cost+' очк.'}</button></div>`;
   }).join(''));
-
   safeHTML('petCard', state.pet ? (() => {
     let p = pets.find(x => x.id === state.pet);
     return p ? `<div class="skillrow on"><div class="iconbox">${p.emoji}</div><div class="iteminfo"><strong>${p.name}</strong><small>${p.desc}</small></div><button data-pet="release">Отпустить</button></div>` : '';
   })() : pets.map(p => `<div class="skillrow"><div class="iconbox">${p.emoji}</div><div class="iteminfo"><strong>${p.name}</strong><small>${p.desc}</small></div><button data-pet="${p.id}">Приручить (200◈)</button></div>`).join(''));
-
   safeText('inventoryCount', state.inventory.length + ' слотов');
   safeHTML('inventoryList', state.inventory.length ? state.inventory.map(it => {
     let isP = [POTION, BIG_POTION, MANA_POTION].includes(it.slot);
     let isS = it.slot === SHARD;
     let isX = it.slot === XP_SCROLL;
     let qtyStr = it.qty && it.qty > 1 ? ` <b style="color:var(--gold)">x${it.qty}</b>` : '';
-    let compareHtml = '';
-    if (!isP && !isS && !isX) {
-      let normSlot = String(it.slot).trim().toLowerCase();
-      let eq = null;
-      for(let s in state.equipment) {
-        if (s.trim().toLowerCase() === normSlot) { eq = state.equipment[s]; break; }
-      }
-      if (eq) {
-        let diffAtk = (it.bonus?.atk || 0) - (eq.bonus?.atk || 0);
-        let diffDef = (it.bonus?.def || 0) - (eq.bonus?.def || 0);
-        let diffHp = (it.bonus?.hp || 0) - (eq.bonus?.hp || 0);
-        let diffMp = (it.bonus?.mp || 0) - (eq.bonus?.mp || 0);
-        let diffSil = (it.bonus?.Сила || 0) - (eq.bonus?.Сила || 0);
-        let diffLov = (it.bonus?.Ловкость || 0) - (eq.bonus?.Ловкость || 0);
-        let diffInt = (it.bonus?.Интеллект || 0) - (eq.bonus?.Интеллект || 0);
-        let diffVyn = (it.bonus?.Выносливость || 0) - (eq.bonus?.Выносливость || 0);
-        let diffs = [];
-        if (diffAtk !== 0) diffs.push(`<span style="color:${diffAtk > 0 ? '#73e0a1' : '#ff6d7c'}">${diffAtk > 0 ? '▲' : '▼'} ${Math.abs(diffAtk)} атк</span>`);
-        if (diffDef !== 0) diffs.push(`<span style="color:${diffDef > 0 ? '#73e0a1' : '#ff6d7c'}">${diffDef > 0 ? '▲' : '▼'} ${Math.abs(diffDef)} защ</span>`);
-        if (diffHp !== 0) diffs.push(`<span style="color:${diffHp > 0 ? '#73e0a1' : '#ff6d7c'}">${diffHp > 0 ? '▲' : '▼'} ${Math.abs(diffHp)} HP</span>`);
-        if (diffMp !== 0) diffs.push(`<span style="color:${diffMp > 0 ? '#73e0a1' : '#ff6d7c'}">${diffMp > 0 ? '▲' : '▼'} ${Math.abs(diffMp)} MP</span>`);
-        if (diffSil !== 0) diffs.push(`<span style="color:${diffSil > 0 ? '#73e0a1' : '#ff6d7c'}">${diffSil > 0 ? '▲' : '▼'} ${Math.abs(diffSil)} сил</span>`);
-        if (diffLov !== 0) diffs.push(`<span style="color:${diffLov > 0 ? '#73e0a1' : '#ff6d7c'}">${diffLov > 0 ? '▲' : '▼'} ${Math.abs(diffLov)} лов</span>`);
-        if (diffInt !== 0) diffs.push(`<span style="color:${diffInt > 0 ? '#73e0a1' : '#ff6d7c'}">${diffInt > 0 ? '▲' : '▼'} ${Math.abs(diffInt)} инт</span>`);
-        if (diffVyn !== 0) diffs.push(`<span style="color:${diffVyn > 0 ? '#73e0a1' : '#ff6d7c'}">${diffVyn > 0 ? '▲' : '▼'} ${Math.abs(diffVyn)} вын</span>`);
-        if (diffs.length > 0) compareHtml = `<br><small style="font-size:10px">${diffs.join(' · ')}</small>`;
-      }
-    }
-    let label = isP || isX ? 'Исп.' : isS ? '—' : state.equipment[it.slot]?.id === it.id ? 'Снято' : 'Надеть';
+    let label = isP || isX ? 'Исп.' : isS ? '—' : 'Надеть';
     let sub = '';
     if (it.slot === POTION) sub = `Расходник · +${it.heal} HP`;
     else if (it.slot === BIG_POTION) sub = `Расходник · +${it.heal} HP`;
     else if (it.slot === MANA_POTION) sub = `Расходник · +${it.mana} MP`;
     else if (it.slot === XP_SCROLL) sub = `Расходник · +${it.xp} XP`;
     else if (it.slot === SHARD) sub = 'Материал для крафта';
-    else sub = `${it.slot} · ур. ${it.level}<br><span class="rarity ${rarityClass[it.rarity]}">${rarity[it.rarity]}</span> · ${itemBonus(it)}${compareHtml}`;
+    else sub = `${it.slot} · ур. ${it.level}<br><span class="rarity ${rarityClass[it.rarity]}">${rarity[it.rarity]}</span> · ${itemBonus(it)}`;
     let sellPrice = Math.floor((it.rarity + 1) * 15 * (it.level || 1) * 0.5) + 10;
-    return `<div class="item">
-      <div class="iconbox">${it.icon}</div>
-      <div class="iteminfo"><strong>${it.name}${qtyStr}</strong><small>${sub}</small></div>
-      ${isS ? `<button data-sell="${it.id}">Продать (${sellPrice}◈)</button>` : `<button data-equip="${it.id}">${label}</button>`}
-      <button data-sell="${it.id}" style="background:#3a2a1a">💰</button>
-    </div>`;
+    return `<div class="item"><div class="iconbox">${it.icon}</div><div class="iteminfo"><strong>${it.name}${qtyStr}</strong><small>${sub}</small></div>${isS ? `<button data-sell="${it.id}">Продать (${sellPrice}◈)</button>` : `<button data-equip="${it.id}">${label}</button>`}<button data-sell="${it.id}" style="background:#3a2a1a">💰</button></div>`;
   }).join('') : '<div class="card muted">Инвентарь пуст.</div>');
-
   safeHTML('craftList', `
     <div class="actionlist" style="max-height:300px;">
       <div class="craftrow"><div class="iconbox">⚗️</div><div class="iteminfo"><strong>Большое зелье</strong><small>3× зелье</small></div><button data-craft="big" ${countBySlot(POTION)<3?'disabled':''}>Скрафтить</button></div>
@@ -558,10 +492,8 @@ function renderAll(){
       <div class="craftrow"><div class="iconbox">🎁</div><div class="iteminfo"><strong>Случайный предмет</strong><small>5× осколок</small></div><button data-craft="item" ${countBySlot(SHARD)<5?'disabled':''}>Скрафтить</button></div>
     </div>
   `);
-
   safeText('nearbyCount',state.objects.length);
   safeText('steps',state.steps);
-
   safeHTML('questList', [
     {name:'Первое истребление',desc:'Победи 3',progress:Math.min(3,state.quests.kills),goal:3,reward:'120 XP · 50◈',done:state.quests.kills>=3,id:'kills'},
     {name:'Исследователь',desc:'Сканируй 2',progress:Math.min(2,state.quests.scans),goal:2,reward:'80 XP · сундук',done:state.quests.scans>=2,id:'scans'},
@@ -570,7 +502,6 @@ function renderAll(){
     let claimed = !!state.quests['claimed_'+q.id];
     return `<div class="card"><div class="row"><strong>${q.name}</strong><span class="pill">${claimed?'✓':q.done?'Готово':q.progress+'/'+q.goal}</span></div><p class="muted small">${q.desc}</p><div class="bar"><i style="width:${q.progress/q.goal*100}%"></i></div><div class="row"><span class="questreward">${q.reward}</span><button data-quest="${q.id}" ${q.done&&!claimed?'':'disabled'}>${claimed?'Получено':q.done?'Получить':'—'}</button></div></div>`;
   }).join(''));
-
   safeHTML('chainList', chain.map((c,i) => {
     let cur = state.counters[c.field] || 0;
     let done = cur >= c.goal;
@@ -578,14 +509,11 @@ function renderAll(){
     let claimed = state.counters['chain_'+i];
     return `<div class="skillrow ${claimed?'on':''}" style="opacity:${unlocked?1:.5}"><div class="iconbox">${done?'✅':unlocked?'🎯':'🔒'}</div><div class="iteminfo"><strong>${i+1}. ${c.desc}</strong><small>${Math.min(cur,c.goal)}/${c.goal} · ${c.reward.xp} XP${c.reward.item?' · предмет':''}</small></div><button data-chain="${i}" ${done&&!claimed&&unlocked?'':'disabled'}>${claimed?'✓':done?'Забрать':'—'}</button></div>`;
   }).join(''));
-
   try{renderDaily()}catch(e){}
   try{renderGift()}catch(e){}
-
   safeHTML('achList', achievements.map(a => `<div class="ach ${state.achievements[a.id]?'on':''}"><div class="iconbox">${state.achievements[a.id]?'🏆':'🔒'}</div><div class="iteminfo"><strong>${a.name}</strong><small>${a.desc}</small></div></div>`).join(''));
   safeHTML('bestiaryList', monsters.map((m,i) => `<div class="item"><div class="iconbox">${m.emoji}</div><div class="iteminfo"><strong>${m.name}</strong><small>Ур. ${m.level} · ${m.hp} HP</small></div><span class="pill">${state.seen.includes(i)?'✓':'???'}</span></div>`).join(''));
   safeHTML('historyList', state.history.length ? state.history.map(h => `<div class="hrow"><span>${h.emoji} ${h.name}</span><span class="${h.win?'win':'lose'}">${h.win?'Победа':'Поражение'}</span></div>`).join('') : '<p class="muted small">Пусто.</p>');
-
   safeHTML('lbList', (() => {
     try {
       let lb = JSON.parse(localStorage.getItem('awakeningLB') || '[]');
@@ -596,7 +524,6 @@ function renderAll(){
       return top.map((x,i) => `<div class="hrow"><span>${i+1}. ${x.name}</span><span>${x.elo}</span></div>`).join('');
     } catch(e){ return ''; }
   })());
-
   safeHTML('shopList', shopItems.map(s => `<div class="craftrow"><div class="iconbox">${s.icon}</div><div class="iteminfo"><strong>${s.name}</strong><small>${s.price}◈</small></div><button data-shop="${s.id}" ${state.gold<s.price?'disabled':''}>Купить</button></div>`).join(''));
   renderOnline();
 }
@@ -604,7 +531,6 @@ function ensureDaily(){let today=new Date().toISOString().slice(0,10);if(state.d
 function renderDaily(){ensureDaily();let now=new Date();let t=new Date(now);t.setHours(24,0,0,0);let ms=t-now;let h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000);safeText('dailyTimer',`${h}ч ${m}м`);
 safeHTML('dailyList',state.daily.pool.map(id=>{let q=dailyPool.find(x=>x.id===id);if(!q)return'';let cur=state.counters[q.field]||0;let prog=Math.min(q.goal,cur);let done=cur>=q.goal;let claimed=!!state.daily.progress[id];return `<div class="card"><div class="row"><strong>${q.desc}</strong><span class="pill">${claimed?'✓':done?'Готово':prog+'/'+q.goal}</span></div><div class="bar"><i style="width:${prog/q.goal*100}%"></i></div><div class="row"><span class="questreward">${q.reward.xp} XP · ${q.reward.gold}◈${q.reward.item!==undefined?' · предмет':''}</span><button data-daily="${id}" ${done&&!claimed?'':'disabled'}>${claimed?'✓':done?'Забрать':'—'}</button></div></div>`}).join(''))}
 function renderGift(){let today=new Date().toISOString().slice(0,10);let last=state.dailyGift.last;let canClaim=last!==today;let streak=state.dailyGift.streak;safeHTML('dailyGift',`<div class="row"><span>Серия: <b>${streak}</b> дн.</span><button class="primary" id="giftBtn" ${canClaim?'':'disabled'}>${canClaim?'Забрать':'Уже сегодня'}</button></div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px">${[1,2,3,4,5,6,7].map(d=>`<div class="stat" style="text-align:center;padding:6px;${d<=streak?'border-color:#ffd36a':''}"><small>Д${d}</small><b style="font-size:12px">${[10,20,30,40,50,75,150][d-1]}◈</b></div>`).join('')}</div>`);let gb=$('giftBtn');if(gb)gb.onclick=()=>{if(!canClaim)return;let yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);streak=last===yesterday?streak+1:1;state.dailyGift={last:today,streak:Math.min(7,streak)};let reward=[10,20,30,40,50,75,150][state.dailyGift.streak-1];state.gold+=reward;beep(880,200,'sine',.08);toast('Награда: +'+reward+'◈');save()}}
-
 function setPage(p){
   document.querySelectorAll('.page').forEach(x=>{x.classList.toggle('active',x.id==='page-'+p)});
   document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('active',x.dataset.page===p)});
@@ -613,9 +539,7 @@ function setPage(p){
   try{renderAll()}catch(e){console.warn('renderAll:',e)}
 }
 document.querySelectorAll('.tab').forEach(b=>{b.onclick=()=>setPage(b.dataset.page)});
-
 document.addEventListener('click',e=>{
-let cl=e.target.closest('[data-class]');if(cl&&!state.class){let id=cl.dataset.class;state.class=id;let c=classes[id];for(let[k,v] of Object.entries(c.stats))state.stats[k]+=v;state.hp=maxHp();state.mp=maxMp();beep(660,150,'sine',.08);save();toast('Класс: '+c.name);return}
 let eq=e.target.closest('[data-equip]');if(eq){let raw=eq.dataset.equip;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];
   if([POTION,BIG_POTION].includes(it.slot)){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+(it.heal||35));vibrate(20);save();return}
   if(it.slot===MANA_POTION){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.mp=Math.min(maxMp(),state.mp+(it.mana||50));vibrate(20);save();return}
@@ -624,8 +548,7 @@ let eq=e.target.closest('[data-equip]');if(eq){let raw=eq.dataset.equip;let idx=
   state.inventory.splice(idx,1);if(state.equipment[it.slot])state.inventory.push(state.equipment[it.slot]);state.equipment[it.slot]=it;state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save()}}
 let un=e.target.closest('[data-unequip]');if(un){let s=un.dataset.unequip;if(state.equipment[s]){addToInventory(state.equipment[s]);delete state.equipment[s];state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save()}}
 let sl=e.target.closest('[data-sell]');if(sl){let raw=sl.dataset.sell;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];let price=Math.floor((it.rarity+1)*15*(it.level||1)*0.5)+10;
-  if(it.qty && it.qty>1){it.qty--;state.gold+=price;}else{state.inventory.splice(idx,1);state.gold+=price;}
-  toast('+'+price+'◈');save()}}
+  if(it.qty && it.qty>1){it.qty--;state.gold+=price;}else{state.inventory.splice(idx,1);state.gold+=price;}toast('+'+price+'◈');save()}}
 let st=e.target.closest('[data-stat]');if(st&&state.points>0){state.stats[st.dataset.stat]++;state.points--;save()}
 let sk=e.target.closest('[data-skill]');if(sk){let id=sk.dataset.skill,skd=skills.find(x=>x.id===id),lvl=state.skills[id]||0;if(skd&&lvl<skd.max&&state.points>=skd.cost){state.points-=skd.cost;state.skills[id]=lvl+1;beep(700,100,'sine',.06);save()}}
 let pt=e.target.closest('[data-pet]');if(pt){let id=pt.dataset.pet;if(id==='release'){state.pet=null;save();return}if(state.gold>=200){state.gold-=200;state.pet=id;toast('Приручен: '+pets.find(p=>p.id===id).name);beep(880,150,'sine',.08);save()}else toast('Не хватает золота')}
@@ -645,487 +568,111 @@ let cr=e.target.closest('[data-craft]');if(cr){let type=cr.dataset.craft;
 }
 let shop=e.target.closest('[data-shop]');if(shop){let s=shopItems.find(x=>x.id===shop.dataset.shop);if(s&&state.gold>=s.price){state.gold-=s.price;s.fn();toast('Куплено: '+s.name);save()}}
 });
-
-safe('sortInventory',el=>{el.onclick=()=>{
-  state.inventory.sort((a,b)=>{ if(a.slot === 'shard' && b.slot !== 'shard') return -1; if(b.slot === 'shard' && a.slot !== 'shard') return 1; return b.rarity-a.rarity; });
-  save()
-}});
+safe('sortInventory',el=>{el.onclick=()=>{state.inventory.sort((a,b)=>b.rarity-a.rarity);save()}});
 safe('themeBtn',el=>{el.onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.body.classList.toggle('light',state.theme==='light');el.textContent=state.theme==='light'?'☀️':'🌙';save()}});
 function openBattle(m,index){
-  let baseHp = m.hp;
-  let baseAtk = m.atk;
-  if (m.isElite) { baseHp = Math.floor(baseHp * 1.5); baseAtk = Math.floor(baseAtk * 1.3); }
-  else if (m.tag === 'boss') { baseHp = Math.floor(baseHp * 2); baseAtk = Math.floor(baseAtk * 1.5); }
-  let lvlDiff = m.level - state.level;
-  let scale = 1;
-  if (lvlDiff > 0) scale = 1 + (lvlDiff * 0.1);
-  else if (lvlDiff < 0) { scale = 1 + (lvlDiff * 0.05); if (scale < 0.5) scale = 0.5; }
-  let finalHp = Math.floor(baseHp * scale);
-  let finalAtk = Math.floor(baseAtk * scale);
-  battle = {
-    m: {...m, hp: finalHp, atk: finalAtk},
-    index: index,
-    hp: finalHp,
-    log: `${m.name} преграждает путь!`,
-    phase: 1,
-    baseLevel: m.level,
-    turn: 'player'
-  };
+  let baseHp=m.hp,baseAtk=m.atk;
+  if(m.isElite){baseHp=Math.floor(baseHp*1.5);baseAtk=Math.floor(baseAtk*1.3);}
+  else if(m.tag==='boss'){baseHp=Math.floor(baseHp*2);baseAtk=Math.floor(baseAtk*1.5);}
+  let lvlDiff=m.level-state.level,scale=1;
+  if(lvlDiff>0)scale=1+lvlDiff*0.1;
+  else if(lvlDiff<0){scale=1+lvlDiff*0.05;if(scale<0.5)scale=0.5;}
+  let finalHp=Math.floor(baseHp*scale),finalAtk=Math.floor(baseAtk*scale);
+  battle={m:{...m,hp:finalHp,atk:finalAtk},index:index,hp:finalHp,log:`${m.name} преграждает путь!`,phase:1,baseLevel:m.level,turn:'player'};
   renderBattle();
 }
 function renderBattle(){
   if(!battle)return;
-  let m=battle.m;
-  let pc=countBySlot(POTION)+countBySlot(BIG_POTION);
-  let sc=skillCost();
-  let isMyTurn = battle.turn === 'player';
+  let m=battle.m,pc=countBySlot(POTION)+countBySlot(BIG_POTION),sc=skillCost(),isMyTurn=battle.turn==='player';
   safeHTML('modalContent',`
     <div class="eyebrow">Бой · ур. ${m.level}</div>
-    <div class="battleenemy">
-      <div class="enemyemoji" id="enemyEmoji">${m.emoji}</div>
-      <h2>${m.name}</h2>
-      <div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div>
-      <small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small>
-    </div>
+    <div class="battleenemy"><div class="enemyemoji" id="enemyEmoji">${m.emoji}</div><h2>${m.name}</h2><div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div><small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small></div>
     <div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div>
     <div class="battlelog" id="blog">${battle.log}</div>
-    <div class="grid2">
-      <button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button>
-      <button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button>
-      <button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button>
-      <button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button>
-    </div>
+    <div class="grid2"><button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button><button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button><button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button><button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button></div>
   `);
   let mm=$('modal');if(mm)mm.classList.add('show');
   safe('attackBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1)}});
   safe('skillBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1.5)}});
-  safe('potionBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;
-    if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}
-    state.hp=Math.min(maxHp(),state.hp+heal);battle.log=`+${heal} HP.`;enemyTurn()}});
+  safe('potionBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+heal);battle.log=`+${heal} HP.`;enemyTurn()}});
   safe('runBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
 }
 function battleMsg(msg){if(!battle)return;battle.log=msg;renderBattle()}
 function spawnDmg(amount,crit){let el=document.createElement('div');el.className='dmg'+(crit?' crit':'');el.textContent=(crit?'-':'')+amount;let em=$('enemyEmoji');if(em){let r=em.getBoundingClientRect();el.style.left=(r.left+r.width/2-20)+'px';el.style.top=(r.top+10)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000)}}
 function enemyTurn(){if(!battle)return;
-  battle.turn = 'enemy';
-  renderBattle();
-  setTimeout(() => {
-    if(!battle) return;
+  battle.turn='enemy';renderBattle();
+  setTimeout(()=>{
+    if(!battle)return;
     if(battle.m.tag==='boss'){let ratio=battle.hp/battle.m.hp;if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}}
     if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';battle.turn='player';renderBattle();return}
-    let rawDmg = battle.m.atk - defense();
-    let minDmg = Math.floor(maxHp() * 0.05);
-    let dmg = Math.max(1, rawDmg, minDmg);
+    let rawDmg=battle.m.atk-defense(),minDmg=Math.floor(maxHp()*0.05),dmg=Math.max(1,rawDmg,minDmg);
     state.hp-=dmg;vibrate(30);let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}
-    if(state.hp<=0){
-      state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();
+    if(state.hp<=0){state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();
       safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p><button class="primary" id="cb" style="width:100%">Продолжить</button>`);
       safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return;
     }
-    battle.log+=` Враг: ${dmg}.`;
-    battle.turn = 'player';
-    renderBattle();
-  }, 600);
+    battle.log+=` Враг: ${dmg}.`;battle.turn='player';renderBattle();
+  },600);
 }
 function battleTurn(mult){
- if(!battle || battle.turn !== 'player')return;
+ if(!battle||battle.turn!=='player')return;
  let sc=skillCost();if(mult>1){if(state.mp<sc)return;state.mp-=sc}
- let crit=Math.random()<critChance();let base=Math.floor(attack()*mult*(.85+Math.random()*.3));let dmg=crit?Math.floor(base*1.8):base;battle.hp-=dmg;spawnDmg(dmg,crit);beep(crit?1200:520,60,'square',.05);vibrate(crit?40:15);
+ let crit=Math.random()<critChance(),base=Math.floor(attack()*mult*(.85+Math.random()*.3)),dmg=crit?Math.floor(base*1.8):base;battle.hp-=dmg;spawnDmg(dmg,crit);beep(crit?1200:520,60,'square',.05);vibrate(crit?40:15);
  if(state.pet){let p=pets.find(x=>x.id===state.pet);if(p){let pdmg=Math.floor((p.base+state.level)*(applySkills().petMult||1));battle.hp-=pdmg;battle.log+=` ${p.emoji} бьёт на ${pdmg}. `}}
  if(battle.hp<=0){
    let m=battle.m;state.kills++;state.quests.kills++;
-   if (battle.index >= 0 && state.objects[battle.index]) {
-     let obj = state.objects[battle.index];
-     if (!state.deadZones) state.deadZones = [];
-     state.deadZones.push({ lat: obj.pos.lat, lng: obj.pos.lng, mi: battle.index, respawnAt: Date.now() + 86400000 });
-     state.objects.splice(battle.index, 1);
-     drawObjects();
-     renderAll();
-   }
+   if(battle.index>=0 && state.objects[battle.index]){let obj=state.objects[battle.index];if(!state.deadZones)state.deadZones=[];state.deadZones.push({lat:obj.pos.lat,lng:obj.pos.lng,respawnAt:Date.now()+86400000});state.objects.splice(battle.index,1);drawObjects();renderAll();}
    state.counters.wins++;if(m.tag)state.counters[m.tag]=(state.counters[m.tag]||0)+1;
    state.seen.push(monsters.indexOf(m));
    let goldGain=Math.floor(m.gold*(applySkills().goldMult||1));state.gold+=goldGain;addXp(m.xp);
-   let extra='';
-   let dropChance = 0.5 + (m.tag === 'boss' ? 0.4 : (m.isElite ? 0.3 : 0));
-   if(Math.random()<dropChance){
-     let minRarity = m.tag==='boss' ? 3 : (m.isElite ? 2 : 0);
-     let it = makeItem(minRarity, battle.baseLevel);
-     addToInventory(it);
-     extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}).`;
-   }
+   let extra='',dropChance=0.5+(m.tag==='boss'?0.4:(m.isElite?0.3:0));
+   if(Math.random()<dropChance){let minRarity=m.tag==='boss'?3:(m.isElite?2:0);let it=makeItem(minRarity,battle.baseLevel);addToInventory(it);extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}).`;}
    if(Math.random()<.25){addToInventory(makePotion());extra+=' +зелье.'}
    if(Math.random()<.15){addToInventory(makeShard());extra+=' +осколок.'}
    state.history.unshift({name:m.name,emoji:m.emoji,win:true});state.history=state.history.slice(0,20);
    checkAchievements();beep(880,200,'sine',.08);save();
    safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p><button class="primary" id="fb" style="width:100%">Забрать</button>`);
-   safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
-   return;
+   safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return;
  }
- battle.log=`${crit?'💥 КРИТ! ':''}Ты: ${dmg}.`;
- enemyTurn();
+ battle.log=`${crit?'💥 КРИТ! ':''}Ты: ${dmg}.`;enemyTurn();
 }
-
-// --- FIREBASE LOGIC ---
-let onlinePlayers = {};
-let onlineArenas = {};
-let activeArena = null;
-let myPlayerId = localStorage.getItem('awakening_player_id');
-
-if (!myPlayerId) {
-  myPlayerId = 'p_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
-  localStorage.setItem('awakening_player_id', myPlayerId);
-}
-
-function sendPosition() {
-  if (!state.position || !window.FB) return;
-  window.FB.set(window.FB.ref(window.FB.db, 'players/' + myPlayerId), {
-    name: state.name || "Охотник",
-    level: state.level,
-    hp: maxHp(),
-    atk: attack(),
-    lat: state.position.lat,
-    lng: state.position.lng,
-    lastSeen: Date.now()
-  }).catch(() => {});
-}
-
-function createArena() {
-  if (!state.position || !window.FB) { toast('Сначала включи GPS или задай позицию на карте.'); return; }
-  let betInput = $('arenaBet');
-  let bet = betInput ? parseInt(betInput.value) || 0 : 0;
-  if (bet > state.gold) { toast('Недостаточно золота для ставки!'); return; }
-  if (bet > 0) { state.gold -= bet; save(); }
-  let arenaId = 'a_' + Date.now();
-  window.FB.set(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
-    lat: state.position.lat, lng: state.position.lng,
-    creator: myPlayerId, creatorName: state.name || "Охотник",
-    creatorLevel: state.level, hp: maxHp(), atk: attack(),
-    bet: bet, status: 'waiting'
-  });
-  toast('Арена создана со ставкой ' + bet + '◈. Жди соперников.');
-}
-
-function initOnline() {
-  if (!window.FB) { setTimeout(initOnline, 500); return; }
-  const playersRef = window.FB.ref(window.FB.db, 'players');
-  window.FB.onValue(playersRef, (snap) => {
-    onlinePlayers = snap.val() || {};
-    try { renderOnline(); } catch (e) { console.warn('renderOnline', e); }
-  });
-}
-
-function renderOnline() {
-  if (!window.FB) {
-    safeHTML('onlineList', '<p class="muted small" style="padding:10px;text-align:center;">Подключение к серверу...</p>');
-    return;
-  }
-  if (map) { onlineMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} }); }
-  onlineMarkers = [];
-  let listHtml = '';
-  let count = 0;
-  let now = Date.now();
-  for (let id in onlinePlayers) {
-    let p = onlinePlayers[id];
-    if (!p || now - (p.lastSeen || 0) > 300000) continue;
-    count++;
-    listHtml += `<div class="item">
-      <div class="iconbox">👤</div>
-      <div class="iteminfo"><strong>${p.name} ${id===myPlayerId?'(Ты)':''}</strong><small>Уровень ${p.level}</small></div>
-      <button onclick="window.flyToPlayer(${p.lat}, ${p.lng})">Найти</button>
-    </div>`;
-    if (map && id !== myPlayerId && p.lat && p.lng) {
-      let mk = L.marker([p.lat, p.lng], {
-        icon: L.divIcon({
-          className: '',
-          html: `<div style="background:#17304b;border:2px solid #62b5ff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:16px;box-shadow:0 0 10px #62b5ff">👤</div>`,
-          iconSize: [30, 30], iconAnchor: [15, 15]
-        })
-      }).addTo(map).bindPopup(`${p.name} (Ур. ${p.level})`);
-      onlineMarkers.push(mk);
-    }
-  }
-  safeText('onlineCount', count);
-  if (count > 0) safeHTML('onlineList', listHtml);
-  else safeHTML('onlineList', '<p class="muted small" style="text-align:center; padding:20px;">Рядом пока никого нет. Пригласи друзей!</p>');
-}
-
-window.flyToPlayer = (lat, lng) => {
-  if (map) map.setView([lat, lng], 16);
-  setPage('map');
-};
-
-// ---- Чат ----
-let chatRef = null;
-let chatInited = false;
-
-function initChatAndFriends() {
-  if (!window.FB) { setTimeout(initChatAndFriends, 500); return; }
-  if (chatInited) return;
-  chatInited = true;
-  chatRef = window.FB.ref(window.FB.db, 'chat');
-  window.FB.onValue(
-    window.FB.query(chatRef, window.FB.limitToLast(50)),
-    (snap) => {
-      const msgs = snap.val() || {};
-      let html = '';
-      Object.keys(msgs).forEach((k) => {
-        const m = msgs[k];
-        if (!m || !m.text) return;
-        html += `<div style="margin-bottom:4px;"><b style="color:var(--cyan)">${m.author || 'Аноним'}:</b> ${m.text}</div>`;
-      });
-      safeHTML('chatBox', html || '<div class="muted small">Сообщений нет.</div>');
-      const cb = $('chatBox'); if (cb) cb.scrollTop = cb.scrollHeight;
-    }
-  );
-  safe('sendChatBtn', (b) => {
-    b.onclick = () => {
-      if (!window.FB || !chatRef) { toast('Нет соединения'); return; }
-      const input = $('chatInput');
-      const text = input && input.value.trim();
-      if (!text) return;
-      window.FB.push(chatRef, { author: state.name || 'Охотник', text: text, time: Date.now() }).catch(() => toast('Не отправлено'));
-      if (input) input.value = '';
-    };
-  });
-}
-
-// ---- Арены ----
-function watchArena() {
-  if (!window.FB) { setTimeout(watchArena, 500); return; }
-  window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
-    let arenas = snapshot.val() || {};
-    for (let id in arenas) {
-      let a = arenas[id];
-      if (a.creator === myPlayerId && a.status === 'fighting' && !battle) {
-        safeHTML('modalContent', `
-          <div class="systemhead">▣ АРЕНА</div>
-          <h2>Вас вызывает ${a.challengerName}!</h2>
-          <p class="muted">Ставка: ${a.bet}◈</p>
-          <div class="grid2">
-            <button class="primary" id="acceptBtn">Принять</button>
-            <button id="declineBtn">Отклонить</button>
-          </div>
-        `);
-        let mm=$('modal'); if(mm)mm.classList.add('show');
-        safe('acceptBtn', b => { b.onclick = () => {
-          startRealBattle(a.challengerName, a.challengerLevel, a.challengerHp, a.challengerAtk, a.bet, id);
-        }});
-        safe('declineBtn', b => { b.onclick = () => {
-          window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + id));
-          let mm=$('modal'); if(mm)mm.classList.remove('show');
-          toast('Вызов отклонен');
-        }});
-        return;
-      }
-    }
-  });
-}
-
-window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, creatorHp, creatorAtk, bet) => {
-  if (!window.FB) return;
-  if (bet > 0 && state.gold < bet) { toast('У тебя недостаточно золота для этой ставки!'); return; }
-  if (bet > 0) { state.gold -= bet; save(); }
-  activeArena = arenaId;
-  window.FB.update(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
-    status: 'fighting', challenger: myPlayerId,
-    challengerName: state.name || "Охотник", challengerLevel: state.level,
-    challengerHp: maxHp(), challengerAtk: attack()
-  });
-  safeHTML('modalContent', `<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);
-  let mm=$('modal'); if(mm)mm.classList.add('show');
-};
-
-function startRealBattle(enemyName, enemyLevel, enemyHp, enemyAtk, bet, arenaId) {
-  if (battle) return;
-  battle = {
-    m: {name: enemyName, emoji: '👤', level: enemyLevel, hp: enemyHp, atk: enemyAtk, xp: 50, gold: bet * 2, drop: 0, tag: ''},
-    index: -1, hp: enemyHp, log: `Дуэль на арене со ставкой ${bet}◈!`, phase: 1, pvp: true, baseLevel: enemyLevel, turn: 'player'
-  };
-  window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
-  renderBattle();
-}
-
-function initMap(){
-  if(!window.L){safeHTML('map','<div class="mapfallback">Карта недоступна.</div>');return}
-  try{
-    map=L.map('map',{attributionControl:false}).setView([60.1699,24.9384],14);
-    L.tileLayer('https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=21.06.14&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', {maxZoom: 19, subdomains: ['01','02','03','04']}).addTo(map);
-    L.circle([60.1699,24.9384],{radius:350,color:'#4aaeff',fillOpacity:.04}).addTo(map);
-    map.on('click',e=>{state.position={lat:e.latlng.lat,lng:e.latlng.lng};if(playerMarker)playerMarker.setLatLng(e.latlng);else playerMarker=L.marker(e.latlng).addTo(map).bindPopup('Ты');safeText('gpsStatus','Тест');save();sendPosition();})
-  }catch(e){console.warn('initMap',e)}
-}
-function randomPosition(){let c=state.position||(map&&map.getCenter())||{lat:60.1699,lng:24.9384};let a=(Math.random()-.5)*.008,b=(Math.random()-.5)*.008;return{lat:c.lat+a,lng:c.lng+b}}
-
-function scan(){
-  state.scans++;state.quests.scans++;
-  state.objects = [];
-  let now = Date.now();
-  if (state.deadZones) state.deadZones = state.deadZones.filter(z => z.respawnAt > now);
-  else state.deadZones = [];
-  let n=3+Math.floor(Math.random()*3);
-  for(let i=0;i<n;i++){
-    let pos = randomPosition();
-    let inDeadZone = state.deadZones.some(z => {
-      let d = Math.sqrt(Math.pow(z.lat - pos.lat, 2) + Math.pow(z.lng - pos.lng, 2));
-      return d < 0.002;
-    });
-    if (inDeadZone) { i--; continue; }
-    if(Math.random()<.68){
-      let av = monsters.filter(m => m.level >= state.level - 5 && m.level <= state.level + 15);
-      if(!av.length) av = [monsters[0]];
-      let m=av[Math.floor(Math.random()*av.length)];
-      let isElite = Math.random() < 0.15;
-      let scaledMonster = {...m};
-      if (isElite) {
-        scaledMonster.name = '💀 [ЭЛИТА] ' + m.name;
-        scaledMonster.hp = Math.floor(m.hp * 2);
-        scaledMonster.atk = Math.floor(m.atk * 2);
-        scaledMonster.xp = Math.floor(m.xp * 2.5);
-        scaledMonster.gold = Math.floor(m.gold * 2.5);
-        scaledMonster.isElite = true;
-      }
-      state.objects.push({type:'monster', mi:monsters.indexOf(m), name:scaledMonster.name, emoji:m.emoji, pos:pos, scaled: scaledMonster, isElite: isElite});
-    } else {
-      state.objects.push({type:'chest',name:'Сундук',emoji:'🎁',pos:pos});
-    }
-  }
-  drawObjects();save();safeText('mapHint','Найдено: '+state.objects.length);checkAchievements();
-}
-function drawObjects(){
-  markers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});markers=[];
-  if(!map)return;
-  state.objects.forEach((o,i)=>{
-    try{
-      let glow = o.isElite ? '0 0 12px #ff0000' : '0 0 8px #46baff';
-      let mk=L.marker([o.pos.lat,o.pos.lng],{icon:L.divIcon({className:'',html:`<div style="font-size:25px;text-shadow:${glow}">${o.emoji}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindPopup(`${o.name}<br><button onclick="window.__interact(${i})">Взаимодействовать</button>`);
-      markers.push(mk);
-    }catch(e){}
-  });
-  safeHTML('nearbyList',state.objects.map((o,i)=>`<div class="item"><div class="iconbox">${o.emoji}</div><div class="iteminfo"><strong>${o.name}</strong><small>${o.type==='monster'?'Враг':'Награда'}</small></div><button data-object="${i}">Открыть</button></div>`).join(''));
-}
+let onlinePlayers={},activeArena=null;
+let myPlayerId=localStorage.getItem('awakening_player_id');
+if(!myPlayerId){myPlayerId='p_'+Date.now()+'_'+Math.floor(Math.random()*1000);localStorage.setItem('awakening_player_id',myPlayerId);}
+function sendPosition(){if(!state.position||!window.FB)return;window.FB.set(window.FB.ref(window.FB.db,'players/'+myPlayerId),{name:state.name||"Охотник",level:state.level,hp:maxHp(),atk:attack(),lat:state.position.lat,lng:state.position.lng,lastSeen:Date.now()}).catch(()=>{});}
+function createArena(){if(!state.position||!window.FB){toast('Сначала включи GPS или задай позицию на карте.');return;}let betInput=$('arenaBet');let bet=betInput?parseInt(betInput.value)||0:0;if(bet>state.gold){toast('Недостаточно золота для ставки!');return;}if(bet>0){state.gold-=bet;save();}let arenaId='a_'+Date.now();window.FB.set(window.FB.ref(window.FB.db,'arenas/'+arenaId),{lat:state.position.lat,lng:state.position.lng,creator:myPlayerId,creatorName:state.name||"Охотник",creatorLevel:state.level,hp:maxHp(),atk:attack(),bet:bet,status:'waiting'});toast('Арена создана со ставкой '+bet+'◈. Жди соперников.');}
+function initOnline(){if(!window.FB){setTimeout(initOnline,500);return;}const playersRef=window.FB.ref(window.FB.db,'players');window.FB.onValue(playersRef,(snap)=>{onlinePlayers=snap.val()||{};try{renderOnline();}catch(e){console.warn('renderOnline',e);}});}
+function renderOnline(){if(!window.FB){safeHTML('onlineList','<p class="muted small" style="padding:10px;text-align:center;">Подключение к серверу...</p>');return;}if(map){onlineMarkers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});}onlineMarkers=[];let listHtml='',count=0,now=Date.now();for(let id in onlinePlayers){let p=onlinePlayers[id];if(!p||now-(p.lastSeen||0)>300000)continue;count++;listHtml+=`<div class="item"><div class="iconbox">👤</div><div class="iteminfo"><strong>${p.name} ${id===myPlayerId?'(Ты)':''}</strong><small>Уровень ${p.level}</small></div><button onclick="window.flyToPlayer(${p.lat}, ${p.lng})">Найти</button></div>`;if(map&&id!==myPlayerId&&p.lat&&p.lng){let mk=L.marker([p.lat,p.lng],{icon:L.divIcon({className:'',html:`<div style="background:#17304b;border:2px solid #62b5ff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:16px;box-shadow:0 0 10px #62b5ff">👤</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindPopup(`${p.name} (Ур. ${p.level})`);onlineMarkers.push(mk);}}safeText('onlineCount',count);if(count>0)safeHTML('onlineList',listHtml);else safeHTML('onlineList','<p class="muted small" style="text-align:center; padding:20px;">Рядом пока никого нет. Пригласи друзей!</p>');}
+window.flyToPlayer=(lat,lng)=>{if(map)map.setView([lat,lng],16);setPage('map');};
+let chatRef=null,chatInited=false;
+function initChatAndFriends(){if(!window.FB){setTimeout(initChatAndFriends,500);return;}if(chatInited)return;chatInited=true;chatRef=window.FB.ref(window.FB.db,'chat');window.FB.onValue(window.FB.query(chatRef,window.FB.limitToLast(50)),(snap)=>{const msgs=snap.val()||{};let html='';Object.keys(msgs).forEach((k)=>{const m=msgs[k];if(!m||!m.text)return;html+=`<div style="margin-bottom:4px;"><b style="color:var(--cyan)">${m.author||'Аноним'}:</b> ${m.text}</div>`;});safeHTML('chatBox',html||'<div class="muted small">Сообщений нет.</div>');const cb=$('chatBox');if(cb)cb.scrollTop=cb.scrollHeight;});safe('sendChatBtn',(b)=>{b.onclick=()=>{if(!window.FB||!chatRef){toast('Нет соединения');return;}const input=$('chatInput');const text=input&&input.value.trim();if(!text)return;window.FB.push(chatRef,{author:state.name||'Охотник',text:text,time:Date.now()}).catch(()=>toast('Не отправлено'));if(input)input.value='';};});}
+let arenaWatchInited=false;
+function watchArena(){if(!window.FB){setTimeout(watchArena,500);return;}if(arenaWatchInited)return;arenaWatchInited=true;window.FB.onValue(window.FB.ref(window.FB.db,'arenas'),(snapshot)=>{let arenas=snapshot.val()||{};let listHtml='';for(let id in arenas){let a=arenas[id];if(!a)continue;if(a.creator===myPlayerId&&a.status==='accepted'){startRealBattle(a.challengerName,a.challengerLevel,a.challengerHp,a.challengerAtk,a.bet||0,id);return;}if(a.challenger===myPlayerId&&a.status==='declined'){let mm=$('modal');if(mm)mm.classList.remove('show');toast('Вызов отклонён');window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+id));return;}if(a.creator===myPlayerId&&a.status==='fighting'&&!battle){safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><h2>Вас вызывает ${a.challengerName}!</h2><p class="muted">Ставка: ${a.bet||0}◈ · Уровень ${a.challengerLevel}</p><div class="grid2"><button class="primary" id="acceptBtn">Принять</button><button id="declineBtn">Отклонить</button></div>`);let mm=$('modal');if(mm)mm.classList.add('show');safe('acceptBtn',b=>{b.onclick=()=>{window.FB.update(window.FB.ref(window.FB.db,'arenas/'+id),{status:'accepted'});startRealBattle(a.challengerName,a.challengerLevel,a.challengerHp,a.challengerAtk,a.bet||0,id);}});safe('declineBtn',b=>{b.onclick=()=>{window.FB.update(window.FB.ref(window.FB.db,'arenas/'+id),{status:'declined'});let mm=$('modal');if(mm)mm.classList.remove('show');toast('Вызов отклонён');}});return;}if(a.creator!==myPlayerId&&a.status==='waiting'){listHtml+=`<div class="item"><div class="iconbox">🏟</div><div class="iteminfo"><strong>${a.creatorName} (ур. ${a.creatorLevel})</strong><small>Ставка: ${a.bet||0}◈</small></div><button onclick="window.enterArena('${id}','${a.creator}','${a.creatorName}',${a.creatorLevel},${a.hp},${a.atk},${a.bet||0})">Бросить вызов</button></div>`;}}let box=$('arenaList');if(box)box.innerHTML=listHtml||'<p class="muted small" style="text-align:center; padding:10px;">Открытых арен нет. Создай свою!</p>';});}
+window.enterArena=(arenaId,creatorId,creatorName,creatorLevel,creatorHp,creatorAtk,bet)=>{if(!window.FB)return;if(bet>0&&state.gold<bet){toast('Недостаточно золота для ставки!');return;}if(bet>0){state.gold-=bet;save();}activeArena=arenaId;window.FB.update(window.FB.ref(window.FB.db,'arenas/'+arenaId),{status:'fighting',challenger:myPlayerId,challengerName:state.name||'Охотник',challengerLevel:state.level,challengerHp:maxHp(),challengerAtk:attack()});safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);let mm=$('modal');if(mm)mm.classList.add('show');};
+function startRealBattle(enemyName,enemyLevel,enemyHp,enemyAtk,bet,arenaId){if(battle)return;battle={m:{name:enemyName,emoji:'👤',level:enemyLevel,hp:enemyHp,atk:enemyAtk,xp:50,gold:bet*2,drop:0,tag:''},index:-1,hp:enemyHp,log:`Дуэль на арене со ставкой ${bet}◈!`,phase:1,pvp:true,baseLevel:enemyLevel,turn:'player'};window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+arenaId));renderBattle();}
+function initMap(){if(!window.L){safeHTML('map','<div class="mapfallback">Карта недоступна.</div>');return;}try{map=L.map('map',{attributionControl:false}).setView([60.1699,24.9384],14);L.tileLayer('https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=21.06.14&x={x}&y={y}&z={z}&scale=1&lang=ru_RU',{maxZoom:19,subdomains:['01','02','03','04']}).addTo(map);L.circle([60.1699,24.9384],{radius:350,color:'#4aaeff',fillOpacity:.04}).addTo(map);map.on('click',e=>{state.position={lat:e.latlng.lat,lng:e.latlng.lng};if(playerMarker)playerMarker.setLatLng(e.latlng);else playerMarker=L.marker(e.latlng).addTo(map).bindPopup('Ты');safeText('gpsStatus','Тест');save();sendPosition();});}catch(e){console.warn('initMap',e);}}
+function randomPosition(){let c=state.position||(map&&map.getCenter())||{lat:60.1699,lng:24.9384};let a=(Math.random()-.5)*.008,b=(Math.random()-.5)*.008;return{lat:c.lat+a,lng:c.lng+b};}
+function scan(){state.scans++;state.quests.scans++;state.objects=[];let now=Date.now();if(state.deadZones)state.deadZones=state.deadZones.filter(z=>z.respawnAt>now);else state.deadZones=[];let n=3+Math.floor(Math.random()*3);for(let i=0;i<n;i++){let pos=randomPosition();let inDeadZone=state.deadZones.some(z=>{let d=Math.sqrt(Math.pow(z.lat-pos.lat,2)+Math.pow(z.lng-pos.lng,2));return d<0.002;});if(inDeadZone){i--;continue;}if(Math.random()<.68){let av=monsters.filter(m=>m.level>=state.level-5&&m.level<=state.level+15);if(!av.length)av=[monsters[0]];let m=av[Math.floor(Math.random()*av.length)];let isElite=Math.random()<0.15;let scaledMonster={...m};if(isElite){scaledMonster.name='💀 [ЭЛИТА] '+m.name;scaledMonster.hp=Math.floor(m.hp*2);scaledMonster.atk=Math.floor(m.atk*2);scaledMonster.xp=Math.floor(m.xp*2.5);scaledMonster.gold=Math.floor(m.gold*2.5);scaledMonster.isElite=true;}state.objects.push({type:'monster',mi:monsters.indexOf(m),name:scaledMonster.name,emoji:m.emoji,pos:pos,scaled:scaledMonster,isElite:isElite});}else{state.objects.push({type:'chest',name:'Сундук',emoji:'🎁',pos:pos});}}drawObjects();save();safeText('mapHint','Найдено: '+state.objects.length);checkAchievements();}
+function drawObjects(){markers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});markers=[];if(!map)return;state.objects.forEach((o,i)=>{try{let glow=o.isElite?'0 0 12px #ff0000':'0 0 8px #46baff';let mk=L.marker([o.pos.lat,o.pos.lng],{icon:L.divIcon({className:'',html:`<div style="font-size:25px;text-shadow:${glow}">${o.emoji}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindPopup(`${o.name}<br><button onclick="window.__interact(${i})">Взаимодействовать</button>`);markers.push(mk);}catch(e){}});safeHTML('nearbyList',state.objects.map((o,i)=>`<div class="item"><div class="iconbox">${o.emoji}</div><div class="iteminfo"><strong>${o.name}</strong><small>${o.type==='monster'?'Враг':'Награда'}</small></div><button data-object="${i}">Открыть</button></div>`).join(''));}
 window.__interact=i=>interact(i);
-document.addEventListener('click',e=>{let o=e.target.closest('[data-object]');if(o)interact(Number(o.dataset.object))});
-function interact(i){
-  let o=state.objects[i];
-  if(!o)return;
-  if(o.type==='monster'){ openBattle(o.scaled || monsters[o.mi], i); }
-  else if(o.type==='chest'){
-    let g=15+Math.floor(Math.random()*45);state.gold+=g;state.counters.chests++;let it=Math.random()<.7?makeItem(0):null;if(it)addToInventory(it);if(Math.random()<.3)addToInventory(makeShard());state.objects.splice(i,1);drawObjects();save();notify('СУНДУК',`+${g}◈${it?' +'+it.name:''}`);checkAchievements()
-  } else { notify('POI',o.name) }
-}
-safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatus','GPS недоступен');return}navigator.geolocation.getCurrentPosition(pos=>{let p={lat:pos.coords.latitude,lng:pos.coords.longitude};state.position=p;safeText('gpsStatus','GPS ✓');if(map){map.setView([p.lat,p.lng],16);if(playerMarker)playerMarker.setLatLng([p.lat,p.lng]);else playerMarker=L.marker([p.lat,p.lng]).addTo(map).bindPopup('Ты').openPopup()}save();sendPosition();},()=>{safeText('gpsStatus','GPS ✗')},{enableHighAccuracy:true,timeout:12000,maximumAge:30000})}});
-safe('scanBtn',el=>{el.onclick=()=>scan()});
-safe('refreshObjects',el=>{el.onclick=()=>scan()});
-safe('spawnBtn',el=>{el.onclick=()=>{if(!state.position){state.position={lat:60.1699,lng:24.9384};if(map){map.setView([state.position.lat,state.position.lng],14);if(playerMarker)playerMarker.setLatLng([state.position.lat,state.position.lng]);else playerMarker=L.marker([state.position.lat,state.position.lng]).addTo(map)}}scan();sendPosition();}});
-safe('pvpBtn',el=>{el.onclick=()=>{
-  let hpM = Math.floor(maxHp() * 1.2);
-  let atkM = Math.floor(attack() * 1.3);
-  battle={
-    m:{name:'Тень охотника',emoji:'👤',level:state.level,hp:hpM,atk:atkM,xp:Math.floor(state.level*20),gold:Math.floor(state.level*10),drop:0,tag:''},
-    index:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,pvp:true,baseLevel:state.level,turn:'player'
-  };
-  renderBattle();
-}});
-safe('poiBtn',el=>{el.onclick=async()=>{
-  if(!state.position){safeText('mapHint','Задай позицию.');return}
-  let {lat,lng}=state.position;
-  let q=`[out:json];(node["amenity"](around:800,${lat},${lng});node["tourism"](around:800,${lat},${lng});node["leisure"](around:800,${lat},${lng}););out 15;`;
-  safeText('mapHint','Запрос...');
-  try{
-    let r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:q});
-    let j=await r.json();
-    if (!j.elements || !j.elements.length) { safeText('mapHint','POI не найдено.'); return; }
-    state.objects=state.objects.filter(o=>o.type!=='poi');
-    j.elements.slice(0,10).forEach(el=>{
-        let t=el.tags?.name||el.tags?.amenity||'Точка';
-        let icon=el.tags?.amenity==='cafe'?'☕':el.tags?.tourism==='museum'?'🏛️':el.tags?.leisure==='park'?'🌳':'📍';
-        state.objects.push({type:'poi',name:t,emoji:icon,pos:{lat:el.lat,lng:el.lon}})
-    });
-    drawObjects();save();safeText('mapHint',`POI: ${j.elements.length}`)
-  }catch(err){
-    safeText('mapHint','Ошибка Overpass (нет соединения).')
-  }
-}});
-safe('arenaBtn',el=>{el.onclick=()=>{
-  if(!map)return;
-  arenaMarkers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});
-  arenaMarkers = [];
-  for(let i=0;i<3;i++){
-    let p=randomPosition();
-    let mk = L.circleMarker([p.lat,p.lng],{radius:20,color:'#ff8eaf',fillOpacity:.2}).addTo(map).bindPopup('🏟 Арена');
-    arenaMarkers.push(mk);
-  }
-  safeText('mapHint','3 арены добавлены.')
-}});
-safe('storyBtn',el=>{el.onclick=()=>{
-  let now = Date.now();
-  if (now - state.lastStory < 2 * 3600000) {
-    let rem = Math.ceil((2 * 3600000 - (now - state.lastStory)) / 60000);
-    notify('СОБЫТИЕ', `Следующее событие через ${rem} мин.`);
-    return;
-  }
-  state.lastStory = now;
-  let s=storyPool[Math.floor(Math.random()*storyPool.length)];
-  safeHTML('modalContent',`<div class="systemhead">📖 СОБЫТИЕ</div><h2>${s.title}</h2><p class="muted">${s.text}</p><div class="grid2">${s.choices.map((c,i)=>`<button data-choice="${i}">${c.label}</button>`).join('')}</div>`);
-  let mm=$('modal');if(mm)mm.classList.add('show');
-  document.querySelectorAll('[data-choice]').forEach(b=>{b.onclick=()=>{
-    let r=s.choices[Number(b.dataset.choice)].fn();
-    safeHTML('modalContent',`<div class="systemhead">📖 ИТОГ</div><p>${r}</p><button class="primary" id="cl">OK</button>`);
-    safe('cl',bb=>{bb.onclick=()=>{let m=$('modal');if(m)m.classList.remove('show');save()}});
-  }});
-}});
-safe('updatePosBtn',el=>{el.onclick=()=>{sendPosition();toast('Позиция обновлена')}});
-safe('createArenaBtn',el=>{el.onclick=()=>createArena()});
-safe('exportBtn',el=>{el.onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='awakening-save.json';a.click();toast('Сейв скачан')}});
-safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};save();toast('Загружено')}catch(e){toast('Ошибка файла')}};r.readAsText(f)};inp.click()}});
-safe('resetBtn',el=>{el.onclick=()=>{if(confirm('Удалить весь прогресс?')){localStorage.removeItem('awakeningSave');location.reload()}}});
-
-function showStartDialog() {
-  safeHTML('modalContent', `
-    <div class="systemhead">▣ ПРОБУЖДЕНИЕ</div>
-    <h2>Создание персонажа</h2>
-    <p class="muted small">Введи имя и выбери класс.</p>
-    <input type="text" id="startName" placeholder="Имя охотника" value="${state.name || 'Охотник'}" style="margin-bottom:10px;">
-    <div class="grid2">
-      ${Object.entries(classes).map(([id,c])=>`<button data-startclass="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join('')}
-    </div>
-  `);
-  let mm=$('modal');if(mm)mm.classList.add('show');
-  document.querySelectorAll('[data-startclass]').forEach(b => {
-    b.onclick = () => {
-      let nameVal = $('startName').value.trim() || 'Охотник';
-      let classId = b.dataset.startclass;
-      state.name = nameVal;
-      state.class = classId;
-      let c = classes[classId];
-      for(let[k,v] of Object.entries(c.stats)) state.stats[k]+=v;
-      state.hp=maxHp(); state.mp=maxMp();
-      save();
-      let mm=$('modal');if(mm)mm.classList.remove('show');
-      toast('Добро пожаловать, ' + state.name);
-      sendPosition();
-    }
-  });
-}
-
-function initial(){
-  document.body.classList.toggle('light',state.theme==='light');
-  safeText('themeBtn',state.theme==='light'?'☀️':'🌙');
-  initMap();
-  try{renderAll()}catch(e){console.warn('renderAll initial:',e)}
-  try{ensureDaily()}catch(e){}
-  if(state.objects.length)try{drawObjects()}catch(e){}
-  safeHTML('rankList',['E','D','C','B','A','S','SS','SSS'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));
-  setInterval(()=>{try{renderDaily()}catch(e){}},60000);
-  checkAchievements();
-  if(!state.class) setTimeout(showStartDialog, 1000);
-  else setTimeout(sendPosition, 2000);
-  setTimeout(initOnline, 1000);
-  setTimeout(watchArena, 1500);
-  setTimeout(initChatAndFriends, 2000);
-  setInterval(()=>{ try{sendPosition();}catch(e){} }, 120000);
-}
-setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save()},60000);
+document.addEventListener('click',e=>{let o=e.target.closest('[data-object]');if(o)interact(Number(o.dataset.object));});
+function interact(i){let o=state.objects[i];if(!o)return;if(o.type==='monster'){openBattle(o.scaled||monsters[o.mi],i);}else if(o.type==='chest'){let g=15+Math.floor(Math.random()*45);state.gold+=g;state.counters.chests++;let it=Math.random()<.7?makeItem(0):null;if(it)addToInventory(it);if(Math.random()<.3)addToInventory(makeShard());state.objects.splice(i,1);drawObjects();save();notify('СУНДУК',`+${g}◈${it?' +'+it.name:''}`);checkAchievements();}else{notify('POI',o.name);}}
+safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatus','GPS недоступен');return;}navigator.geolocation.getCurrentPosition(pos=>{let p={lat:pos.coords.latitude,lng:pos.coords.longitude};state.position=p;safeText('gpsStatus','GPS ✓');if(map){map.setView([p.lat,p.lng],16);if(playerMarker)playerMarker.setLatLng([p.lat,p.lng]);else playerMarker=L.marker([p.lat,p.lng]).addTo(map).bindPopup('Ты').openPopup();}save();sendPosition();},()=>{safeText('gpsStatus','GPS ✗');},{enableHighAccuracy:true,timeout:12000,maximumAge:30000});};});
+safe('scanBtn',el=>{el.onclick=()=>scan();});
+safe('refreshObjects',el=>{el.onclick=()=>scan();});
+safe('spawnBtn',el=>{el.onclick=()=>{if(!state.position){state.position={lat:60.1699,lng:24.9384};if(map){map.setView([state.position.lat,state.position.lng],14);if(playerMarker)playerMarker.setLatLng([state.position.lat,state.position.lng]);else playerMarker=L.marker([state.position.lat,state.position.lng]).addTo(map);}}scan();sendPosition();};});
+safe('pvpBtn',el=>{el.onclick=()=>{let hpM=Math.floor(maxHp()*1.2),atkM=Math.floor(attack()*1.3);battle={m:{name:'Тень охотника',emoji:'👤',level:state.level,hp:hpM,atk:atkM,xp:Math.floor(state.level*20),gold:Math.floor(state.level*10),drop:0,tag:''},index:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,pvp:true,baseLevel:state.level,turn:'player'};renderBattle();};});
+safe('poiBtn',el=>{el.onclick=async()=>{if(!state.position){safeText('mapHint','Задай позицию.');return;}let{lat,lng}=state.position;let q=`[out:json];(node["amenity"](around:800,${lat},${lng});node["tourism"](around:800,${lat},${lng});node["leisure"](around:800,${lat},${lng}););out 15;`;safeText('mapHint','Запрос...');try{let r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:q});let j=await r.json();if(!j.elements||!j.elements.length){safeText('mapHint','POI не найдено.');return;}state.objects=state.objects.filter(o=>o.type!=='poi');j.elements.slice(0,10).forEach(el=>{let t=el.tags?.name||el.tags?.amenity||'Точка';let icon=el.tags?.amenity==='cafe'?'☕':el.tags?.tourism==='museum'?'🏛️':el.tags?.leisure==='park'?'🌳':'📍';state.objects.push({type:'poi',name:t,emoji:icon,pos:{lat:el.lat,lng:el.lon}});});drawObjects();save();safeText('mapHint',`POI: ${j.elements.length}`);}catch(err){safeText('mapHint','Ошибка Overpass (нет соединения).');}};});
+safe('arenaBtn',el=>{el.onclick=()=>{if(!map)return;arenaMarkers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});arenaMarkers=[];for(let i=0;i<3;i++){let p=randomPosition();let mk=L.circleMarker([p.lat,p.lng],{radius:20,color:'#ff8eaf',fillOpacity:.2}).addTo(map).bindPopup('🏟 Арена');arenaMarkers.push(mk);}safeText('mapHint','3 арены добавлены.');};});
+safe('storyBtn',el=>{el.onclick=()=>{let now=Date.now();if(now-state.lastStory<2*3600000){let rem=Math.ceil((2*3600000-(now-state.lastStory))/60000);notify('СОБЫТИЕ',`Следующее событие через ${rem} мин.`);return;}state.lastStory=now;let s=storyPool[Math.floor(Math.random()*storyPool.length)];safeHTML('modalContent',`<div class="systemhead">📖 СОБЫТИЕ</div><h2>${s.title}</h2><p class="muted">${s.text}</p><div class="grid2">${s.choices.map((c,i)=>`<button data-choice="${i}">${c.label}</button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-choice]').forEach(b=>{b.onclick=()=>{let r=s.choices[Number(b.dataset.choice)].fn();safeHTML('modalContent',`<div class="systemhead">📖 ИТОГ</div><p>${r}</p><button class="primary" id="cl">OK</button>`);safe('cl',bb=>{bb.onclick=()=>{let m=$('modal');if(m)m.classList.remove('show');save();}});};});};});
+safe('updatePosBtn',el=>{el.onclick=()=>{sendPosition();toast('Позиция обновлена');};});
+safe('createArenaBtn',el=>{el.onclick=()=>createArena();});
+safe('exportBtn',el=>{el.onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='awakening-save.json';a.click();toast('Сейв скачан');};});
+safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};save();toast('Загружено');}catch(e){toast('Ошибка файла');}};r.readAsText(f);};inp.click();};});
+safe('resetBtn',el=>{el.onclick=()=>{if(confirm('Удалить весь прогресс?')){localStorage.removeItem('awakeningSave');location.reload();}};});
+function showStartDialog(){safeHTML('modalContent',`<div class="systemhead">▣ ПРОБУЖДЕНИЕ</div><h2>Создание персонажа</h2><p class="muted small">Введи имя и выбери класс.</p><input type="text" id="startName" placeholder="Имя охотника" value="${state.name||'Охотник'}" style="margin-bottom:10px;"><div class="grid2">${Object.entries(classes).map(([id,c])=>`<button data-startclass="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-startclass]').forEach(b=>{b.onclick=()=>{let nameVal=$('startName').value.trim()||'Охотник';let classId=b.dataset.startclass;state.name=nameVal;state.class=classId;let c=classes[classId];for(let[k,v]of Object.entries(c.stats))state.stats[k]+=v;state.hp=maxHp();state.mp=maxMp();save();let mm=$('modal');if(mm)mm.classList.remove('show');toast('Добро пожаловать, '+state.name);sendPosition();};});}
+function initial(){document.body.classList.toggle('light',state.theme==='light');safeText('themeBtn',state.theme==='light'?'☀️':'🌙');initMap();try{renderAll()}catch(e){console.warn('renderAll initial:',e)}try{ensureDaily()}catch(e){}if(state.objects.length)try{drawObjects()}catch(e){}safeHTML('rankList',['E','D','C','B','A','S','SS','SSS'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));setInterval(()=>{try{renderDaily()}catch(e){}},60000);checkAchievements();if(!state.class)setTimeout(showStartDialog,1000);else setTimeout(sendPosition,2000);setTimeout(initOnline,1000);setTimeout(watchArena,1500);setTimeout(initChatAndFriends,2000);setInterval(()=>{try{sendPosition();}catch(e){}},120000);}
+setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save();},60000);
 initial();
 })();
 </script>
