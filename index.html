@@ -148,7 +148,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  <div class="card system">
    <div class="systemhead">▣ СЕТЬ</div>
    <h2>Онлайн-игроки</h2>
-   <p class="muted small">Охотники, которые сейчас в сети рядом с тобой.</p>
+   <p class="muted small">Все охотники, которые сейчас в сети.</p>
    <div class="row">
      <span>Игроков: <b id="onlineCount">0</b></span>
      <button class="primary" id="updatePosBtn">Обновить позицию</button>
@@ -159,10 +159,10 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
    </div>
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;">
-   <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков рядом...</p>
+   <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.0.0 Real PvP · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.0.1 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -883,15 +883,15 @@ function initOnline() {
     for(let id in onlineArenas) {
         let a = onlineArenas[id];
         if (a.status !== 'waiting') continue;
-        if (a.creator === myPlayerId) continue; // Свою арену не показываем в списке входа
+        if (a.creator === myPlayerId) continue;
         
         if (map) {
             let mk = L.marker([a.lat, a.lng], {
                 icon: L.divIcon({
                   className: '',
                   html: `<div style="font-size:30px;filter:drop-shadow(0 0 10px #ffd36a)">🏟</div>`,
-                  size: [30, 30],
-                  anchor: [15, 15]
+                  iconSize: [30, 30],
+                  iconAnchor: [15, 15]
                 })
             }).addTo(map).bindPopup(`Арена: ${a.creatorName} (Ур. ${a.creatorLevel})<br>Ставка: ${a.bet}◈<br><button onclick="window.enterArena('${id}', '${a.creator}', '${a.creatorName}', ${a.creatorLevel}, ${a.bet})">Принять вызов</button>`);
             arenaZoneMarkers.push(mk);
@@ -921,7 +921,6 @@ window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, bet) => {
     
     activeArena = arenaId;
     
-    // Отправляем запрос на арену
     window.FB.update(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
         status: 'fighting',
         challenger: myPlayerId,
@@ -929,18 +928,15 @@ window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, bet) => {
         challengerLevel: state.level
     });
     
-    // Открываем окно боя ожидания
     safeHTML('modalContent', `<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);
     let mm=$('modal');if(mm)mm.classList.add('show');
 };
 
-// Слушаем изменения статуса арены
 function watchArena() {
     if (!window.FB) return;
     window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
         let arenas = snapshot.val() || {};
         
-        // Если я создал арену и кто-то ее принял
         for (let id in arenas) {
             let a = arenas[id];
             if (a.creator === myPlayerId && a.status === 'fighting') {
@@ -952,7 +948,7 @@ function watchArena() {
 }
 
 function startRealBattle(enemyName, enemyLevel, bet, arenaId) {
-    if (battle) return; // Уже в бою
+    if (battle) return;
     
     let hpM = Math.floor(maxHp() * 1.2);
     let atkM = Math.floor(attack() * 1.3);
@@ -962,9 +958,7 @@ function startRealBattle(enemyName, enemyLevel, bet, arenaId) {
         index: -1, hp: hpM, log: `Дуэль на арене со ставкой ${bet}◈!`, phase: 1, pvp: true, baseLevel: enemyLevel
     };
     
-    // Удаляем арену, чтобы не зашли другие
     window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
-    
     renderBattle();
 }
 // ----------------------
