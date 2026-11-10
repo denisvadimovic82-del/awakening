@@ -139,6 +139,11 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  <div class="card"><div class="eyebrow">База</div><h2>Бестиарий</h2></div>
  <div id="bestiaryList" class="actionlist" style="max-height:500px; overflow-y:auto;"></div>
 </section>
+<section class="page" id="page-pvp">
+ <div class="card system"><div class="systemhead">▣ PvP</div><h2>Теневой бой</h2><p class="muted small">Сразись с копией своих статов. Рейтинг ELO.</p><div class="row"><span>Рейтинг: <b id="eloText">1000</b></span><button class="primary" id="pvpBtn">⚔ В бой</button></div></div>
+ <div class="card"><h3>Лидерборд</h3><p class="muted small">Локальный (сохраняется на устройстве).</p><div id="lbList"></div></div>
+ <div class="card"><h3>Магазин</h3><div id="shopList"></div></div>
+</section>
 <section class="page" id="page-online">
  <div class="card system">
    <div class="systemhead">▣ СЕТЬ</div>
@@ -148,12 +153,15 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
      <span>Игроков: <b id="onlineCount">0</b></span>
      <button class="primary" id="updatePosBtn">Обновить позицию</button>
    </div>
+   <div class="row" style="margin-top:10px;">
+     <button id="createArenaBtn" style="width:100%; background:#3a2a1a; border-color:#ffd36a; color:#ffd36a;">🏟 Создать Арену здесь</button>
+   </div>
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;">
    <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков рядом...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 0.8.0 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 0.8.2 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -161,6 +169,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  <button class="tab" data-page="inventory"><span>▣</span>Сумка</button>
  <button class="tab" data-page="system"><span>✧</span>Система</button>
  <button class="tab" data-page="bestiary"><span>☠</span>Бестиарий</button>
+ <button class="tab" data-page="pvp"><span>⚔</span>PvP</button>
  <button class="tab" data-page="online"><span>🌐</span>Онлайн</button>
 </nav>
 <div class="modal" id="modal"><div class="modalbox" id="modalContent"></div></div>
@@ -183,7 +192,6 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   
-  // Делаем доступным глобально для игры
   window.FB = { db, ref, set, onValue, remove };
 </script>
 <script>
@@ -366,7 +374,7 @@ try{
   state.deadZones=state.deadZones||[];
   state.lastStory=state.lastStory||0;
 }catch(e){state=defaultState()}
-let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[];
+let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[],arenaZoneMarkers=[];
 const save=()=>{try{localStorage.setItem('awakeningSave',JSON.stringify(state))}catch(e){}try{renderAll()}catch(e){console.warn('renderAll fail',e)}};
 const applySkills=()=>{let s={};for(let [id,lvl] of Object.entries(state.skills||{})){let sk=skills.find(x=>x.id===id);if(sk)for(let i=0;i<lvl;i++)sk.apply(s)}return s};
 const classBonus=key=>state.class?classes[state.class].stats[key]||0:0;
@@ -749,6 +757,7 @@ function battleTurn(mult){
 
 // --- FIREBASE LOGIC ---
 let onlinePlayers = {};
+let onlineArenas = {};
 let myPlayerId = 'p_' + Math.floor(Math.random() * 1000000);
 
 function sendPosition() {
@@ -761,6 +770,21 @@ function sendPosition() {
     lng: state.position.lng,
     lastSeen: Date.now()
   });
+}
+
+function createArena() {
+  if (!state.position || !window.FB) {
+    toast('Сначала включи GPS или задай позицию на карте.');
+    return;
+  }
+  let arenaId = 'a_' + Date.now();
+  window.FB.set(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
+    lat: state.position.lat,
+    lng: state.position.lng,
+    creator: myPlayerId,
+    creatorName: state.class ? classes[state.class].name : "Охотник"
+  });
+  toast('Арена создана! Жди соперников.');
 }
 
 function renderOnline() {
@@ -778,21 +802,19 @@ function renderOnline() {
   let now = Date.now();
   
   for (let id in onlinePlayers) {
-    if (id === myPlayerId) continue; // Пропускаем себя
+    if (id === myPlayerId) continue;
     
     let p = onlinePlayers[id];
-    if (now - p.lastSeen > 300000) continue; // Если игрока не было 5 минут, скрываем
+    if (now - p.lastSeen > 300000) continue;
     
     count++;
     
-    // Добавляем в список
     listHtml += `<div class="item">
       <div class="iconbox">👤</div>
       <div class="iteminfo"><strong>${p.name}</strong><small>Уровень ${p.level}</small></div>
       <button onclick="window.flyToPlayer(${p.lat}, ${p.lng})">Найти</button>
     </div>`;
     
-    // Добавляем на карту
     if (map) {
       let mk = L.marker([p.lat, p.lng], {
         icon: L.divIcon({
@@ -823,28 +845,60 @@ window.flyToPlayer = (lat, lng) => {
 function initOnline() {
   if (!window.FB) return;
   
-  // Подключаемся к базе и слушаем изменения
-  const playersRef = window.FB.ref(window.FB.db, 'players');
-  window.FB.onValue(playersRef, (snapshot) => {
+  // Слушаем игроков
+  window.FB.onValue(window.FB.ref(window.FB.db, 'players'), (snapshot) => {
     onlinePlayers = snapshot.val() || {};
     if (document.getElementById('page-online').classList.contains('active')) {
       renderOnline();
     }
   });
+
+  // Слушаем арены
+  window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
+    onlineArenas = snapshot.val() || {};
+    // Отрисовка арен из базы
+    arenaZoneMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} });
+    arenaZoneMarkers = [];
+    
+    for(let id in onlineArenas) {
+        let a = onlineArenas[id];
+        if (map) {
+            let mk = L.marker([a.lat, a.lng], {
+                icon: L.divIcon({
+                  className: '',
+                  html: `<div style="font-size:30px;filter:drop-shadow(0 0 10px #ffd36a)">🏟</div>`,
+                  iconSize: [30, 30],
+                  iconAnchor: [15, 15]
+                })
+            }).addTo(map).bindPopup(`Арена игрока ${a.creatorName}<br><button onclick="window.enterArena('${id}', '${a.creatorName}')">Войти в бой</button>`);
+            arenaZoneMarkers.push(mk);
+        }
+    }
+  });
   
   // Отправляем позицию каждые 30 секунд
   setInterval(sendPosition, 30000);
-  
-  // И отправляем сразу при старте
   setTimeout(sendPosition, 2000);
   
-  safe('updatePosBtn', el => {
-    el.onclick = () => {
-      sendPosition();
-      toast('Позиция обновлена в сети');
-    };
-  });
+  safe('updatePosBtn', el => { el.onclick = () => { sendPosition(); toast('Позиция обновлена в сети'); }; });
+  safe('createArenaBtn', el => { el.onclick = () => { createArena(); }; });
 }
+
+window.enterArena = (arenaId, creatorName) => {
+    if (!window.FB) return;
+    
+    // Удаляем арену из базы (кто первый зашел, тот и занял)
+    window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
+    
+    // Создаем бота-соперника
+    let hpM = Math.floor(maxHp() * 1.2);
+    let atkM = Math.floor(attack() * 1.3);
+    battle={
+      m:{name: 'Тень ' + creatorName, emoji:'👤', level:state.level, hp:hpM, atk:atkM, xp:Math.floor(state.level*20), gold:Math.floor(state.level*10), drop:0, tag:''},
+      index:-1, hp:hpM, log:'Бой на арене!', phase:1, pvp:true, baseLevel:state.level
+    };
+    renderBattle();
+};
 // ----------------------
 
 function initMap(){
@@ -936,6 +990,15 @@ safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatu
 safe('scanBtn',el=>{el.onclick=()=>scan()});
 safe('refreshObjects',el=>{el.onclick=()=>scan()});
 safe('spawnBtn',el=>{el.onclick=()=>{if(!state.position){state.position={lat:60.1699,lng:24.9384};if(map){map.setView([state.position.lat,state.position.lng],14);if(playerMarker)playerMarker.setLatLng([state.position.lat,state.position.lng]);else playerMarker=L.marker([state.position.lat,state.position.lng]).addTo(map)}}scan();sendPosition();}});
+safe('pvpBtn',el=>{el.onclick=()=>{
+  let hpM = Math.floor(maxHp() * 1.2);
+  let atkM = Math.floor(attack() * 1.3);
+  battle={
+    m:{name:'Тень охотника',emoji:'👤',level:state.level,hp:hpM,atk:atkM,xp:Math.floor(state.level*20),gold:Math.floor(state.level*10),drop:0,tag:''},
+    index:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,pvp:true,baseLevel:state.level
+  };
+  renderBattle();
+}});
 safe('poiBtn',el=>{el.onclick=async()=>{
   if(!state.position){safeText('mapHint','Задай позицию.');return}
   let {lat,lng}=state.position;
