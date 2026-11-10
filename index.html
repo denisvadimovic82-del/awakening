@@ -153,15 +153,16 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
      <span>Игроков: <b id="onlineCount">0</b></span>
      <button class="primary" id="updatePosBtn">Обновить позицию</button>
    </div>
-   <div class="row" style="margin-top:10px;">
-     <button id="createArenaBtn" style="width:100%; background:#3a2a1a; border-color:#ffd36a; color:#ffd36a;">🏟 Создать Арену здесь</button>
+   <div class="row" style="margin-top:10px; gap:8px;">
+     <input type="number" id="arenaBet" placeholder="Ставка в золоте (0)" value="0" style="width:50%">
+     <button id="createArenaBtn" style="width:50%; background:#3a2a1a; border-color:#ffd36a; color:#ffd36a;">🏟 Создать</button>
    </div>
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;">
    <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков рядом...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 0.8.2 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 0.9.0 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -758,7 +759,13 @@ function battleTurn(mult){
 // --- FIREBASE LOGIC ---
 let onlinePlayers = {};
 let onlineArenas = {};
-let myPlayerId = 'p_' + Math.floor(Math.random() * 1000000);
+let myPlayerId = localStorage.getItem('awakening_player_id');
+
+// Фикс дублей: генерируем ID один раз и сохраняем навсегда
+if (!myPlayerId) {
+  myPlayerId = 'p_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  localStorage.setItem('awakening_player_id', myPlayerId);
+}
 
 function sendPosition() {
   if (!state.position || !window.FB) return;
@@ -777,14 +784,28 @@ function createArena() {
     toast('Сначала включи GPS или задай позицию на карте.');
     return;
   }
+  let betInput = $('arenaBet');
+  let bet = betInput ? parseInt(betInput.value) || 0 : 0;
+  
+  if (bet > state.gold) {
+    toast('Недостаточно золота для ставки!');
+    return;
+  }
+  
+  if (bet > 0) {
+    state.gold -= bet; // Списываем ставку
+    save();
+  }
+
   let arenaId = 'a_' + Date.now();
   window.FB.set(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
     lat: state.position.lat,
     lng: state.position.lng,
     creator: myPlayerId,
-    creatorName: state.class ? classes[state.class].name : "Охотник"
+    creatorName: state.class ? classes[state.class].name : "Охотник",
+    bet: bet
   });
-  toast('Арена создана! Жди соперников.');
+  toast('Арена создана со ставкой ' + bet + '◈. Жди соперников.');
 }
 
 function renderOnline() {
@@ -793,7 +814,6 @@ function renderOnline() {
     return;
   }
   
-  // Очищаем старые маркеры
   onlineMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} });
   onlineMarkers = [];
   
@@ -845,7 +865,6 @@ window.flyToPlayer = (lat, lng) => {
 function initOnline() {
   if (!window.FB) return;
   
-  // Слушаем игроков
   window.FB.onValue(window.FB.ref(window.FB.db, 'players'), (snapshot) => {
     onlinePlayers = snapshot.val() || {};
     if (document.getElementById('page-online').classList.contains('active')) {
@@ -853,10 +872,9 @@ function initOnline() {
     }
   });
 
-  // Слушаем арены
   window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
     onlineArenas = snapshot.val() || {};
-    // Отрисовка арен из базы
+    
     arenaZoneMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} });
     arenaZoneMarkers = [];
     
@@ -870,13 +888,12 @@ function initOnline() {
                   iconSize: [30, 30],
                   iconAnchor: [15, 15]
                 })
-            }).addTo(map).bindPopup(`Арена игрока ${a.creatorName}<br><button onclick="window.enterArena('${id}', '${a.creatorName}')">Войти в бой</button>`);
+            }).addTo(map).bindPopup(`Арена игрока ${a.creatorName}<br>Ставка: ${a.bet}◈<br><button onclick="window.enterArena('${id}', '${a.creatorName}', ${a.bet})">Войти в бой</button>`);
             arenaZoneMarkers.push(mk);
         }
     }
   });
   
-  // Отправляем позицию каждые 30 секунд
   setInterval(sendPosition, 30000);
   setTimeout(sendPosition, 2000);
   
@@ -884,18 +901,27 @@ function initOnline() {
   safe('createArenaBtn', el => { el.onclick = () => { createArena(); }; });
 }
 
-window.enterArena = (arenaId, creatorName) => {
+window.enterArena = (arenaId, creatorName, bet) => {
     if (!window.FB) return;
     
-    // Удаляем арену из базы (кто первый зашел, тот и занял)
+    if (bet > 0 && state.gold < bet) {
+        toast('У тебя недостаточно золота для этой ставки!');
+        return;
+    }
+    
+    if (bet > 0) {
+        state.gold -= bet;
+        save();
+    }
+    
     window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
     
-    // Создаем бота-соперника
     let hpM = Math.floor(maxHp() * 1.2);
     let atkM = Math.floor(attack() * 1.3);
+    
     battle={
-      m:{name: 'Тень ' + creatorName, emoji:'👤', level:state.level, hp:hpM, atk:atkM, xp:Math.floor(state.level*20), gold:Math.floor(state.level*10), drop:0, tag:''},
-      index:-1, hp:hpM, log:'Бой на арене!', phase:1, pvp:true, baseLevel:state.level
+      m:{name: 'Тень ' + creatorName, emoji:'👤', level:state.level, hp:hpM, atk:atkM, xp:Math.floor(state.level*20), gold:bet*2, drop:0, tag:''},
+      index:-1, hp:hpM, log:`Бой на арене со ставкой ${bet}◈!`, phase:1, pvp:true, baseLevel:state.level
     };
     renderBattle();
 };
@@ -1066,7 +1092,6 @@ function initial(){
   setInterval(()=>{try{renderDaily()}catch(e){}},60000);
   checkAchievements();
   
-  // Инициализация онлайна
   setTimeout(initOnline, 1000);
 }
 setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save()},60000);
