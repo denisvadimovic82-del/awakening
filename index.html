@@ -162,7 +162,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
    <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков рядом...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 0.9.0 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.0.0 Real PvP · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -178,7 +178,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBZ0l0wbtUao4Drg8PtzP87-b7qwvscnj8",
@@ -193,7 +193,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   
-  window.FB = { db, ref, set, onValue, remove };
+  window.FB = { db, ref, set, onValue, remove, update };
 </script>
 <script>
 (()=>{
@@ -759,9 +759,9 @@ function battleTurn(mult){
 // --- FIREBASE LOGIC ---
 let onlinePlayers = {};
 let onlineArenas = {};
+let activeArena = null;
 let myPlayerId = localStorage.getItem('awakening_player_id');
 
-// Фикс дублей: генерируем ID один раз и сохраняем навсегда
 if (!myPlayerId) {
   myPlayerId = 'p_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
   localStorage.setItem('awakening_player_id', myPlayerId);
@@ -793,7 +793,7 @@ function createArena() {
   }
   
   if (bet > 0) {
-    state.gold -= bet; // Списываем ставку
+    state.gold -= bet;
     save();
   }
 
@@ -803,7 +803,9 @@ function createArena() {
     lng: state.position.lng,
     creator: myPlayerId,
     creatorName: state.class ? classes[state.class].name : "Охотник",
-    bet: bet
+    creatorLevel: state.level,
+    bet: bet,
+    status: 'waiting'
   });
   toast('Арена создана со ставкой ' + bet + '◈. Жди соперников.');
 }
@@ -880,15 +882,18 @@ function initOnline() {
     
     for(let id in onlineArenas) {
         let a = onlineArenas[id];
+        if (a.status !== 'waiting') continue;
+        if (a.creator === myPlayerId) continue; // Свою арену не показываем в списке входа
+        
         if (map) {
             let mk = L.marker([a.lat, a.lng], {
                 icon: L.divIcon({
                   className: '',
                   html: `<div style="font-size:30px;filter:drop-shadow(0 0 10px #ffd36a)">🏟</div>`,
-                  iconSize: [30, 30],
-                  iconAnchor: [15, 15]
+                  size: [30, 30],
+                  anchor: [15, 15]
                 })
-            }).addTo(map).bindPopup(`Арена игрока ${a.creatorName}<br>Ставка: ${a.bet}◈<br><button onclick="window.enterArena('${id}', '${a.creatorName}', ${a.bet})">Войти в бой</button>`);
+            }).addTo(map).bindPopup(`Арена: ${a.creatorName} (Ур. ${a.creatorLevel})<br>Ставка: ${a.bet}◈<br><button onclick="window.enterArena('${id}', '${a.creator}', '${a.creatorName}', ${a.creatorLevel}, ${a.bet})">Принять вызов</button>`);
             arenaZoneMarkers.push(mk);
         }
     }
@@ -901,7 +906,7 @@ function initOnline() {
   safe('createArenaBtn', el => { el.onclick = () => { createArena(); }; });
 }
 
-window.enterArena = (arenaId, creatorName, bet) => {
+window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, bet) => {
     if (!window.FB) return;
     
     if (bet > 0 && state.gold < bet) {
@@ -914,17 +919,54 @@ window.enterArena = (arenaId, creatorName, bet) => {
         save();
     }
     
-    window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
+    activeArena = arenaId;
+    
+    // Отправляем запрос на арену
+    window.FB.update(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
+        status: 'fighting',
+        challenger: myPlayerId,
+        challengerName: state.class ? classes[state.class].name : "Охотник",
+        challengerLevel: state.level
+    });
+    
+    // Открываем окно боя ожидания
+    safeHTML('modalContent', `<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);
+    let mm=$('modal');if(mm)mm.classList.add('show');
+};
+
+// Слушаем изменения статуса арены
+function watchArena() {
+    if (!window.FB) return;
+    window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
+        let arenas = snapshot.val() || {};
+        
+        // Если я создал арену и кто-то ее принял
+        for (let id in arenas) {
+            let a = arenas[id];
+            if (a.creator === myPlayerId && a.status === 'fighting') {
+                startRealBattle(a.challengerName, a.challengerLevel, a.bet, id);
+                return;
+            }
+        }
+    });
+}
+
+function startRealBattle(enemyName, enemyLevel, bet, arenaId) {
+    if (battle) return; // Уже в бою
     
     let hpM = Math.floor(maxHp() * 1.2);
     let atkM = Math.floor(attack() * 1.3);
     
-    battle={
-      m:{name: 'Тень ' + creatorName, emoji:'👤', level:state.level, hp:hpM, atk:atkM, xp:Math.floor(state.level*20), gold:bet*2, drop:0, tag:''},
-      index:-1, hp:hpM, log:`Бой на арене со ставкой ${bet}◈!`, phase:1, pvp:true, baseLevel:state.level
+    battle = {
+        m: {name: enemyName, emoji: '👤', level: enemyLevel, hp: hpM, atk: atkM, xp: 50, gold: bet * 2, drop: 0, tag: ''},
+        index: -1, hp: hpM, log: `Дуэль на арене со ставкой ${bet}◈!`, phase: 1, pvp: true, baseLevel: enemyLevel
     };
+    
+    // Удаляем арену, чтобы не зашли другие
+    window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
+    
     renderBattle();
-};
+}
 // ----------------------
 
 function initMap(){
@@ -1093,6 +1135,7 @@ function initial(){
   checkAchievements();
   
   setTimeout(initOnline, 1000);
+  setTimeout(watchArena, 1500);
 }
 setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save()},60000);
 initial();
