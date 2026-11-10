@@ -21,13 +21,11 @@ header{position:sticky;top:0;z-index:9999;background:#07111fef;border-bottom:1px
 .brand strong{letter-spacing:2px;color:#dff3ff;font-size:15px}body.light .brand strong{color:#0f2b44}
 .rank-wrap{display:flex;align-items:center;gap:8px}
 .rank{font-size:11px;color:var(--cyan);border:1px solid #32628c;border-radius:20px;padding:5px 9px;white-space:nowrap}
-/* Кнопка темы в шапке */
 .themebtn{width:28px;height:28px;padding:0;border-radius:50%;font-size:14px;display:grid;place-items:center;background:#0e1e31;border:1px solid #3b6c98;flex:none;}
 body.light .themebtn{background:#fff;border-color:#a9c8e4;}
 
 .xpwrap{height:6px;background:#243b55;border-radius:9px;margin-top:10px;overflow:hidden}body.light .xpwrap{background:#d6e6f4}.xpbar{height:100%;background:linear-gradient(90deg,#278bff,#77e4ff);width:0;transition:width .3s}
 .statsline{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:5px}
-/* Стили для полосок в шапке */
 .hud-bars{display:flex;flex-direction:column;gap:4px;margin-top:8px}
 .hud-row{display:flex;align-items:center;gap:8px}
 .hud-bar{flex:1;height:8px;border-radius:10px;overflow:hidden;background:#263d57}
@@ -35,7 +33,7 @@ body.light .themebtn{background:#fff;border-color:#a9c8e4;}
 .hud-bar.mp>i{display:block;height:100%;background:linear-gradient(90deg,#4d65e8,#a28cff);transition:width .3s}
 .hud-text{font-size:10px;color:var(--muted);min-width:50px;text-align:right}
 
-main{max-width:760px;margin:auto;padding:12px 12px 90px}.tabs{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:#081321f5;border-top:1px solid #29415e;backdrop-filter:blur(12px)}body.light .tabs{background:#ffffffef;border-top:1px solid #c5d8ea}
+main{max-width:760px;margin:auto;padding:12px 12px 90px}.tabs{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:#081321f5;border-top:1px solid #29415e;backdrop-filter:blur(12px)}body.light .tabs{background:#ffffffef;border-top:1px solid #c5d8ea}
 .tab{border:0;background:transparent;color:#819bb8;padding:7px 2px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px}.tab span:first-child{font-size:19px}.tab.active{color:var(--cyan);background:#17304b;border-radius:10px}body.light .tab.active{background:#dceaf8}
 .page{display:none}.page.active{display:block}.card{background:linear-gradient(145deg,#12243a,#0d1a2b);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 8px 25px #0002}body.light .card{background:#fff;box-shadow:0 6px 18px #1a3a5e12}.card h2,.card h3{margin:0 0 10px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--cyan);text-transform:uppercase}.muted{color:var(--muted)}.small{font-size:11px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pill{padding:5px 8px;border:1px solid #355575;border-radius:30px;color:#b9d8f6;font-size:11px}body.light .pill{color:#1a5f9e;border-color:#a9c8e4}.bar{height:9px;border-radius:10px;background:#263d57;overflow:hidden;margin:6px 0}body.light .bar{background:#d6e6f4}.bar>i{display:block;height:100%;background:linear-gradient(90deg,#2589ff,#75e7ff);transition:width .25s}.bar.hp>i{background:linear-gradient(90deg,#d83e61,#ff8d91)}.bar.mp>i{background:linear-gradient(90deg,#4d65e8,#a28cff)}
 #map{height:48vh;min-height:300px;border-radius:13px;border:1px solid #31516f;overflow:hidden;background:#14243a;z-index:1;position:relative;}.mapfallback{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:#b5cce4;background:radial-gradient(circle,#1b3859,#0b1828)}
@@ -141,12 +139,21 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  <div class="card"><div class="eyebrow">База</div><h2>Бестиарий</h2></div>
  <div id="bestiaryList" class="actionlist" style="max-height:500px; overflow-y:auto;"></div>
 </section>
-<section class="page" id="page-pvp">
- <div class="card system"><div class="systemhead">▣ PvP</div><h2>Теневой бой</h2><p class="muted small">Сразись с копией своих статов. Рейтинг ELO.</p><div class="row"><span>Рейтинг: <b id="eloText">1000</b></span><button class="primary" id="pvpBtn">⚔ В бой</button></div></div>
- <div class="card"><h3>Лидерборд</h3><p class="muted small">Локальный (сохраняется на устройстве).</p><div id="lbList"></div></div>
- <div class="card"><h3>Магазин</h3><div id="shopList"></div></div>
+<section class="page" id="page-online">
+ <div class="card system">
+   <div class="systemhead">▣ СЕТЬ</div>
+   <h2>Онлайн-игроки</h2>
+   <p class="muted small">Охотники, которые сейчас в сети рядом с тобой.</p>
+   <div class="row">
+     <span>Игроков: <b id="onlineCount">0</b></span>
+     <button class="primary" id="updatePosBtn">Обновить позицию</button>
+   </div>
+ </div>
+ <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;">
+   <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков рядом...</p>
+ </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 0.7.5 · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 0.8.0 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -154,11 +161,31 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  <button class="tab" data-page="inventory"><span>▣</span>Сумка</button>
  <button class="tab" data-page="system"><span>✧</span>Система</button>
  <button class="tab" data-page="bestiary"><span>☠</span>Бестиарий</button>
- <button class="tab" data-page="pvp"><span>⚔</span>PvP</button>
+ <button class="tab" data-page="online"><span>🌐</span>Онлайн</button>
 </nav>
 <div class="modal" id="modal"><div class="modalbox" id="modalContent"></div></div>
 <div class="toast" id="toast"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZ0l0wbtUao4Drg8PtzP87-b7qwvscnj8",
+    authDomain: "awakening-game.firebaseapp.com",
+    databaseURL: "https://awakening-game-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "awakening-game",
+    storageBucket: "awakening-game.firebasestorage.app",
+    messagingSenderId: "80461481570",
+    appId: "1:80461481570:web:73e139c4d5a1f8047a333b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  
+  // Делаем доступным глобально для игры
+  window.FB = { db, ref, set, onValue, remove };
+</script>
 <script>
 (()=>{
 'use strict';
@@ -339,7 +366,7 @@ try{
   state.deadZones=state.deadZones||[];
   state.lastStory=state.lastStory||0;
 }catch(e){state=defaultState()}
-let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[];
+let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[];
 const save=()=>{try{localStorage.setItem('awakeningSave',JSON.stringify(state))}catch(e){}try{renderAll()}catch(e){console.warn('renderAll fail',e)}};
 const applySkills=()=>{let s={};for(let [id,lvl] of Object.entries(state.skills||{})){let sk=skills.find(x=>x.id===id);if(sk)for(let i=0;i<lvl;i++)sk.apply(s)}return s};
 const classBonus=key=>state.class?classes[state.class].stats[key]||0:0;
@@ -576,6 +603,8 @@ function renderAll(){
   })());
 
   safeHTML('shopList', shopItems.map(s => `<div class="craftrow"><div class="iconbox">${s.icon}</div><div class="iteminfo"><strong>${s.name}</strong><small>${s.price}◈</small></div><button data-shop="${s.id}" ${state.gold<s.price?'disabled':''}>Купить</button></div>`).join(''));
+  
+  renderOnline();
 }
 function ensureDaily(){let today=new Date().toISOString().slice(0,10);if(state.daily.date===today&&state.daily.pool.length)return;let pool=[...dailyPool].sort(()=>Math.random()-.5).slice(0,3);state.daily={date:today,pool:pool.map(p=>p.id),progress:{}};save()}
 function renderDaily(){ensureDaily();let now=new Date();let t=new Date(now);t.setHours(24,0,0,0);let ms=t-now;let h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000);safeText('dailyTimer',`${h}ч ${m}м`);
@@ -586,6 +615,7 @@ function setPage(p){
   document.querySelectorAll('.page').forEach(x=>{x.classList.toggle('active',x.id==='page-'+p)});
   document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('active',x.dataset.page===p)});
   if(p==='map'&&map)setTimeout(()=>{try{map.invalidateSize()}catch(e){}},100);
+  if(p==='online') renderOnline();
   try{renderAll()}catch(e){console.warn('renderAll:',e)}
 }
 document.querySelectorAll('.tab').forEach(b=>{b.onclick=()=>setPage(b.dataset.page)});
@@ -717,13 +747,113 @@ function battleTurn(mult){
  enemyTurn();
 }
 
+// --- FIREBASE LOGIC ---
+let onlinePlayers = {};
+let myPlayerId = 'p_' + Math.floor(Math.random() * 1000000);
+
+function sendPosition() {
+  if (!state.position || !window.FB) return;
+  
+  window.FB.set(window.FB.ref(window.FB.db, 'players/' + myPlayerId), {
+    name: state.class ? classes[state.class].name : "Охотник",
+    level: state.level,
+    lat: state.position.lat,
+    lng: state.position.lng,
+    lastSeen: Date.now()
+  });
+}
+
+function renderOnline() {
+  if (!window.FB) {
+    safeHTML('onlineList', '<p class="muted small" style="padding:10px;text-align:center;">Подключение к серверу...</p>');
+    return;
+  }
+  
+  // Очищаем старые маркеры
+  onlineMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} });
+  onlineMarkers = [];
+  
+  let listHtml = '';
+  let count = 0;
+  let now = Date.now();
+  
+  for (let id in onlinePlayers) {
+    if (id === myPlayerId) continue; // Пропускаем себя
+    
+    let p = onlinePlayers[id];
+    if (now - p.lastSeen > 300000) continue; // Если игрока не было 5 минут, скрываем
+    
+    count++;
+    
+    // Добавляем в список
+    listHtml += `<div class="item">
+      <div class="iconbox">👤</div>
+      <div class="iteminfo"><strong>${p.name}</strong><small>Уровень ${p.level}</small></div>
+      <button onclick="window.flyToPlayer(${p.lat}, ${p.lng})">Найти</button>
+    </div>`;
+    
+    // Добавляем на карту
+    if (map) {
+      let mk = L.marker([p.lat, p.lng], {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="background:#17304b;border:2px solid #62b5ff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:16px;box-shadow:0 0 10px #62b5ff">👤</div>`,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15]
+        })
+      }).addTo(map).bindPopup(`${p.name} (Ур. ${p.level})`);
+      onlineMarkers.push(mk);
+    }
+  }
+  
+  safeText('onlineCount', count);
+  
+  if (count > 0) {
+    safeHTML('onlineList', listHtml);
+  } else {
+    safeHTML('onlineList', '<p class="muted small" style="text-align:center; padding:20px;">Рядом пока никого нет. Пригласи друзей!</p>');
+  }
+}
+
+window.flyToPlayer = (lat, lng) => {
+  if (map) map.setView([lat, lng], 16);
+  setPage('map');
+};
+
+function initOnline() {
+  if (!window.FB) return;
+  
+  // Подключаемся к базе и слушаем изменения
+  const playersRef = window.FB.ref(window.FB.db, 'players');
+  window.FB.onValue(playersRef, (snapshot) => {
+    onlinePlayers = snapshot.val() || {};
+    if (document.getElementById('page-online').classList.contains('active')) {
+      renderOnline();
+    }
+  });
+  
+  // Отправляем позицию каждые 30 секунд
+  setInterval(sendPosition, 30000);
+  
+  // И отправляем сразу при старте
+  setTimeout(sendPosition, 2000);
+  
+  safe('updatePosBtn', el => {
+    el.onclick = () => {
+      sendPosition();
+      toast('Позиция обновлена в сети');
+    };
+  });
+}
+// ----------------------
+
 function initMap(){
   if(!window.L){safeHTML('map','<div class="mapfallback">Карта недоступна.</div>');return}
   try{
     map=L.map('map',{attributionControl:false}).setView([60.1699,24.9384],14);
     L.tileLayer('https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=21.06.14&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', {maxZoom: 19, subdomains: ['01','02','03','04']}).addTo(map);
     L.circle([60.1699,24.9384],{radius:350,color:'#4aaeff',fillOpacity:.04}).addTo(map);
-    map.on('click',e=>{state.position={lat:e.latlng.lat,lng:e.latlng.lng};if(playerMarker)playerMarker.setLatLng(e.latlng);else playerMarker=L.marker(e.latlng).addTo(map).bindPopup('Ты');safeText('gpsStatus','Тест');save()})
+    map.on('click',e=>{state.position={lat:e.latlng.lat,lng:e.latlng.lng};if(playerMarker)playerMarker.setLatLng(e.latlng);else playerMarker=L.marker(e.latlng).addTo(map).bindPopup('Ты');safeText('gpsStatus','Тест');save();sendPosition();})
   }catch(e){console.warn('initMap',e)}
 }
 function randomPosition(){let c=state.position||(map&&map.getCenter())||{lat:60.1699,lng:24.9384};let a=(Math.random()-.5)*.008,b=(Math.random()-.5)*.008;return{lat:c.lat+a,lng:c.lng+b}}
@@ -802,19 +932,10 @@ function interact(i){
     notify('POI',o.name)
   }
 }
-safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatus','GPS недоступен');return}navigator.geolocation.getCurrentPosition(pos=>{let p={lat:pos.coords.latitude,lng:pos.coords.longitude};state.position=p;safeText('gpsStatus','GPS ✓');if(map){map.setView([p.lat,p.lng],16);if(playerMarker)playerMarker.setLatLng([p.lat,p.lng]);else playerMarker=L.marker([p.lat,p.lng]).addTo(map).bindPopup('Ты').openPopup()}save()},()=>{safeText('gpsStatus','GPS ✗')},{enableHighAccuracy:true,timeout:12000,maximumAge:30000})}});
+safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatus','GPS недоступен');return}navigator.geolocation.getCurrentPosition(pos=>{let p={lat:pos.coords.latitude,lng:pos.coords.longitude};state.position=p;safeText('gpsStatus','GPS ✓');if(map){map.setView([p.lat,p.lng],16);if(playerMarker)playerMarker.setLatLng([p.lat,p.lng]);else playerMarker=L.marker([p.lat,p.lng]).addTo(map).bindPopup('Ты').openPopup()}save();sendPosition();},()=>{safeText('gpsStatus','GPS ✗')},{enableHighAccuracy:true,timeout:12000,maximumAge:30000})}});
 safe('scanBtn',el=>{el.onclick=()=>scan()});
 safe('refreshObjects',el=>{el.onclick=()=>scan()});
-safe('spawnBtn',el=>{el.onclick=()=>{if(!state.position){state.position={lat:60.1699,lng:24.9384};if(map){map.setView([state.position.lat,state.position.lng],14);if(playerMarker)playerMarker.setLatLng([state.position.lat,state.position.lng]);else playerMarker=L.marker([state.position.lat,state.position.lng]).addTo(map)}}scan()}});
-safe('pvpBtn',el=>{el.onclick=()=>{
-  let hpM = Math.floor(maxHp() * 1.2);
-  let atkM = Math.floor(attack() * 1.3);
-  battle={
-    m:{name:'Тень охотника',emoji:'👤',level:state.level,hp:hpM,atk:atkM,xp:Math.floor(state.level*20),gold:Math.floor(state.level*10),drop:0,tag:''},
-    index:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,pvp:true,baseLevel:state.level
-  };
-  renderBattle();
-}});
+safe('spawnBtn',el=>{el.onclick=()=>{if(!state.position){state.position={lat:60.1699,lng:24.9384};if(map){map.setView([state.position.lat,state.position.lng],14);if(playerMarker)playerMarker.setLatLng([state.position.lat,state.position.lng]);else playerMarker=L.marker([state.position.lat,state.position.lng]).addTo(map)}}scan();sendPosition();}});
 safe('poiBtn',el=>{el.onclick=async()=>{
   if(!state.position){safeText('mapHint','Задай позицию.');return}
   let {lat,lng}=state.position;
@@ -881,6 +1002,9 @@ function initial(){
   safeHTML('rankList',['E','D','C','B','A','S','SS','SSS'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));
   setInterval(()=>{try{renderDaily()}catch(e){}},60000);
   checkAchievements();
+  
+  // Инициализация онлайна
+  setTimeout(initOnline, 1000);
 }
 setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save()},60000);
 initial();
