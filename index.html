@@ -105,10 +105,8 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  <div class="card">
   <div class="row"><div><div class="eyebrow">Профиль</div><h2 id="heroName">Пробуждённый</h2><span class="pill" id="heroRank">Ранг E</span></div><div style="font-size:56px" id="heroEmoji">🧙</div></div>
   <div class="bar hp"><i id="hpbar" style="width:100%"></i></div><div class="statsline"><span>❤ <b id="hpText">100/100</b></span><span>✦ <b id="mpText">30/30</b></span></div>
-  <div class="row" style="margin-top:8px"><span class="muted small">Класс:</span><b id="classText">Не выбран</b></div>
+  <div class="row" style="margin-top:8px"><span class="muted small">Имя:</span><b id="heroNameText">Охотник</b></div>
  </div>
- <div class="card"><h3>Класс</h3><div id="classChooser" class="grid2"></div></div>
- 
  <div class="card system">
    <div class="systemhead">▣ ОБЩИЕ ХАРАКТЕРИСТИКИ</div>
    <div class="statgrid" style="margin-top:10px" id="totalStatsGrid"></div>
@@ -162,7 +160,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
    <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.3.0 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.4.0 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -362,7 +360,7 @@ const defaultState=()=>({
   inventory:[],equipment:{},kills:0,scans:0,steps:0,seen:[],quests:{kills:0,scans:0,level:0},
   objects:[],position:null,history:[],lastRegen:Date.now(),elo:1000,
   daily:{date:'',pool:[],progress:{}},counters:{chests:0,wins:0,levelups:0,crafts:0,pvpWins:0,goblin:0,wolf:0,boss:0},
-  skills:{},pet:null,class:null,achievements:{},dailyGift:{last:'',streak:0},theme:'dark',chainIdx:0,
+  skills:{},pet:null,class:null,name:"Охотник",achievements:{},dailyGift:{last:'',streak:0},theme:'dark',chainIdx:0,
   deadZones: [],
   lastStory: 0
 });
@@ -440,6 +438,9 @@ function renderAll(){
   safeText('hpText',`${Math.min(state.hp,maxHp())}/${maxHp()}`);
   safeText('mpText',`${state.mp}/${maxMp()}`);
   safeStyle('hpbar','width',(Math.max(0,state.hp)/maxHp()*100)+'%');
+  
+  // Имя
+  safeText('heroNameText', state.name || "Охотник");
 
   safeText('hudHpText',`${Math.min(state.hp,maxHp())}/${maxHp()}`);
   safeText('hudMpText',`${state.mp}/${maxMp()}`);
@@ -450,7 +451,6 @@ function renderAll(){
   safeText('eloText',state.elo);
   safeText('classText',state.class?classes[state.class].name:'Не выбран');
   safeText('heroEmoji',state.class?classes[state.class].emoji:'🧙');
-  safeHTML('classChooser',state.class?'':Object.entries(classes).map(([id,c])=>`<button data-class="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join(''));
   
   // Общие характеристики
   let s={};
@@ -819,7 +819,7 @@ function sendPosition() {
   if (!state.position || !window.FB) return;
   
   window.FB.set(window.FB.ref(window.FB.db, 'players/' + myPlayerId), {
-    name: state.class ? classes[state.class].name : "Охотник",
+    name: state.name || "Охотник",
     level: state.level,
     hp: maxHp(),
     atk: attack(),
@@ -852,7 +852,7 @@ function createArena() {
     lat: state.position.lat,
     lng: state.position.lng,
     creator: myPlayerId,
-    creatorName: state.class ? classes[state.class].name : "Охотник",
+    creatorName: state.name || "Охотник",
     creatorLevel: state.level,
     hp: maxHp(),
     atk: attack(),
@@ -957,6 +957,49 @@ function initOnline() {
   safe('createArenaBtn', el => { el.onclick = () => { createArena(); }; });
 }
 
+// Добавлено окно подтверждения для создателя арены
+function watchArena() {
+    if (!window.FB) return;
+    window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
+        let arenas = snapshot.val() || {};
+        
+        for (let id in arenas) {
+            let a = arenas[id];
+            if (a.creator === myPlayerId && a.status === 'fighting' && !battle) {
+                // Если мы создатель и кто-то бросил нам вызов
+                safeHTML('modalContent', `
+                  <div class="systemhead">▣ АРЕНА</div>
+                  <h2>Вас вызывает ${a.challengerName}!</h2>
+                  <p class="muted">Ставка: ${a.bet}◈</p>
+                  <div class="grid2">
+                    <button class="primary" id="acceptBtn">Принять</button>
+                    <button id="declineBtn">Отклонить</button>
+                  </div>
+                `);
+                let mm=$('modal');if(mm)mm.classList.add('show');
+                
+                safe('acceptBtn', b => {
+                  b.onclick = () => {
+                    let enemyName = a.challengerName;
+                    let enemyLevel = a.challengerLevel;
+                    let enemyHp = a.challengerHp;
+                    let enemyAtk = a.challengerAtk;
+                    startRealBattle(enemyName, enemyLevel, enemyHp, enemyAtk, a.bet, id);
+                  }
+                });
+                safe('declineBtn', b => {
+                  b.onclick = () => {
+                    window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + id));
+                    let mm=$('modal');if(mm)mm.classList.remove('show');
+                    toast('Вызов отклонен');
+                  }
+                });
+                return;
+            }
+        }
+    });
+}
+
 window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, creatorHp, creatorAtk, bet) => {
     if (!window.FB) return;
     
@@ -975,7 +1018,7 @@ window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, creatorHp, c
     window.FB.update(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
         status: 'fighting',
         challenger: myPlayerId,
-        challengerName: state.class ? classes[state.class].name : "Охотник",
+        challengerName: state.name || "Охотник",
         challengerLevel: state.level,
         challengerHp: maxHp(),
         challengerAtk: attack()
@@ -984,21 +1027,6 @@ window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, creatorHp, c
     safeHTML('modalContent', `<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);
     let mm=$('modal');if(mm)mm.classList.add('show');
 };
-
-function watchArena() {
-    if (!window.FB) return;
-    window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
-        let arenas = snapshot.val() || {};
-        
-        for (let id in arenas) {
-            let a = arenas[id];
-            if (a.creator === myPlayerId && a.status === 'fighting') {
-                startRealBattle(a.challengerName, a.challengerLevel, a.challengerHp, a.challengerAtk, a.bet, id);
-                return;
-            }
-        }
-    });
-}
 
 function startRealBattle(enemyName, enemyLevel, enemyHp, enemyAtk, bet, arenaId) {
     if (battle) return;
@@ -1167,6 +1195,35 @@ safe('exportBtn',el=>{el.onclick=()=>{let blob=new Blob([JSON.stringify(state,nu
 safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};save();toast('Загружено')}catch(e){toast('Ошибка файла')}};r.readAsText(f)};inp.click()}});
 safe('resetBtn',el=>{el.onclick=()=>{if(confirm('Удалить весь прогресс?')){localStorage.removeItem('awakeningSave');location.reload()}}});
 
+function showStartDialog() {
+  safeHTML('modalContent', `
+    <div class="systemhead">▣ ПРОБУЖДЕНИЕ</div>
+    <h2>Создание персонажа</h2>
+    <p class="muted small">Введи имя и выбери класс.</p>
+    <input type="text" id="startName" placeholder="Имя охотника" value="${state.name || 'Охотник'}" style="margin-bottom:10px;">
+    <div class="grid2">
+      ${Object.entries(classes).map(([id,c])=>`<button data-startclass="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join('')}
+    </div>
+  `);
+  let mm=$('modal');if(mm)mm.classList.add('show');
+  
+  document.querySelectorAll('[data-startclass]').forEach(b => {
+    b.onclick = () => {
+      let nameVal = $('startName').value.trim() || 'Охотник';
+      let classId = b.dataset.startclass;
+      state.name = nameVal;
+      state.class = classId;
+      let c = classes[classId];
+      for(let[k,v] of Object.entries(c.stats)) state.stats[k]+=v;
+      state.hp=maxHp(); state.mp=maxMp();
+      save();
+      let mm=$('modal');if(mm)mm.classList.remove('show');
+      toast('Добро пожаловать, ' + state.name);
+      sendPosition();
+    }
+  });
+}
+
 function initial(){
   document.body.classList.toggle('light',state.theme==='light');
   safeText('themeBtn',state.theme==='light'?'☀️':'🌙');
@@ -1177,6 +1234,13 @@ function initial(){
   safeHTML('rankList',['E','D','C','B','A','S','SS','SSS'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));
   setInterval(()=>{try{renderDaily()}catch(e){}},60000);
   checkAchievements();
+  
+  // Если класс не выбран, показываем окно старта
+  if(!state.class) {
+    setTimeout(showStartDialog, 1000);
+  } else {
+    setTimeout(sendPosition, 2000);
+  }
   
   setTimeout(initOnline, 1000);
   setTimeout(watchArena, 1500);
