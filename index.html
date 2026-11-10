@@ -75,6 +75,9 @@ body.light .leaflet-popup-close-button{color:#102338!important}
 .btn-super{background:linear-gradient(135deg,#5a1fa8,#2c0f70);border-color:#9b6aff;font-weight:700;font-size:12px;padding:10px 8px}
 body.light .btn-super{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;border-color:#7c3aed}
 .btn-super:disabled{opacity:.4}
+.bestiary-tabs{display:flex;gap:6px;margin-bottom:10px}
+.bestiary-tabs button{flex:1;padding:8px;font-size:12px}
+.bestiary-tabs button.active{background:linear-gradient(135deg,#1764a8,#173e70);border-color:#438acb}
 @media(min-width:650px){main{padding-top:18px}.tabs{left:50%;right:auto;transform:translateX(-50%);width:min(100%,760px);border:1px solid #29415e;border-bottom:0;border-radius:15px 15px 0 0}#map{height:440px}}
 </style>
 </head>
@@ -140,6 +143,10 @@ body.light .btn-super{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#
 </section>
 <section class="page" id="page-bestiary">
  <div class="card"><div class="eyebrow">База</div><h2>Бестиарий</h2></div>
+ <div class="bestiary-tabs">
+   <button id="tabBeastNormal" class="active">Обычные</button>
+   <button id="tabBeastElite">Элитные</button>
+ </div>
  <div id="bestiaryList" class="actionlist" style="max-height:500px; overflow-y:auto;"></div>
 </section>
 <section class="page" id="page-pvp">
@@ -166,7 +173,7 @@ body.light .btn-super{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;"><p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p></div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.7.1 · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.8.1 · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -204,12 +211,19 @@ const safe=(id,fn)=>{const el=document.getElementById(id);if(el)try{fn(el)}catch
 const safeHTML=(id,html)=>safe(id,el=>{el.innerHTML=html});
 const safeText=(id,txt)=>safe(id,el=>{el.textContent=txt});
 const safeStyle=(id,prop,val)=>safe(id,el=>{el.style[prop]=val});
+
+// ==== Константы ====
+const MAX_LEVEL = 500;
+const HP_REGEN_MIN_MON_LVL = 50; // «Бог разлома» и выше
+const DROP_BASE = 0.5;
+const CHEST_DROP_CHANCE = 0.10;  // 10% — сундук с победы
+const SCAN_CHEST_CHANCE = 0.10;  // 10% — сундук при скане
+
 const slots=['Шлем','Нагрудник','Перчатки','Поножи','Сапоги','Оружие','Щит','Кольцо','Амулет','Артефакт'];
 const icons={Шлем:'⛑️',Нагрудник:'🦺',Перчатки:'🧤',Поножи:'🥋',Сапоги:'🥾',Оружие:'⚔️',Щит:'🛡️',Кольцо:'💍',Амулет:'📿',Артефакт:'🔮'};
 const rarity=['Обычный','Необычный','Редкий','Эпический','Легендарный','Мифический'];
 const rarityClass=['common','uncommon','rare','epic','legendary','mythic'];
 
-// ==== Зелья ====
 const POTION='potion';
 const MID_POTION='mid_potion';
 const BIG_POTION='big_potion';
@@ -220,7 +234,6 @@ const IMMORTAL_POTION='immortal_potion';
 const MANA_POTION='mana_potion';
 const POTION_SLOTS=[POTION,BIG_POTION,MANA_POTION,MID_POTION,GREATER_POTION,ELITE_POTION,TITAN_POTION,IMMORTAL_POTION];
 const HP_POTIONS=[IMMORTAL_POTION,TITAN_POTION,ELITE_POTION,GREATER_POTION,BIG_POTION,MID_POTION,POTION];
-
 const SHARD='shard', XP_SCROLL='xp_scroll';
 
 const sets=[
@@ -299,7 +312,6 @@ const chain=[
  {id:'c3',desc:'Победи вождя',goal:1,field:'boss',reward:{xp:500,gold:300,item:4}}
 ];
 
-// ==== МАГАЗИН ====
 const shopItems=[
  {id:'sp',    name:'Зелье лечения',     icon:'🧪', price:25,  fn:()=>addToInventory(makePotion())},
  {id:'smp',   name:'Среднее зелье',     icon:'🩹', price:55,  fn:()=>addToInventory(makeMidPotion())},
@@ -380,11 +392,11 @@ const itemNames={
 };
 const defaultState=()=>({
   level:1,xp:0,gold:0,hp:100,mp:30,points:0,stats:{Сила:5,Ловкость:5,Интеллект:5,Выносливость:5},
-  inventory:[],equipment:{},kills:0,scans:0,steps:0,seen:[],quests:{kills:0,scans:0,level:0},
+  inventory:[],equipment:{},kills:0,scans:0,steps:0,seen:[],seenElite:[],quests:{kills:0,scans:0,level:0},
   objects:[],position:null,history:[],lastRegen:Date.now(),elo:1000,
   daily:{date:'',pool:[],progress:{}},counters:{chests:0,wins:0,levelups:0,crafts:0,pvpWins:0,goblin:0,wolf:0,boss:0},
   skills:{},pet:null,class:null,name:"Охотник",achievements:{},dailyGift:{last:'',streak:0},theme:'dark',chainIdx:0,
-  deadZones:[],lastStory:0
+  deadZones:[],lastStory:0,beastMode:'normal'
 });
 let state;
 try{
@@ -393,9 +405,10 @@ try{
   state.counters={...defaultState().counters,...(state.counters||{})};state.quests={...defaultState().quests,...(state.quests||{})};
   state.daily=state.daily||{date:'',pool:[],progress:{}};state.skills=state.skills||{};state.achievements=state.achievements||{};state.dailyGift=state.dailyGift||{last:'',streak:0};
   state.deadZones=state.deadZones||[];state.lastStory=state.lastStory||0;
-  if(Array.isArray(state.seen)){
-    state.seen=[...new Set(state.seen.map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length))];
-  } else { state.seen=[]; }
+  state.beastMode = state.beastMode || 'normal';
+  const norm=(arr)=>(arr||[]).map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length);
+  state.seen = [...new Set(norm(state.seen))];
+  state.seenElite = [...new Set(norm(state.seenElite))];
 }catch(e){state=defaultState()}
 let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[];
 const save=()=>{try{localStorage.setItem('awakeningSave',JSON.stringify(state))}catch(e){}try{renderAll()}catch(e){console.warn('renderAll fail',e)}};
@@ -409,14 +422,14 @@ const maxMp=()=>{let m=applySkills().mpMult||1;return Math.floor((30+(totalStat(
 const baseAtk=()=>10+totalStat('Сила')*3+equipBonus('atk');
 const attack=()=>Math.floor(baseAtk()*(applySkills().atkMult||1));
 const defense=()=>Math.floor(totalStat('Выносливость')*.8+equipBonus('def'));
-const xpNeed=()=>Math.floor(100+(state.level-1)*65+(state.level*state.level)*0.5);
+const xpNeed=()=>{const l=state.level;return Math.floor(100+(l-1)*65+l*l*0.5+Math.pow(l,2.4)*0.8)};
 const critChance=()=>Math.min(.6,totalStat('Ловкость')*.015+(applySkills().critAdd||0)+(state.pet==='cat'?.05:0));
 const dodgeChance=()=>Math.min(.4,totalStat('Ловкость')*.008);
 const skillBaseCost=()=>Math.max(2,applySkills().skillCost??8);
+const hpRegenPerSec = ()=>Object.values(state.equipment).filter(Boolean).reduce((sum,it)=>sum+(it.bonus?.regenHp||0),0);
 
-// ==== Супер-удары ====
-const SMASH_MP_COST = 190;   // Разрушающий удар
-const VOID_MP_COST  = 360;   // Удар пустоты
+const SMASH_MP_COST = 190;
+const VOID_MP_COST  = 360;
 function superDamage(kind){
   const a = attack();
   if(kind==='smash') return Math.floor(a * 4.2);
@@ -424,19 +437,69 @@ function superDamage(kind){
   return a;
 }
 
-function rank(){let l=state.level;return l>=90?'SSS':l>=75?'SS':l>=60?'S':l>=45?'A':l>=30?'B':l>=20?'C':l>=10?'D':'E'}
-function rankName(){return ({E:'Новичок',D:'Ученик',C:'Опытный',B:'Ветеран',A:'Элита',S:'Высший',SS:'Легендарный',SSS:'Мифический'})[rank()]}
+function rank(){
+  const l = state.level;
+  if (l>=450) return 'Ω';
+  if (l>=400) return 'SSS';
+  if (l>=350) return 'SS';
+  if (l>=300) return 'S';
+  if (l>=250) return 'A';
+  if (l>=200) return 'B';
+  if (l>=150) return 'C';
+  if (l>=100) return 'D';
+  return 'E';
+}
+function rankName(){
+  const r = rank();
+  return ({'Ω':'Абсолют','SSS':'Мифический','SS':'Легендарный','S':'Высший','A':'Элита','B':'Ветеран','C':'Опытный','D':'Ученик','E':'Новичок'})[r] || 'Новичок';
+}
 function toast(msg){let t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000)}
 function vibrate(p){if(navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
 let actx=null;
 function beep(freq=440,dur=80,type='square',vol=.05){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();let o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+dur/1000)}catch(e){}}
-function addXp(n){n=Math.floor(n*(applySkills().xpMult||1)*(state.pet==='owl'?1.05:1));state.xp+=n;while(state.xp>=xpNeed()&&state.level<100){state.xp-=xpNeed();state.level++;state.points+=3;state.hp=maxHp();state.mp=maxMp();state.quests.level++;state.counters.levelups++;beep(880,120,'sine',.08);vibrate(50);notify('УРОВЕНЬ ПОВЫШЕН',`Ты достиг ${state.level} уровня. +3 очка.`)}} 
+function addXp(n){
+  n=Math.floor(n*(applySkills().xpMult||1)*(state.pet==='owl'?1.05:1));
+  state.xp+=n;
+  while(state.xp>=xpNeed() && state.level<MAX_LEVEL){
+    state.xp-=xpNeed();
+    state.level++; state.points+=3;
+    state.hp=maxHp(); state.mp=maxMp();
+    state.quests.level++; state.counters.levelups++;
+    beep(880,120,'sine',.08); vibrate(50);
+    notify('УРОВЕНЬ ПОВЫШЕН',`Ты достиг ${state.level} уровня. +3 очка.`);
+  }
+  if (state.level>=MAX_LEVEL) state.xp=0;
+}
 function notify(title,msg){safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>${title}</h2><p class="muted">${msg}</p><button class="primary" style="width:100%" id="closeModal">Понятно</button>`);let m=$('modal');if(m)m.classList.add('show');let c=$('closeModal');if(c)c.onclick=()=>{m.classList.remove('show')}}
 function setOfSlot(slot){return sets.find(st=>st.slots.includes(slot))}
-function makeItem(minR=0, monsterLevel=null){let slot=slots[Math.floor(Math.random()*slots.length)],r=Math.max(minR,Math.min(5,Math.floor(Math.random()*6)+(state.level>=15?1:0)));let names=itemNames[slot];let base=2+r*3+Math.floor((monsterLevel||state.level)/4);let bonus={};if(slot==='Оружие')bonus.atk=base+4;if(['Нагрудник','Щит','Шлем','Поножи'].includes(slot))bonus.def=base+2;if(['Кольцо','Амулет','Артефакт'].includes(slot)){bonus.atk=base;bonus.mp=base*2}if(['Перчатки','Сапоги'].includes(slot))bonus.Сила=Math.ceil(base/3);if(slot==='Нагрудник'||slot==='Шлем')bonus.hp=base*5;
-let name=names[Math.floor(Math.random()*names.length)];let set=setOfSlot(slot);
-let lvl = monsterLevel || Math.max(1,state.level-1+Math.floor(Math.random()*3));
-return{id:Date.now()+Math.floor(Math.random()*1000),name,slot,rarity:r,bonus,icon:icons[slot],level:lvl,set:set?set.id:null}}
+
+function makeItem(minR=0, monsterLevel=null){
+  const slot=slots[Math.floor(Math.random()*slots.length)];
+  const r=Math.max(minR,Math.min(5,Math.floor(Math.random()*6)+(state.level>=50?1:0)));
+  const names=itemNames[slot];
+  const ml = monsterLevel || state.level;
+  const scale = 1 + ml*0.12;
+  const base = Math.floor((2 + r*3 + ml*0.5) * scale * 0.5);
+
+  let bonus={};
+  if(slot==='Оружие') bonus.atk = base + 4 + Math.floor(ml*0.8);
+  if(['Нагрудник','Щит','Шлем','Поножи'].includes(slot)) bonus.def = base + 2 + Math.floor(ml*0.5);
+  if(['Кольцо','Амулет','Артефакт'].includes(slot)){ bonus.atk=base + Math.floor(ml*0.6); bonus.mp=base*2 + Math.floor(ml*2); }
+  if(['Перчатки','Сапоги'].includes(slot)) bonus.Сила = Math.ceil(base/3) + Math.floor(ml*0.1);
+  if(slot==='Нагрудник'||slot==='Шлем') bonus.hp = base*5 + Math.floor(ml*15);
+
+  if (monsterLevel && monsterLevel >= HP_REGEN_MIN_MON_LVL){
+    if(Math.random() < 0.25){
+      const maxR = Math.min(500, Math.floor(50 + monsterLevel * 5));
+      bonus.regenHp = Math.max(1, Math.floor(Math.random()*maxR) + 1);
+    }
+  }
+
+  let name=names[Math.floor(Math.random()*names.length)];
+  let set=setOfSlot(slot);
+  let lvl = monsterLevel || Math.max(1,state.level-1+Math.floor(Math.random()*3));
+  return {id:Date.now()+Math.floor(Math.random()*1000), name, slot, rarity:r, bonus, icon:icons[slot], level:lvl, set:set?set.id:null};
+}
 
 const makePotion        =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Зелье',              slot:POTION,          rarity:1,bonus:{},icon:'🧪',level:1,heal:35});
 const makeMidPotion     =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Среднее зелье',      slot:MID_POTION,      rarity:2,bonus:{},icon:'🩹',level:1,heal:60});
@@ -449,14 +512,26 @@ const makeManaPotion    =()=>({id:Date.now()+Math.floor(Math.random()*1000),name
 const makeXpScroll      =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Свиток опыта',       slot:XP_SCROLL,       rarity:3,bonus:{},icon:'📜',level:1,xp:500});
 const makeShard         =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Осколок',            slot:SHARD,           rarity:2,bonus:{},icon:'💠',level:1});
 
-function itemBonus(it){return Object.entries(it.bonus||{}).map(([k,v])=>`${k==='atk'?'Атака':k==='def'?'Защита':k==='hp'?'HP':k==='mp'?'MP':k}: +${v}`).join(' · ')}
+function itemBonus(it){
+  return Object.entries(it.bonus||{}).map(([k,v])=>{
+    if (k==='atk') return `Атака: +${v}`;
+    if (k==='def') return `Защита: +${v}`;
+    if (k==='hp')  return `HP: +${v}`;
+    if (k==='mp')  return `MP: +${v}`;
+    if (k==='regenHp') return `❤-реген: +${v}/сек`;
+    return `${k}: +${v}`;
+  }).join(' · ');
+}
 function countBySlot(slot){return state.inventory.filter(i=>i.slot===slot).reduce((sum,item)=>sum+(item.qty||1),0)}
 function checkAchievements(){for(let a of achievements){if(state.achievements[a.id])continue;try{if(a.check(state)){state.achievements[a.id]=true;if(a.reward.gold)state.gold+=a.reward.gold;if(a.reward.xp)addXp(a.reward.xp);toast('🏆 '+a.name);beep(1200,150,'sine',.08)}}catch(e){}}}
 function addToInventory(item){let isStackable=[SHARD,XP_SCROLL,...POTION_SLOTS].includes(item.slot);if(isStackable){let existing=state.inventory.find(i=>i.slot===item.slot);if(existing){existing.qty=(existing.qty||1)+1;return}item.qty=1;state.inventory.push(item)}else{state.inventory.push(item)}}
 
 function renderAll(){
   let need=xpNeed();
-  safeText('levelText','УРОВЕНЬ '+state.level);safeText('xpText',`${state.xp} / ${need} XP`);safeStyle('xpbar','width',(state.xp/need*100)+'%');safeText('goldText','◈ '+state.gold);
+  safeText('levelText','УРОВЕНЬ '+state.level+(state.level>=MAX_LEVEL?' (MAX)':''));
+  safeText('xpText', state.level>=MAX_LEVEL ? 'MAX' : `${state.xp} / ${need} XP`);
+  safeStyle('xpbar','width', state.level>=MAX_LEVEL ? '100%' : (state.xp/need*100)+'%');
+  safeText('goldText','◈ '+state.gold);
   safeText('rankBadge',`РАНГ ${rank()} · ${rankName().toUpperCase()}`);safeText('heroRank','Ранг '+rank());
   safeText('hpText',`${Math.min(state.hp,maxHp())}/${maxHp()}`);safeText('mpText',`${state.mp}/${maxMp()}`);safeStyle('hpbar','width',(Math.max(0,state.hp)/maxHp()*100)+'%');
   safeText('heroNameText', state.name || "Охотник");
@@ -464,7 +539,8 @@ function renderAll(){
   safeStyle('hudHpBar','width',(Math.max(0,state.hp)/maxHp()*100)+'%');safeStyle('hudMpBar','width',(Math.max(0,state.mp)/maxMp()*100)+'%');
   safeText('pointsText',state.points);safeText('eloText',state.elo);safeText('heroEmoji',state.class?classes[state.class].emoji:'🧙');
   let s={};for(let k of ['Сила','Ловкость','Интеллект','Выносливость']) s[k] = totalStat(k);
-  safeHTML('totalStatsGrid', `<div class="stat" style="grid-column:span 3"><small>⚔️ Атака</small><b>${attack()}</b></div><div class="stat" style="grid-column:span 3"><small>🛡️ Защита</small><b>${defense()}</b></div><div class="stat"><small>Сила</small><b>${s['Сила']}</b></div><div class="stat"><small>Ловкость</small><b>${s['Ловкость']}</b></div><div class="stat"><small>Интеллект</small><b>${s['Интеллект']}</b></div><div class="stat"><small>Выносливость</small><b>${s['Выносливость']}</b></div><div class="stat"><small>Крит шанс</small><b>${Math.floor(critChance()*100)}%</b></div><div class="stat"><small>Уклонение</small><b>${Math.floor(dodgeChance()*100)}%</b></div>`);
+  const regen = hpRegenPerSec();
+  safeHTML('totalStatsGrid', `<div class="stat" style="grid-column:span 3"><small>⚔️ Атака</small><b>${attack()}</b></div><div class="stat" style="grid-column:span 3"><small>🛡️ Защита</small><b>${defense()}</b></div><div class="stat"><small>Сила</small><b>${s['Сила']}</b></div><div class="stat"><small>Ловкость</small><b>${s['Ловкость']}</b></div><div class="stat"><small>Интеллект</small><b>${s['Интеллект']}</b></div><div class="stat"><small>Выносливость</small><b>${s['Выносливость']}</b></div><div class="stat"><small>Крит шанс</small><b>${Math.floor(critChance()*100)}%</b></div><div class="stat"><small>Уклонение</small><b>${Math.floor(dodgeChance()*100)}%</b></div><div class="stat"><small>❤-реген/сек</small><b style="color:var(--green)">${regen}</b></div>`);
   safeHTML('statsGrid',Object.entries(state.stats).map(([k,v])=>`<div class="stat"><small>${k}</small><b>${v}</b></div>`).join(''));
   safeHTML('statButtons',Object.keys(state.stats).map(k=>`<button data-stat="${k}" ${state.points<=0?'disabled':''}>+ ${k}</button>`).join(''));
   safeHTML('equipmentList', slots.map(s => {let it = state.equipment[s];let sb = setBonus('atk')||setBonus('def')||setBonus('mp') ? `<br><span class="set-bonus">Сет: +${setBonus('atk')?setBonus('atk')+' атк ':''}${setBonus('def')?setBonus('def')+' защ ':''}${setBonus('mp')?setBonus('mp')+' MP':''}</span>` : '';return `<div class="item"><div class="iconbox">${icons[s]}</div><div class="iteminfo"><strong>${s}</strong><small>${it ? `<span class="rarity ${rarityClass[it.rarity]}">${it.name} · ${rarity[it.rarity]}</span><br>${itemBonus(it)}${sb}` : 'Пусто'}</small></div>${it ? `<span class="pill" style="border-color:#73e0a1;color:#73e0a1;font-size:10px">Надето</span><button data-unequip="${s}">Снять</button>` : '<span class="muted small">—</span>'}</div>`;}).join(''));
@@ -497,6 +573,7 @@ function renderAll(){
         const diffDef = (it.bonus?.def || 0) - (eq.bonus?.def || 0);
         const diffHp  = (it.bonus?.hp  || 0) - (eq.bonus?.hp  || 0);
         const diffMp  = (it.bonus?.mp  || 0) - (eq.bonus?.mp  || 0);
+        const diffRgn = (it.bonus?.regenHp || 0) - (eq.bonus?.regenHp || 0);
         const diffSil = (it.bonus?.Сила        || 0) - (eq.bonus?.Сила        || 0);
         const diffLov = (it.bonus?.Ловкость    || 0) - (eq.bonus?.Ловкость    || 0);
         const diffInt = (it.bonus?.Интеллект   || 0) - (eq.bonus?.Интеллект   || 0);
@@ -506,7 +583,7 @@ function renderAll(){
           : '';
         const diffs = [
           part(diffAtk,'атк'), part(diffDef,'защ'), part(diffHp,'HP'), part(diffMp,'MP'),
-          part(diffSil,'сил'), part(diffLov,'лов'), part(diffInt,'инт'), part(diffVyn,'вын')
+          part(diffRgn,'рег'), part(diffSil,'сил'), part(diffLov,'лов'), part(diffInt,'инт'), part(diffVyn,'вын')
         ].filter(Boolean).join(' · ');
         if (diffs) compareHtml = `<br><small style="font-size:10px">${diffs}</small>`;
       }
@@ -544,8 +621,24 @@ function renderAll(){
   safeHTML('chainList', chain.map((c,i) => {let cur = state.counters[c.field] || 0;let done = cur >= c.goal;let unlocked = i <= state.chainIdx;let claimed = state.counters['chain_'+i];return `<div class="skillrow ${claimed?'on':''}" style="opacity:${unlocked?1:.5}"><div class="iconbox">${done?'✅':unlocked?'🎯':'🔒'}</div><div class="iteminfo"><strong>${i+1}. ${c.desc}</strong><small>${Math.min(cur,c.goal)}/${c.goal} · ${c.reward.xp} XP${c.reward.item?' · предмет':''}</small></div><button data-chain="${i}" ${done&&!claimed&&unlocked?'':'disabled'}>${claimed?'✓':done?'Забрать':'—'}</button></div>`;}).join(''));
   try{renderDaily()}catch(e){}try{renderGift()}catch(e){}
   safeHTML('achList', achievements.map(a => `<div class="ach ${state.achievements[a.id]?'on':''}"><div class="iconbox">${state.achievements[a.id]?'🏆':'🔒'}</div><div class="iteminfo"><strong>${a.name}</strong><small>${a.desc}</small></div></div>`).join(''));
-  const seenSet = new Set((state.seen||[]).map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length));
-  safeHTML('bestiaryList', monsters.map((m,i) => `<div class="item"><div class="iconbox">${m.emoji}</div><div class="iteminfo"><strong>${m.name}</strong><small>Ур. ${m.level} · ${m.hp} HP</small></div><span class="pill">${seenSet.has(i)?'✓':'???'}</span></div>`).join(''));
+
+  safe('tabBeastNormal', el=>{el.classList.toggle('active', state.beastMode==='normal');});
+  safe('tabBeastElite', el=>{el.classList.toggle('active', state.beastMode==='elite');});
+
+  if (state.beastMode==='elite'){
+    const seenEliteSet = new Set((state.seenElite||[]));
+    safeHTML('bestiaryList', monsters.map((m,i) => {
+      const seen = seenEliteSet.has(i);
+      return `<div class="item"><div class="iconbox">💀</div><div class="iteminfo"><strong>💀 [ЭЛИТА] ${m.name}</strong><small>Ур. ${m.level} · ${Math.floor(m.hp*2)} HP · ATK ×2</small></div><span class="pill">${seen?'✓':'???'}</span></div>`;
+    }).join(''));
+  } else {
+    const seenSet = new Set((state.seen||[]));
+    safeHTML('bestiaryList', monsters.map((m,i) => {
+      const seen = seenSet.has(i);
+      return `<div class="item"><div class="iconbox">${m.emoji}</div><div class="iteminfo"><strong>${m.name}</strong><small>Ур. ${m.level} · ${m.hp} HP</small></div><span class="pill">${seen?'✓':'???'}</span></div>`;
+    }).join(''));
+  }
+
   safeHTML('historyList', state.history.length ? state.history.map(h => `<div class="hrow"><span>${h.emoji} ${h.name}</span><span class="${h.win?'win':'lose'}">${h.win?'Победа':'Поражение'}</span></div>`).join('') : '<p class="muted small">Пусто.</p>');
   safeHTML('lbList', (() => {try {let lb = JSON.parse(localStorage.getItem('awakeningLB') || '[]');lb.push({name:'Ты', elo: state.elo});lb.sort((a,b) => b.elo - a.elo);let top = lb.slice(0,10);localStorage.setItem('awakeningLB', JSON.stringify(top));return top.map((x,i) => `<div class="hrow"><span>${i+1}. ${x.name}</span><span>${x.elo}</span></div>`).join('');} catch(e){ return ''; }})());
   safeHTML('shopList', shopItems.map(s => `<div class="craftrow"><div class="iconbox">${s.icon}</div><div class="iteminfo"><strong>${s.name}</strong><small>${s.price}◈</small></div><button data-shop="${s.id}" ${state.gold<s.price?'disabled':''}>Купить</button></div>`).join(''));
@@ -556,6 +649,8 @@ function renderDaily(){ensureDaily();let now=new Date();let t=new Date(now);t.se
 function renderGift(){let today=new Date().toISOString().slice(0,10);let last=state.dailyGift.last;let canClaim=last!==today;let streak=state.dailyGift.streak;safeHTML('dailyGift',`<div class="row"><span>Серия: <b>${streak}</b> дн.</span><button class="primary" id="giftBtn" ${canClaim?'':'disabled'}>${canClaim?'Забрать':'Уже сегодня'}</button></div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px">${[1,2,3,4,5,6,7].map(d=>`<div class="stat" style="text-align:center;padding:6px;${d<=streak?'border-color:#ffd36a':''}"><small>Д${d}</small><b style="font-size:12px">${[10,20,30,40,50,75,150][d-1]}◈</b></div>`).join('')}</div>`);let gb=$('giftBtn');if(gb)gb.onclick=()=>{if(!canClaim)return;let yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);streak=last===yesterday?streak+1:1;state.dailyGift={last:today,streak:Math.min(7,streak)};let reward=[10,20,30,40,50,75,150][state.dailyGift.streak-1];state.gold+=reward;beep(880,200,'sine',.08);toast('Награда: +'+reward+'◈');save()}}
 function setPage(p){document.querySelectorAll('.page').forEach(x=>{x.classList.toggle('active',x.id==='page-'+p)});document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('active',x.dataset.page===p)});if(p==='map'&&map)setTimeout(()=>{try{map.invalidateSize()}catch(e){}},100);if(p==='online') renderOnline();try{renderAll()}catch(e){console.warn('renderAll:',e)}}
 document.querySelectorAll('.tab').forEach(b=>{b.onclick=()=>setPage(b.dataset.page)});
+safe('tabBeastNormal', el=>{el.onclick=()=>{state.beastMode='normal';save();}});
+safe('tabBeastElite', el=>{el.onclick=()=>{state.beastMode='elite';save();}});
 
 document.addEventListener('click',e=>{
 let eq=e.target.closest('[data-equip]');if(eq){let raw=eq.dataset.equip;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];
@@ -580,12 +675,10 @@ let pt=e.target.closest('[data-pet]');if(pt){let id=pt.dataset.pet;if(id==='rele
 let q=e.target.closest('[data-quest]');if(q){let id=q.dataset.quest,done=id==='kills'?state.quests.kills>=3:id==='scans'?state.quests.scans>=2:state.level>=3;if(done&&!state.quests['claimed_'+id]){state.quests['claimed_'+id]=true;if(id==='kills'){addXp(120);state.gold+=50}else if(id==='scans'){addXp(80);state.gold+=30;addToInventory(makeItem(1))}else{addXp(200);addToInventory(makeItem(2))}save();notify('НАГРАДА','Получено.')}}
 let ch=e.target.closest('[data-chain]');if(ch){let i=Number(ch.dataset.chain);let c=chain[i];if(c&&(state.counters[c.field]||0)>=c.goal&&!state.counters['chain_'+i]&&i<=state.chainIdx){state.counters['chain_'+i]=true;state.gold+=c.reward.gold;addXp(c.reward.xp);if(c.reward.item!==undefined)addToInventory(makeItem(c.reward.item));if(i===state.chainIdx)state.chainIdx++;save();notify('ЦЕПОЧКА','Шаг выполнен.')}}
 let dq=e.target.closest('[data-daily]');if(dq){let id=dq.dataset.daily;let q=dailyPool.find(x=>x.id===id);if(!q)return;let cur=state.counters[q.field]||0;if(cur>=q.goal&&!state.daily.progress[id]){state.daily.progress[id]=true;state.gold+=q.reward.gold;addXp(q.reward.xp);if(q.reward.item!==undefined)addToInventory(makeItem(q.reward.item));save();toast('Ежедневка ✓')}}
-
 let cr=e.target.closest('[data-craft]');
 if(cr){
   const type=cr.dataset.craft;
   const take=(slot,n)=>{for(let i=0;i<n;i++){let idx=state.inventory.findIndex(x=>x.slot===slot);if(idx<0)return false;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}return true};
-
   if(type==='big'){if(countBySlot(POTION)<3)return;if(!take(POTION,3))return;addToInventory(makeBigPotion());state.counters.crafts++;save();notify('КРАФТ','Большое зелье ⚗️')}
   else if(type==='mana'){if(countBySlot(SHARD)<2)return;if(!take(SHARD,2))return;addToInventory(makeManaPotion());state.counters.crafts++;save();notify('КРАФТ','Эликсир маны 🔮')}
   else if(type==='xp'){if(countBySlot(SHARD)<3||countBySlot(BIG_POTION)<1)return;if(!take(SHARD,3)||!take(BIG_POTION,1))return;addToInventory(makeXpScroll());state.counters.crafts++;save();notify('КРАФТ','Свиток опыта 📜')}
@@ -596,23 +689,28 @@ if(cr){
   else if(type==='titan'){if(countBySlot(ELITE_POTION)<2||countBySlot(SHARD)<2)return;if(!take(ELITE_POTION,2)||!take(SHARD,2))return;addToInventory(makeTitanPotion());state.counters.crafts++;save();notify('КРАФТ','Титаническое зелье 🏆')}
   else if(type==='immortal'){if(countBySlot(TITAN_POTION)<2||countBySlot(SHARD)<3)return;if(!take(TITAN_POTION,2)||!take(SHARD,3))return;addToInventory(makeImmortalPotion());state.counters.crafts++;save();notify('КРАФТ','Зелье бессмертия 👑')}
 }
-
 let shop=e.target.closest('[data-shop]');if(shop){let s=shopItems.find(x=>x.id===shop.dataset.shop);if(s&&state.gold>=s.price){state.gold-=s.price;s.fn();toast('Куплено: '+s.name);save()}}
 });
 safe('sortInventory',el=>{el.onclick=()=>{state.inventory.sort((a,b)=>b.rarity-a.rarity);save()}});
 safe('themeBtn',el=>{el.onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.body.classList.toggle('light',state.theme==='light');el.textContent=state.theme==='light'?'☀️':'🌙';save()}});
 
 /* ===================== БОЙ ===================== */
-function openBattle(m,index){
+function openBattle(m,index,isElite){
   let baseHp=m.hp,baseAtk=m.atk;
-  if(m.isElite){baseHp=Math.floor(baseHp*1.5);baseAtk=Math.floor(baseAtk*1.3)}
+  let elite = !!isElite;
+  if(elite){baseHp=Math.floor(baseHp*2);baseAtk=Math.floor(baseAtk*2)}
   else if(m.tag==='boss'){baseHp=Math.floor(baseHp*2);baseAtk=Math.floor(baseAtk*1.5)}
   let lvlDiff=m.level-state.level,scale=1;
   if(lvlDiff>0)scale=1+lvlDiff*0.1;
   else if(lvlDiff<0){scale=1+lvlDiff*0.05;if(scale<0.5)scale=0.5}
   let finalHp=Math.floor(baseHp*scale),finalAtk=Math.floor(baseAtk*scale);
   const mi = monsters.findIndex(x => x.name === m.name && x.emoji === m.emoji);
-  battle={m:{...m,hp:finalHp,atk:finalAtk},index:index,mi:mi,hp:finalHp,log:`${m.name} преграждает путь!`,phase:1,baseLevel:m.level,turn:'player'};
+  battle={
+    m:{...m,hp:finalHp,atk:finalAtk,name:elite?('💀 [ЭЛИТА] '+m.name):m.name,emoji:m.emoji},
+    index:index,mi:mi,isElite:elite,hp:finalHp,
+    log: elite ? `${m.name} — элита! Опасный бой.` : `${m.name} преграждает путь!`,
+    phase:1,baseLevel:m.level,turn:'player'
+  };
   renderBattle();
 }
 
@@ -635,6 +733,8 @@ function renderBattle(){
       <div class="grid2">
         <button class="primary" id="attackBtn" ${!myTurn?'disabled':''}>⚔️ Атака</button>
         <button id="skillBtn" ${!myTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button>
+      </div>
+      <div class="grid2" style="margin-top:8px">
         <button id="potionBtn" ${!myTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button>
         <button id="runBtn" ${!myTurn?'disabled':''}>↩ Сдаться</button>
       </div>
@@ -653,24 +753,27 @@ function renderBattle(){
   const isMyTurn=battle.turn==='player';
   const canSuper1 = isMyTurn && state.mp >= SMASH_MP_COST;
   const canSuper2 = isMyTurn && state.mp >= VOID_MP_COST;
+  const regen = hpRegenPerSec();
 
   safeHTML('modalContent',`
-    <div class="eyebrow">${battle.shadow?'Теневой бой':'Бой'} · ур. ${m.level}</div>
+    <div class="eyebrow">${battle.shadow?'Теневой бой':'Бой'} · ур. ${m.level}${battle.isElite?' · 💀 ЭЛИТА':''}</div>
     <div class="battleenemy"><div class="enemyemoji" id="enemyEmoji">${m.emoji}</div><h2>${m.name}</h2>
       <div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div>
       <small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small>
     </div>
-    <div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div>
+    <div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b>${regen>0?` <span style="color:var(--green)">(+${regen}/сек)</span>`:''}</span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div>
     <div class="battlelog" id="blog">${battle.log}</div>
     <div class="grid2">
       <button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button>
       <button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button>
-      <button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button>
-      <button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button>
     </div>
     <div class="supers">
       <button class="btn-super" id="super1Btn" ${canSuper1?'':'disabled'}>💥 Разрушающий удар (${SMASH_MP_COST} MP)</button>
       <button class="btn-super" id="super2Btn" ${canSuper2?'':'disabled'}>🕳️ Удар пустоты (${VOID_MP_COST} MP)</button>
+    </div>
+    <div class="grid2" style="margin-top:8px">
+      <button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button>
+      <button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button>
     </div>
   `);
   let mm=$('modal');if(mm)mm.classList.add('show');
@@ -716,7 +819,7 @@ function enemyTurn(){
   renderBattle();
   setTimeout(()=>{
     if(!battle||pvp) return;
-    if(battle.m.tag==='boss'){
+    if(battle.m.tag==='boss' && !battle.isElite){
       let ratio=battle.hp/battle.m.hp;
       if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}
       else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}
@@ -775,15 +878,12 @@ function battleSuper(kind){
   if(state.mp<cost) return;
   state.mp-=cost;
 
-  let dmg;
-  let label;
+  let dmg, label;
   if(kind==='smash'){
-    dmg = superDamage('smash');
-    dmg = Math.floor(dmg * (0.95 + Math.random()*0.15));
+    dmg = Math.floor(superDamage('smash') * (0.95 + Math.random()*0.15));
     label = '💥 Разрушающий удар';
   } else {
-    dmg = superDamage('void');
-    dmg = Math.floor(dmg * (0.9 + Math.random()*0.25));
+    dmg = Math.floor(superDamage('void') * (0.9 + Math.random()*0.25));
     label = '🕳️ Удар пустоты';
   }
   battle.hp -= dmg;
@@ -807,9 +907,15 @@ function finishBattleWin(){
   }
   state.counters.wins++;
   if(m.tag) state.counters[m.tag]=(state.counters[m.tag]||0)+1;
-  if(typeof battle.mi === 'number' && battle.mi >= 0 && !state.seen.includes(battle.mi)){
-    state.seen.push(battle.mi);
+
+  if(typeof battle.mi === 'number' && battle.mi >= 0){
+    if(battle.isElite){
+      if(!state.seenElite.includes(battle.mi)) state.seenElite.push(battle.mi);
+    } else {
+      if(!state.seen.includes(battle.mi)) state.seen.push(battle.mi);
+    }
   }
+
   const isShadow=!!battle.shadow;
   if(isShadow){
     state.elo = Math.max(0,(state.elo||1000)+15);
@@ -819,15 +925,27 @@ function finishBattleWin(){
   state.gold+=goldGain;
   addXp(m.xp);
   let extra='';
-  let dropChance = isShadow ? 0 : (0.5+(m.tag==='boss'?0.4:(m.isElite?0.3:0)));
+
+  let dropChance = isShadow ? 0 :
+    (battle.isElite ? 0.9 : (m.tag==='boss' ? 0.9 : DROP_BASE));
   if(!isShadow && Math.random()<dropChance){
-    let minRarity=m.tag==='boss'?3:(m.isElite?2:0);
-    let it=makeItem(minRarity,battle.baseLevel);
+    let minRarity = battle.isElite ? 3 : (m.tag==='boss' ? 3 : 0);
+    const allowRegen = battle.baseLevel >= HP_REGEN_MIN_MON_LVL && m.tag!=='boss';
+    let it=makeItem(minRarity, allowRegen ? battle.baseLevel : null);
     addToInventory(it);
-    extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}).`;
+    extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}${it.bonus?.regenHp?` · +${it.bonus.regenHp}❤/с`:''}).`;
   }
-  if(!isShadow && Math.random()<.25){addToInventory(makePotion());extra+=' +зелье.'}
+  if(!isShadow && Math.random()<.2){addToInventory(makePotion());extra+=' +зелье.'}
   if(!isShadow && Math.random()<.15){addToInventory(makeShard());extra+=' +осколок.'}
+
+  if(!isShadow && Math.random()<CHEST_DROP_CHANCE){
+    state.counters.chests++;
+    let bonusGold = 500 + Math.floor(Math.random()*1500);
+    state.gold += bonusGold;
+    let bonusItem = makeItem(4, battle.baseLevel);
+    addToInventory(bonusItem);
+    extra += ` 🎁 СУНДУК: +${bonusGold}◈, ${bonusItem.name}!`;
+  }
 
   state.history.unshift({name:m.name,emoji:m.emoji,win:true});
   state.history=state.history.slice(0,20);
@@ -836,11 +954,12 @@ function finishBattleWin(){
   save();
 
   const eloMsg = isShadow ? `<p class="muted">ELO: <b>${state.elo}</b> (+15)</p>` : '';
-  safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p>${eloMsg}<button class="primary" id="fb" style="width:100%">Забрать</button>`);
+  const eliteMsg = battle.isElite ? `<p class="muted">💀 Элитный противник повержен</p>` : '';
+  safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p>${eloMsg}${eliteMsg}<button class="primary" id="fb" style="width:100%">Забрать</button>`);
   safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
 }
 
-/* ============ PvP: реальный бой (хост-авторитет) ============ */
+/* ============ PvP: реальный бой ============ */
 let pvp = null;
 let pvpUnsub = [];
 function pvpCleanup(){ try{pvpUnsub.forEach(f=>f&&f());}catch(e){} pvpUnsub=[]; }
@@ -1080,11 +1199,64 @@ window.enterArena=(arenaId,creatorId,creatorName,creatorLevel,creatorHp,creatorA
 /* ================== КАРТА / СКАН / POI ================== */
 function initMap(){if(!window.L){safeHTML('map','<div class="mapfallback">Карта недоступна.</div>');return;}try{map=L.map('map',{attributionControl:false}).setView([60.1699,24.9384],14);L.tileLayer('https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=21.06.14&x={x}&y={y}&z={z}&scale=1&lang=ru_RU',{maxZoom:19,subdomains:['01','02','03','04']}).addTo(map);L.circle([60.1699,24.9384],{radius:350,color:'#4aaeff',fillOpacity:.04}).addTo(map);map.on('click',e=>{state.position={lat:e.latlng.lat,lng:e.latlng.lng};if(playerMarker)playerMarker.setLatLng(e.latlng);else playerMarker=L.marker(e.latlng).addTo(map).bindPopup('Ты');safeText('gpsStatus','Тест');save();sendPosition();});}catch(e){console.warn('initMap',e);}}
 function randomPosition(){let c=state.position||(map&&map.getCenter())||{lat:60.1699,lng:24.9384};let a=(Math.random()-.5)*.008,b=(Math.random()-.5)*.008;return{lat:c.lat+a,lng:c.lng+b};}
-function scan(){state.scans++;state.quests.scans++;state.objects=[];let now=Date.now();if(state.deadZones)state.deadZones=state.deadZones.filter(z=>z.respawnAt>now);else state.deadZones=[];let n=3+Math.floor(Math.random()*3);for(let i=0;i<n;i++){let pos=randomPosition();let inDeadZone=state.deadZones.some(z=>{let d=Math.sqrt(Math.pow(z.lat-pos.lat,2)+Math.pow(z.lng-pos.lng,2));return d<0.002;});if(inDeadZone){i--;continue;}if(Math.random()<.68){let av=monsters.filter(m=>m.level>=state.level-5&&m.level<=state.level+15);if(!av.length)av=[monsters[0]];let m=av[Math.floor(Math.random()*av.length)];let isElite=Math.random()<0.15;let scaledMonster={...m};if(isElite){scaledMonster.name='💀 [ЭЛИТА] '+m.name;scaledMonster.hp=Math.floor(m.hp*2);scaledMonster.atk=Math.floor(m.atk*2);scaledMonster.xp=Math.floor(m.xp*2.5);scaledMonster.gold=Math.floor(m.gold*2.5);scaledMonster.isElite=true;}state.objects.push({type:'monster',mi:monsters.indexOf(m),name:scaledMonster.name,emoji:m.emoji,pos:pos,scaled:scaledMonster,isElite:isElite});}else{state.objects.push({type:'chest',name:'Сундук',emoji:'🎁',pos:pos});}}drawObjects();save();safeText('mapHint','Найдено: '+state.objects.length);checkAchievements();}
-function drawObjects(){markers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});markers=[];if(!map)return;state.objects.forEach((o,i)=>{try{let glow=o.isElite?'0 0 12px #ff0000':'0 0 8px #46baff';let mk=L.marker([o.pos.lat,o.pos.lng],{icon:L.divIcon({className:'',html:`<div style="font-size:25px;text-shadow:${glow}">${o.emoji}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindPopup(`${o.name}<br><button onclick="window.__interact(${i})">Взаимодействовать</button>`);markers.push(mk);}catch(e){}});safeHTML('nearbyList',state.objects.map((o,i)=>`<div class="item"><div class="iconbox">${o.emoji}</div><div class="iteminfo"><strong>${o.name}</strong><small>${o.type==='monster'?'Враг':'Награда'}</small></div><button data-object="${i}">Открыть</button></div>`).join(''));}
+
+function scan(){
+  state.scans++;state.quests.scans++;state.objects=[];
+  let now=Date.now();
+  if(state.deadZones)state.deadZones=state.deadZones.filter(z=>z.respawnAt>now);
+  else state.deadZones=[];
+  let n=3+Math.floor(Math.random()*3);
+  for(let i=0;i<n;i++){
+    let pos=randomPosition();
+    let inDeadZone=state.deadZones.some(z=>{let d=Math.sqrt(Math.pow(z.lat-pos.lat,2)+Math.pow(z.lng-pos.lng,2));return d<0.002;});
+    if(inDeadZone){i--;continue;}
+    if(Math.random()< (1-SCAN_CHEST_CHANCE)){
+      let av=monsters.filter(m=>m.level>=Math.min(state.level,100)-5 && m.level<=Math.min(state.level,100)+15);
+      if(!av.length) av=monsters.filter(m=>m.level<=Math.min(state.level,100)+5);
+      if(!av.length) av=[monsters[0]];
+      let m=av[Math.floor(Math.random()*av.length)];
+      let isElite=Math.random()<0.15;
+      state.objects.push({
+        type:'monster',
+        mi:monsters.indexOf(m),
+        name:isElite?('💀 [ЭЛИТА] '+m.name):m.name,
+        emoji:m.emoji,
+        pos:pos,
+        scaled:m,
+        isElite:isElite
+      });
+    } else {
+      state.objects.push({type:'chest',name:'Сундук',emoji:'🎁',pos:pos});
+    }
+  }
+  drawObjects();save();safeText('mapHint','Найдено: '+state.objects.length);checkAchievements();
+}
+function drawObjects(){
+  markers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});markers=[];
+  if(!map)return;
+  state.objects.forEach((o,i)=>{
+    try{
+      let glow=o.isElite?'0 0 12px #ff0000':'0 0 8px #46baff';
+      let mk=L.marker([o.pos.lat,o.pos.lng],{icon:L.divIcon({className:'',html:`<div style="font-size:25px;text-shadow:${glow}">${o.emoji}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindPopup(`${o.name}<br><button onclick="window.__interact(${i})">Взаимодействовать</button>`);
+      markers.push(mk);
+    }catch(e){}
+  });
+  safeHTML('nearbyList',state.objects.map((o,i)=>`<div class="item"><div class="iconbox">${o.emoji}</div><div class="iteminfo"><strong>${o.name}</strong><small>${o.type==='monster'?'Враг':'Награда'}</small></div><button data-object="${i}">Открыть</button></div>`).join(''));
+}
 window.__interact=i=>interact(i);
 document.addEventListener('click',e=>{let o=e.target.closest('[data-object]');if(o)interact(Number(o.dataset.object));});
-function interact(i){let o=state.objects[i];if(!o)return;if(o.type==='monster'){openBattle(o.scaled||monsters[o.mi],i);}else if(o.type==='chest'){let g=15+Math.floor(Math.random()*45);state.gold+=g;state.counters.chests++;let it=Math.random()<.7?makeItem(0):null;if(it)addToInventory(it);if(Math.random()<.3)addToInventory(makeShard());state.objects.splice(i,1);drawObjects();save();notify('СУНДУК',`+${g}◈${it?' +'+it.name:''}`);checkAchievements();}else{notify('POI',o.name);}}
+function interact(i){
+  let o=state.objects[i];if(!o)return;
+  if(o.type==='monster'){
+    openBattle(o.scaled||monsters[o.mi], i, o.isElite);
+  } else if(o.type==='chest'){
+    let g=15+Math.floor(Math.random()*45);state.gold+=g;state.counters.chests++;
+    let it=Math.random()<.7?makeItem(0):null;if(it)addToInventory(it);
+    if(Math.random()<.3)addToInventory(makeShard());
+    state.objects.splice(i,1);drawObjects();save();
+    notify('СУНДУК',`+${g}◈${it?' +'+it.name:''}`);checkAchievements();
+  } else { notify('POI',o.name); }
+}
 safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatus','GPS недоступен');return;}navigator.geolocation.getCurrentPosition(pos=>{let p={lat:pos.coords.latitude,lng:pos.coords.longitude};state.position=p;safeText('gpsStatus','GPS ✓');if(map){map.setView([p.lat,p.lng],16);if(playerMarker)playerMarker.setLatLng([p.lat,p.lng]);else playerMarker=L.marker([p.lat,p.lng]).addTo(map).bindPopup('Ты').openPopup();}save();sendPosition();},()=>{safeText('gpsStatus','GPS ✗');},{enableHighAccuracy:true,timeout:12000,maximumAge:30000});};});
 safe('scanBtn',el=>{el.onclick=()=>scan();});
 safe('refreshObjects',el=>{el.onclick=()=>scan();});
@@ -1101,10 +1273,35 @@ safe('storyBtn',el=>{el.onclick=()=>{let now=Date.now();if(now-state.lastStory<2
 safe('updatePosBtn',el=>{el.onclick=()=>{sendPosition();toast('Позиция обновлена');};});
 safe('createArenaBtn',el=>{el.onclick=()=>createArena();});
 safe('exportBtn',el=>{el.onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='awakening-save.json';a.click();toast('Сейв скачан');};});
-safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};if(Array.isArray(state.seen)){state.seen=[...new Set(state.seen.map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length))];}save();toast('Загружено');}catch(e){toast('Ошибка файла');}};r.readAsText(f);};inp.click();};});
+safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};const norm=(arr)=>(arr||[]).map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length);state.seen=[...new Set(norm(state.seen))];state.seenElite=[...new Set(norm(state.seenElite))];save();toast('Загружено');}catch(e){toast('Ошибка файла');}};r.readAsText(f);};inp.click();};});
 safe('resetBtn',el=>{el.onclick=()=>{if(confirm('Удалить весь прогресс?')){localStorage.removeItem('awakeningSave');location.reload();}};});
 function showStartDialog(){safeHTML('modalContent',`<div class="systemhead">▣ ПРОБУЖДЕНИЕ</div><h2>Создание персонажа</h2><p class="muted small">Введи имя и выбери класс.</p><input type="text" id="startName" placeholder="Имя охотника" value="${state.name||'Охотник'}" style="margin-bottom:10px;"><div class="grid2">${Object.entries(classes).map(([id,c])=>`<button data-startclass="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-startclass]').forEach(b=>{b.onclick=()=>{let nameVal=$('startName').value.trim()||'Охотник';let classId=b.dataset.startclass;state.name=nameVal;state.class=classId;let c=classes[classId];for(let[k,v]of Object.entries(c.stats))state.stats[k]+=v;state.hp=maxHp();state.mp=maxMp();save();let mm=$('modal');if(mm)mm.classList.remove('show');toast('Добро пожаловать, '+state.name);sendPosition();};});}
-function initial(){document.body.classList.toggle('light',state.theme==='light');safeText('themeBtn',state.theme==='light'?'☀️':'🌙');initMap();try{renderAll()}catch(e){console.warn('renderAll initial:',e)}try{ensureDaily()}catch(e){}if(state.objects.length)try{drawObjects()}catch(e){}safeHTML('rankList',['E','D','C','B','A','S','SS','SSS'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));setInterval(()=>{try{renderDaily()}catch(e){}},60000);checkAchievements();if(!state.class)setTimeout(showStartDialog,1000);else setTimeout(sendPosition,2000);setTimeout(initOnline,1000);setTimeout(watchArena,1500);setTimeout(initChatAndFriends,2000);setInterval(()=>{try{sendPosition();}catch(e){}},120000);}
+function initial(){
+  document.body.classList.toggle('light',state.theme==='light');
+  safeText('themeBtn',state.theme==='light'?'☀️':'🌙');
+  initMap();
+  try{renderAll()}catch(e){console.warn('renderAll initial:',e)}
+  try{ensureDaily()}catch(e){}
+  if(state.objects.length)try{drawObjects()}catch(e){}
+  safeHTML('rankList',['E','D','C','B','A','S','SS','SSS','Ω'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑','♾️'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический','Абсолют'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));
+  setInterval(()=>{try{renderDaily()}catch(e){}},60000);
+  checkAchievements();
+  if(!state.class)setTimeout(showStartDialog,1000);
+  else setTimeout(sendPosition,2000);
+  setTimeout(initOnline,1000);
+  setTimeout(watchArena,1500);
+  setTimeout(initChatAndFriends,2000);
+  setInterval(()=>{try{sendPosition();}catch(e){}},120000);
+}
+// HP-реген раз в секунду (работает и в бою)
+setInterval(()=>{
+  const r = hpRegenPerSec();
+  if(r>0 && state.hp < maxHp()){
+    state.hp = Math.min(maxHp(), state.hp + r);
+    save();
+  }
+},1000);
+// Пассивный реген раз в минуту
 setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save();},60000);
 initial();
 })();
