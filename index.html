@@ -31,7 +31,7 @@ body.light .themebtn{background:#fff;border-color:#a9c8e4;}
 .hud-text{font-size:10px;color:var(--muted);min-width:50px;text-align:right}
 main{max-width:760px;margin:auto;padding:12px 12px 90px}.tabs{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:#081321f5;border-top:1px solid #29415e;backdrop-filter:blur(12px)}body.light .tabs{background:#ffffffef;border-top:1px solid #c5d8ea}
 .tab{border:0;background:transparent;color:#819bb8;padding:7px 2px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px}.tab span:first-child{font-size:19px}.tab.active{color:var(--cyan);background:#17304b;border-radius:10px}body.light .tab.active{background:#dceaf8}
-.page{display:none}.page.active{display:block}.card{background:linear-gradient(145deg,#12243a,#0d1a2b);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 8px 25px #0002}body.light .card{background:#fff;box-shadow:0 6px 18px #1a3a5e12}.card h2,.card h3{margin:0 0 10px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--cyan);text-transform:uppercase}.muted{color:var(--muted)}.small{font-size:11px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pill{padding:5px 8px;border:1px solid #355575;border-radius:30px;color:#b9d8f6;font-size:11px}body.light .pill{color:#1a5f9e;border-color:#a9c8e4}.bar{height:9px;border-radius:10px;background:#263d57;overflow:hidden;margin:6px 0}body.light .bar{background:#d6e6f4}.bar>i{display:block;height:100%;background:linear-gradient(90deg,#2589ff,#75e7ff);transition:width .25s}.bar.hp>i{background:linear-gradient(90deg,#d83e61,#ff8d91)}.bar.mp>i{background:linear-gradient(90deg,#4d65e8,#a28cff)}
+.page{display:none}.page.active{display:block}.card{background:linear-gradient(145deg,#12243a,#0d1a2b);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 8px 25px #0002}body.light .card{background:#fff;box-shadow:0 6px 18px #1a3a5e12}.card h2,.card h3{margin:0 0 10px}.eyebrow{font-size:10px;letter-spacing:2px;color:var(--cyan);text-transform:uppercase}.muted{color:var(--muted)}.small{font-size:11px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.pill{padding:5px 8px;border:1px solid #355575;border-radius:30px;color:#b9d8f6;font-size:11px}body.light .pill{color:#1a5f9e;border-color:#a9c8e4}.bar{height:9px;border-radius:10px;background:#263d57;overflow:hidden;margin:6px 0}body.light .bar{background:#d6e6f4}.bar>i{display:block;height:100%;background:linear-gradient(90deg,#2589ff,#75e7ff);transition:width .25s}.bar.hp>i{background:linear-gradient(90deg,#d83e61,#ff8d91)}.bar.mp>i{background:linear-gradient(90deg,#4d65e8,#a28cff)}
 #map{height:48vh;min-height:300px;border-radius:13px;border:1px solid #31516f;overflow:hidden;background:#14243a;z-index:1;position:relative;}.mapfallback{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:#b5cce4;background:radial-gradient(circle,#1b3859,#0b1828)}
 .mapcontrols{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.mapcontrols button{flex:1;min-width:105px;font-size:12px;padding:9px}
 .actionlist{display:grid;gap:8px}
@@ -49,48 +49,32 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
 .skillrow.on{border-color:#73e0a1;box-shadow:0 0 12px #73e0a133}
 .dmg{position:absolute;font-weight:800;font-size:26px;color:#ff6d7c;pointer-events:none;animation:fly 1s ease-out forwards;text-shadow:0 0 8px #000}
 .dmg.crit{font-size:38px;color:#ffd36a}
+.dmg.super{font-size:44px;color:#c49aff;text-shadow:0 0 14px #7c3aed,0 0 8px #000}
 @keyframes fly{0%{opacity:1;transform:translateY(0) scale(.8)}100%{opacity:0;transform:translateY(-70px) scale(1.3)}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 .shake{animation:shake .3s}
 .set-bonus{font-size:10px;color:var(--gold);margin-top:2px}
 .ach{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid #28435f;border-radius:12px;background:#0b1929;margin-bottom:6px;opacity:.5}body.light .ach{background:#f3f8ff;border-color:#c5d8ea}.ach.on{opacity:1;border-color:#ffd36a;box-shadow:0 0 12px #ffd36a33}
 .toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#0e1e31;border:1px solid #3983bd;color:#eaf6ff;padding:10px 16px;border-radius:30px;font-size:13px;z-index:99999;box-shadow:0 0 24px #1684d555;opacity:0;transition:opacity .2s;pointer-events:none}body.light .toast{background:#fff;color:#102338;border-color:#3b9ae0}.toast.show{opacity:1}
-/* Чат: перенос строк с сохранением слов */
 #chatBox{overflow-wrap:break-word;word-break:normal;white-space:pre-wrap}
 #chatBox .chat-msg{margin-bottom:4px;overflow-wrap:break-word;word-break:normal;white-space:pre-wrap;max-width:100%}
 @media(max-width:649px){#chatBox .chat-msg{max-width:40ch;}}
 @media(min-width:650px){#chatBox .chat-msg{max-width:85ch;}}
-/* Тёмная тема попапов Leaflet */
 .leaflet-popup-content-wrapper,
-.leaflet-popup-tip{
-  background:#0e1e31!important;
-  color:#edf6ff!important;
-  border:1px solid #3b6c98;
-  box-shadow:0 0 20px #1785d544;
-}
+.leaflet-popup-tip{background:#0e1e31!important;color:#edf6ff!important;border:1px solid #3b6c98;box-shadow:0 0 20px #1785d544;}
 body.light .leaflet-popup-content-wrapper,
-body.light .leaflet-popup-tip{
-  background:#fff!important;
-  color:#102338!important;
-  border-color:#a9c8e4;
-}
+body.light .leaflet-popup-tip{background:#fff!important;color:#102338!important;border-color:#a9c8e4;}
 .leaflet-popup-content{color:#edf6ff!important;margin:8px 10px;}
 body.light .leaflet-popup-content{color:#102338!important;}
-.leaflet-popup-content button{
-  color:#edf6ff!important;
-  background:linear-gradient(135deg,#1764a8,#173e70)!important;
-  border:1px solid #438acb!important;
-  font-weight:700;padding:6px 10px;border-radius:8px;
-  margin-top:4px;cursor:pointer;width:100%;
-}
-body.light .leaflet-popup-content button{
-  color:#fff!important;
-  background:linear-gradient(135deg,#3b9ae0,#1a5f9e)!important;
-  border-color:#3b9ae0!important;
-}
+.leaflet-popup-content button{color:#edf6ff!important;background:linear-gradient(135deg,#1764a8,#173e70)!important;border:1px solid #438acb!important;font-weight:700;padding:6px 10px;border-radius:8px;margin-top:4px;cursor:pointer;width:100%;}
+body.light .leaflet-popup-content button{color:#fff!important;background:linear-gradient(135deg,#3b9ae0,#1a5f9e)!important;border-color:#3b9ae0!important;}
 .leaflet-popup-content button:active{transform:scale(.98)}
 .leaflet-popup-close-button{color:#edf6ff!important}
 body.light .leaflet-popup-close-button{color:#102338!important}
+.supers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.btn-super{background:linear-gradient(135deg,#5a1fa8,#2c0f70);border-color:#9b6aff;font-weight:700;font-size:12px;padding:10px 8px}
+body.light .btn-super{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;border-color:#7c3aed}
+.btn-super:disabled{opacity:.4}
 @media(min-width:650px){main{padding-top:18px}.tabs{left:50%;right:auto;transform:translateX(-50%);width:min(100%,760px);border:1px solid #29415e;border-bottom:0;border-radius:15px 15px 0 0}#map{height:440px}}
 </style>
 </head>
@@ -135,7 +119,7 @@ body.light .leaflet-popup-close-button{color:#102338!important}
  <div class="card system"><div class="systemhead">▣ ОБЩИЕ ХАРАКТЕРИСТИКИ</div><div class="statgrid" style="margin-top:10px" id="totalStatsGrid"></div></div>
  <div class="card"><h3>Базовые характеристики</h3><div class="statgrid" id="statsGrid"></div><p class="muted small">Свободные очки: <b id="pointsText">0</b></p><div class="grid2" id="statButtons"></div></div>
  <div class="card"><h3>Экипировка</h3><div id="equipmentList" class="actionlist"></div></div>
- <div class="card"><h3>Дерево навыков</h3><div id="skillTree" class="actionlist" style="max-height:300px; overflow-y:auto;"></div></div>
+ <div class="card"><h3>Дерево навыков</h3><div id="skillTree" class="actionlist" style="max-height:400px; overflow-y:auto;"></div></div>
  <div class="card"><h3>Питомец</h3><div id="petCard"></div></div>
  <div class="card"><h3>История</h3><div id="historyList" class="hist"><p class="muted small">Пока пусто.</p></div></div>
  <div class="card"><h3>Сохранение</h3><div class="grid2"><button id="exportBtn">⬇ Экспорт</button><button id="importBtn">⬆ Импорт</button><button id="resetBtn" style="grid-column:1/-1">🗑 Сброс</button></div></div>
@@ -182,7 +166,7 @@ body.light .leaflet-popup-close-button{color:#102338!important}
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;"><p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p></div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.6.2 · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.7.1 · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -224,7 +208,21 @@ const slots=['Шлем','Нагрудник','Перчатки','Поножи','
 const icons={Шлем:'⛑️',Нагрудник:'🦺',Перчатки:'🧤',Поножи:'🥋',Сапоги:'🥾',Оружие:'⚔️',Щит:'🛡️',Кольцо:'💍',Амулет:'📿',Артефакт:'🔮'};
 const rarity=['Обычный','Необычный','Редкий','Эпический','Легендарный','Мифический'];
 const rarityClass=['common','uncommon','rare','epic','legendary','mythic'];
-const POTION='potion',BIG_POTION='big_potion',SHARD='shard',MANA_POTION='mana_potion',XP_SCROLL='xp_scroll';
+
+// ==== Зелья ====
+const POTION='potion';
+const MID_POTION='mid_potion';
+const BIG_POTION='big_potion';
+const GREATER_POTION='greater_potion';
+const ELITE_POTION='elite_potion';
+const TITAN_POTION='titan_potion';
+const IMMORTAL_POTION='immortal_potion';
+const MANA_POTION='mana_potion';
+const POTION_SLOTS=[POTION,BIG_POTION,MANA_POTION,MID_POTION,GREATER_POTION,ELITE_POTION,TITAN_POTION,IMMORTAL_POTION];
+const HP_POTIONS=[IMMORTAL_POTION,TITAN_POTION,ELITE_POTION,GREATER_POTION,BIG_POTION,MID_POTION,POTION];
+
+const SHARD='shard', XP_SCROLL='xp_scroll';
+
 const sets=[
  {id:'wanderer',name:'Странник',slots:['Шлем','Нагрудник','Перчатки'],bonus:{def:10},desc:'+10 защиты'},
  {id:'hunter',name:'Охотник',slots:['Поножи','Сапоги','Оружие'],bonus:{atk:18},desc:'+18 атаки'},
@@ -236,16 +234,18 @@ const classes={
  rogue:{name:'Разбойник',emoji:'🗡️',desc:'+5 Ловкость, +3 Сила',stats:{Сила:3,Ловкость:5,Интеллект:0,Выносливость:0}}
 };
 const skills=[
- {id:'atk1',name:'Сила удара',desc:'+10% атаки',max:5,cost:1,apply:s=>s.atkMult=(s.atkMult||1)+.1},
- {id:'crit1',name:'Меткость',desc:'+3% крита',max:5,cost:1,apply:s=>s.critAdd=(s.critAdd||0)+.03},
- {id:'hp1',name:'Стойкость',desc:'+10% HP',max:5,cost:1,apply:s=>s.hpMult=(s.hpMult||1)+.1},
- {id:'mp1',name:'Поток маны',desc:'+10% MP',max:5,cost:1,apply:s=>s.mpMult=(s.mpMult||1)+.1},
- {id:'regen',name:'Регенерация',desc:'+50% к регену',max:3,cost:1,apply:s=>s.regenMult=(s.regenMult||1)+.5},
- {id:'skill1',name:'Дешёвый импульс',desc:'-2 MP на скилл',max:3,cost:1,apply:s=>s.skillCost=(s.skillCost||8)-2},
- {id:'pet1',name:'Связь с питомцем',desc:'+50% урон питомца',max:3,cost:1,apply:s=>s.petMult=(s.petMult||1)+.5},
- {id:'gold1',name:'Жадность',desc:'+15% золота',max:3,cost:1,apply:s=>s.goldMult=(s.goldMult||1)+.15},
- {id:'xp1',name:'Мудрость',desc:'+10% XP',max:5,cost:1,apply:s=>s.xpMult=(s.xpMult||1)+.1}
+ {id:'atk1',name:'Сила удара',desc:'+10% атаки',max:10,apply:s=>s.atkMult=(s.atkMult||1)+.1},
+ {id:'crit1',name:'Меткость',desc:'+3% крита',max:10,apply:s=>s.critAdd=(s.critAdd||0)+.03},
+ {id:'hp1',name:'Стойкость',desc:'+10% HP',max:10,apply:s=>s.hpMult=(s.hpMult||1)+.1},
+ {id:'mp1',name:'Поток маны',desc:'+10% MP',max:10,apply:s=>s.mpMult=(s.mpMult||1)+.1},
+ {id:'regen',name:'Регенерация',desc:'+50% к регену',max:10,apply:s=>s.regenMult=(s.regenMult||1)+.5},
+ {id:'skill1',name:'Дешёвый импульс',desc:'-2 MP на скилл',max:10,apply:s=>s.skillCost=(s.skillCost||8)-2},
+ {id:'pet1',name:'Связь с питомцем',desc:'+50% урон питомца',max:10,apply:s=>s.petMult=(s.petMult||1)+.5},
+ {id:'gold1',name:'Жадность',desc:'+15% золота',max:10,apply:s=>s.goldMult=(s.goldMult||1)+.15},
+ {id:'xp1',name:'Мудрость',desc:'+10% XP',max:10,apply:s=>s.xpMult=(s.xpMult||1)+.1}
 ];
+function skillCost(lvl){ return Math.max(1, (lvl||0) + 1); }
+
 const pets=[
  {id:'wolf',name:'Волчонок',emoji:'🐺',base:5,desc:'Бьёт врага каждый ход'},
  {id:'cat',name:'Кот-фамильяр',emoji:'🐈',base:3,desc:'Шанс крита +5%'},
@@ -298,13 +298,19 @@ const chain=[
  {id:'c2',desc:'Победи 3 волка',goal:3,field:'wolf',reward:{xp:200,gold:100}},
  {id:'c3',desc:'Победи вождя',goal:1,field:'boss',reward:{xp:500,gold:300,item:4}}
 ];
+
+// ==== МАГАЗИН ====
 const shopItems=[
- {id:'sp',name:'Зелье лечения',icon:'🧪',price:25,fn:()=>addToInventory(makePotion())},
- {id:'sbp',name:'Большое зелье',icon:'⚗️',price:70,fn:()=>addToInventory(makeBigPotion())},
- {id:'smp',name:'Эликсир маны',icon:'🔮',price:40,fn:()=>addToInventory(makeManaPotion())},
- {id:'sshard',name:'Осколок разлома',icon:'💠',price:50,fn:()=>addToInventory(makeShard())},
- {id:'sxpscroll',name:'Свиток опыта',icon:'📜',price:200,fn:()=>addToInventory(makeXpScroll())}
+ {id:'sp',    name:'Зелье лечения',     icon:'🧪', price:25,  fn:()=>addToInventory(makePotion())},
+ {id:'smp',   name:'Среднее зелье',     icon:'🩹', price:55,  fn:()=>addToInventory(makeMidPotion())},
+ {id:'sbp',   name:'Большое зелье',     icon:'⚗️', price:90,  fn:()=>addToInventory(makeBigPotion())},
+ {id:'sgp',   name:'Сильное зелье',     icon:'💊', price:180, fn:()=>addToInventory(makeGreaterPotion())},
+ {id:'selp',  name:'Элитное зелье',     icon:'🌟', price:320, fn:()=>addToInventory(makeElitePotion())},
+ {id:'stp',   name:'Титаническое зелье',icon:'🏆', price:550, fn:()=>addToInventory(makeTitanPotion())},
+ {id:'simp',  name:'Зелье бессмертия',  icon:'👑', price:900, fn:()=>addToInventory(makeImmortalPotion())},
+ {id:'smpot', name:'Эликсир маны',      icon:'🔮', price:40,  fn:()=>addToInventory(makeManaPotion())}
 ];
+
 const monsters=[
  {name:'Бродячий слизень',emoji:'🟢',level:1,hp:34,atk:5,xp:25,gold:8,drop:0,tag:''},
  {name:'Лесной гоблин',emoji:'👺',level:2,hp:52,atk:8,xp:38,gold:13,drop:1,tag:'goblin'},
@@ -387,6 +393,9 @@ try{
   state.counters={...defaultState().counters,...(state.counters||{})};state.quests={...defaultState().quests,...(state.quests||{})};
   state.daily=state.daily||{date:'',pool:[],progress:{}};state.skills=state.skills||{};state.achievements=state.achievements||{};state.dailyGift=state.dailyGift||{last:'',streak:0};
   state.deadZones=state.deadZones||[];state.lastStory=state.lastStory||0;
+  if(Array.isArray(state.seen)){
+    state.seen=[...new Set(state.seen.map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length))];
+  } else { state.seen=[]; }
 }catch(e){state=defaultState()}
 let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[];
 const save=()=>{try{localStorage.setItem('awakeningSave',JSON.stringify(state))}catch(e){}try{renderAll()}catch(e){console.warn('renderAll fail',e)}};
@@ -403,7 +412,18 @@ const defense=()=>Math.floor(totalStat('Выносливость')*.8+equipBonus
 const xpNeed=()=>Math.floor(100+(state.level-1)*65+(state.level*state.level)*0.5);
 const critChance=()=>Math.min(.6,totalStat('Ловкость')*.015+(applySkills().critAdd||0)+(state.pet==='cat'?.05:0));
 const dodgeChance=()=>Math.min(.4,totalStat('Ловкость')*.008);
-const skillCost=()=>Math.max(2,applySkills().skillCost??8);
+const skillBaseCost=()=>Math.max(2,applySkills().skillCost??8);
+
+// ==== Супер-удары ====
+const SMASH_MP_COST = 190;   // Разрушающий удар
+const VOID_MP_COST  = 360;   // Удар пустоты
+function superDamage(kind){
+  const a = attack();
+  if(kind==='smash') return Math.floor(a * 4.2);
+  if(kind==='void')  return Math.floor(a * 6.5);
+  return a;
+}
+
 function rank(){let l=state.level;return l>=90?'SSS':l>=75?'SS':l>=60?'S':l>=45?'A':l>=30?'B':l>=20?'C':l>=10?'D':'E'}
 function rankName(){return ({E:'Новичок',D:'Ученик',C:'Опытный',B:'Ветеран',A:'Элита',S:'Высший',SS:'Легендарный',SSS:'Мифический'})[rank()]}
 function toast(msg){let t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000)}
@@ -417,15 +437,23 @@ function makeItem(minR=0, monsterLevel=null){let slot=slots[Math.floor(Math.rand
 let name=names[Math.floor(Math.random()*names.length)];let set=setOfSlot(slot);
 let lvl = monsterLevel || Math.max(1,state.level-1+Math.floor(Math.random()*3));
 return{id:Date.now()+Math.floor(Math.random()*1000),name,slot,rarity:r,bonus,icon:icons[slot],level:lvl,set:set?set.id:null}}
-const makePotion=()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Зелье',slot:POTION,rarity:1,bonus:{},icon:'🧪',level:1,heal:35});
-const makeBigPotion=()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Большое зелье',slot:BIG_POTION,rarity:2,bonus:{},icon:'⚗️',level:1,heal:80});
-const makeManaPotion=()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Эликсир маны',slot:MANA_POTION,rarity:2,bonus:{},icon:'🔮',level:1,mana:50});
-const makeXpScroll=()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Свиток опыта',slot:XP_SCROLL,rarity:3,bonus:{},icon:'📜',level:1,xp:500});
-const makeShard=()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Осколок',slot:SHARD,rarity:2,bonus:{},icon:'💠',level:1});
+
+const makePotion        =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Зелье',              slot:POTION,          rarity:1,bonus:{},icon:'🧪',level:1,heal:35});
+const makeMidPotion     =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Среднее зелье',      slot:MID_POTION,      rarity:2,bonus:{},icon:'🩹',level:1,heal:60});
+const makeBigPotion     =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Большое зелье',      slot:BIG_POTION,      rarity:2,bonus:{},icon:'⚗️',level:1,heal:80});
+const makeGreaterPotion =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Сильное зелье',      slot:GREATER_POTION,  rarity:3,bonus:{},icon:'💊',level:1,heal:150});
+const makeElitePotion   =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Элитное зелье',      slot:ELITE_POTION,    rarity:3,bonus:{},icon:'🌟',level:1,heal:280});
+const makeTitanPotion   =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Титаническое зелье', slot:TITAN_POTION,    rarity:4,bonus:{},icon:'🏆',level:1,heal:500});
+const makeImmortalPotion=()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Зелье бессмертия',   slot:IMMORTAL_POTION, rarity:5,bonus:{},icon:'👑',level:1,heal:900});
+const makeManaPotion    =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Эликсир маны',       slot:MANA_POTION,     rarity:2,bonus:{},icon:'🔮',level:1,mana:50});
+const makeXpScroll      =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Свиток опыта',       slot:XP_SCROLL,       rarity:3,bonus:{},icon:'📜',level:1,xp:500});
+const makeShard         =()=>({id:Date.now()+Math.floor(Math.random()*1000),name:'Осколок',            slot:SHARD,           rarity:2,bonus:{},icon:'💠',level:1});
+
 function itemBonus(it){return Object.entries(it.bonus||{}).map(([k,v])=>`${k==='atk'?'Атака':k==='def'?'Защита':k==='hp'?'HP':k==='mp'?'MP':k}: +${v}`).join(' · ')}
 function countBySlot(slot){return state.inventory.filter(i=>i.slot===slot).reduce((sum,item)=>sum+(item.qty||1),0)}
 function checkAchievements(){for(let a of achievements){if(state.achievements[a.id])continue;try{if(a.check(state)){state.achievements[a.id]=true;if(a.reward.gold)state.gold+=a.reward.gold;if(a.reward.xp)addXp(a.reward.xp);toast('🏆 '+a.name);beep(1200,150,'sine',.08)}}catch(e){}}}
-function addToInventory(item){let isStackable=[POTION,BIG_POTION,MANA_POTION,XP_SCROLL,SHARD].includes(item.slot);if(isStackable){let existing=state.inventory.find(i=>i.slot===item.slot);if(existing){existing.qty=(existing.qty||1)+1;return}item.qty=1;state.inventory.push(item)}else{state.inventory.push(item)}}
+function addToInventory(item){let isStackable=[SHARD,XP_SCROLL,...POTION_SLOTS].includes(item.slot);if(isStackable){let existing=state.inventory.find(i=>i.slot===item.slot);if(existing){existing.qty=(existing.qty||1)+1;return}item.qty=1;state.inventory.push(item)}else{state.inventory.push(item)}}
+
 function renderAll(){
   let need=xpNeed();
   safeText('levelText','УРОВЕНЬ '+state.level);safeText('xpText',`${state.xp} / ${need} XP`);safeStyle('xpbar','width',(state.xp/need*100)+'%');safeText('goldText','◈ '+state.gold);
@@ -440,13 +468,18 @@ function renderAll(){
   safeHTML('statsGrid',Object.entries(state.stats).map(([k,v])=>`<div class="stat"><small>${k}</small><b>${v}</b></div>`).join(''));
   safeHTML('statButtons',Object.keys(state.stats).map(k=>`<button data-stat="${k}" ${state.points<=0?'disabled':''}>+ ${k}</button>`).join(''));
   safeHTML('equipmentList', slots.map(s => {let it = state.equipment[s];let sb = setBonus('atk')||setBonus('def')||setBonus('mp') ? `<br><span class="set-bonus">Сет: +${setBonus('atk')?setBonus('atk')+' атк ':''}${setBonus('def')?setBonus('def')+' защ ':''}${setBonus('mp')?setBonus('mp')+' MP':''}</span>` : '';return `<div class="item"><div class="iconbox">${icons[s]}</div><div class="iteminfo"><strong>${s}</strong><small>${it ? `<span class="rarity ${rarityClass[it.rarity]}">${it.name} · ${rarity[it.rarity]}</span><br>${itemBonus(it)}${sb}` : 'Пусто'}</small></div>${it ? `<span class="pill" style="border-color:#73e0a1;color:#73e0a1;font-size:10px">Надето</span><button data-unequip="${s}">Снять</button>` : '<span class="muted small">—</span>'}</div>`;}).join(''));
-  safeHTML('skillTree', skills.map(sk => {let lvl = state.skills[sk.id] || 0;let maxed = lvl >= sk.max;let canAfford = state.points >= sk.cost;return `<div class="skillrow ${lvl?'on':''}"><div class="iconbox">📘</div><div class="iteminfo"><strong>${sk.name}</strong><small>${sk.desc} · ур. ${lvl}/${sk.max}</small></div><button data-skill="${sk.id}" ${maxed||!canAfford?'disabled':''}>${maxed?'MAX':'+ '+sk.cost+' очк.'}</button></div>`;}).join(''));
+  safeHTML('skillTree', skills.map(sk => {
+    let lvl = state.skills[sk.id] || 0;
+    let maxed = lvl >= sk.max;
+    let cost = skillCost(lvl);
+    let canAfford = state.points >= cost;
+    return `<div class="skillrow ${lvl?'on':''}"><div class="iconbox">📘</div><div class="iteminfo"><strong>${sk.name}</strong><small>${sk.desc} · ур. ${lvl}/${sk.max}</small></div><button data-skill="${sk.id}" ${maxed||!canAfford?'disabled':''}>${maxed?'MAX':'+ '+cost+' очк.'}</button></div>`;
+  }).join(''));
   safeHTML('petCard', state.pet ? (() => {let p = pets.find(x => x.id === state.pet);return p ? `<div class="skillrow on"><div class="iconbox">${p.emoji}</div><div class="iteminfo"><strong>${p.name}</strong><small>${p.desc}</small></div><button data-pet="release">Отпустить</button></div>` : '';})() : pets.map(p => `<div class="skillrow"><div class="iconbox">${p.emoji}</div><div class="iteminfo"><strong>${p.name}</strong><small>${p.desc}</small></div><button data-pet="${p.id}">Приручить (200◈)</button></div>`).join(''));
 
-  /* === Инвентарь с сравнением экипировки === */
   safeText('inventoryCount', state.inventory.length + ' слотов');
   safeHTML('inventoryList', state.inventory.length ? state.inventory.map(it => {
-    let isP = [POTION, BIG_POTION, MANA_POTION].includes(it.slot);
+    let isP = POTION_SLOTS.includes(it.slot);
     let isS = it.slot === SHARD;
     let isX = it.slot === XP_SCROLL;
     let qtyStr = it.qty && it.qty > 1 ? ` <b style="color:var(--gold)">x${it.qty}</b>` : '';
@@ -480,9 +513,10 @@ function renderAll(){
     }
 
     let sub = '';
-    if (it.slot === POTION) sub = `Расходник · +${it.heal} HP`;
-    else if (it.slot === BIG_POTION) sub = `Расходник · +${it.heal} HP`;
-    else if (it.slot === MANA_POTION) sub = `Расходник · +${it.mana} MP`;
+    if (POTION_SLOTS.includes(it.slot)) {
+      if (it.slot === MANA_POTION) sub = `Расходник · +${it.mana} MP`;
+      else sub = `Расходник · +${it.heal} HP`;
+    }
     else if (it.slot === XP_SCROLL) sub = `Расходник · +${it.xp} XP`;
     else if (it.slot === SHARD) sub = 'Материал для крафта';
     else sub = `${it.slot} · ур. ${it.level}<br><span class="rarity ${rarityClass[it.rarity]}">${rarity[it.rarity]}</span> · ${itemBonus(it)}${compareHtml}`;
@@ -491,13 +525,27 @@ function renderAll(){
     return `<div class="item"><div class="iconbox">${it.icon}</div><div class="iteminfo"><strong>${it.name}${qtyStr}</strong><small>${sub}</small></div>${isS ? `<button data-sell="${it.id}">Продать (${sellPrice}◈)</button>` : `<button data-equip="${it.id}">${label}</button>`}<button data-sell="${it.id}" style="background:#3a2a1a">💰</button></div>`;
   }).join('') : '<div class="card muted">Инвентарь пуст.</div>');
 
-  safeHTML('craftList', `<div class="actionlist" style="max-height:300px;"><div class="craftrow"><div class="iconbox">⚗️</div><div class="iteminfo"><strong>Большое зелье</strong><small>3× зелье</small></div><button data-craft="big" ${countBySlot(POTION)<3?'disabled':''}>Скрафтить</button></div><div class="craftrow"><div class="iconbox">🔮</div><div class="iteminfo"><strong>Эликсир маны</strong><small>2× осколок</small></div><button data-craft="mana" ${countBySlot(SHARD)<2?'disabled':''}>Скрафтить</button></div><div class="craftrow"><div class="iconbox">📜</div><div class="iteminfo"><strong>Свиток опыта</strong><small>3× осколок + 1× большое зелье</small></div><button data-craft="xp" ${countBySlot(SHARD)<3 || countBySlot(BIG_POTION)<1?'disabled':''}>Скрафтить</button></div><div class="craftrow"><div class="iconbox">🎁</div><div class="iteminfo"><strong>Случайный предмет</strong><small>5× осколок</small></div><button data-craft="item" ${countBySlot(SHARD)<5?'disabled':''}>Скрафтить</button></div></div>`);
+  safeHTML('craftList', `
+    <div class="actionlist" style="max-height:500px;">
+      <div class="craftrow"><div class="iconbox">⚗️</div><div class="iteminfo"><strong>Большое зелье</strong><small>3× зелье</small></div><button data-craft="big" ${countBySlot(POTION)<3?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">🔮</div><div class="iteminfo"><strong>Эликсир маны</strong><small>2× осколок</small></div><button data-craft="mana" ${countBySlot(SHARD)<2?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">📜</div><div class="iteminfo"><strong>Свиток опыта</strong><small>3× осколок + 1× большое зелье</small></div><button data-craft="xp" ${countBySlot(SHARD)<3 || countBySlot(BIG_POTION)<1?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">🎁</div><div class="iteminfo"><strong>Случайный предмет</strong><small>5× осколок</small></div><button data-craft="item" ${countBySlot(SHARD)<5?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">🩹</div><div class="iteminfo"><strong>Среднее зелье</strong><small>2× зелье</small></div><button data-craft="mid" ${countBySlot(POTION)<2?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">💊</div><div class="iteminfo"><strong>Сильное зелье</strong><small>2× большое зелье</small></div><button data-craft="greater" ${countBySlot(BIG_POTION)<2?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">🌟</div><div class="iteminfo"><strong>Элитное зелье</strong><small>2× сильное зелье + 1× осколок</small></div><button data-craft="elite" ${countBySlot(GREATER_POTION)<2 || countBySlot(SHARD)<1?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">🏆</div><div class="iteminfo"><strong>Титаническое зелье</strong><small>2× элитное зелье + 2× осколок</small></div><button data-craft="titan" ${countBySlot(ELITE_POTION)<2 || countBySlot(SHARD)<2?'disabled':''}>Скрафтить</button></div>
+      <div class="craftrow"><div class="iconbox">👑</div><div class="iteminfo"><strong>Зелье бессмертия</strong><small>2× титаническое + 3× осколок</small></div><button data-craft="immortal" ${countBySlot(TITAN_POTION)<2 || countBySlot(SHARD)<3?'disabled':''}>Скрафтить</button></div>
+    </div>
+  `);
+
   safeText('nearbyCount',state.objects.length);safeText('steps',state.steps);
   safeHTML('questList', [{name:'Первое истребление',desc:'Победи 3',progress:Math.min(3,state.quests.kills),goal:3,reward:'120 XP · 50◈',done:state.quests.kills>=3,id:'kills'},{name:'Исследователь',desc:'Сканируй 2',progress:Math.min(2,state.quests.scans),goal:2,reward:'80 XP · сундук',done:state.quests.scans>=2,id:'scans'},{name:'Пробуждение',desc:'Ур. 3',progress:Math.min(3,state.level),goal:3,reward:'200 XP · предмет',done:state.level>=3,id:'level'}].map(q => {let claimed = !!state.quests['claimed_'+q.id];return `<div class="card"><div class="row"><strong>${q.name}</strong><span class="pill">${claimed?'✓':q.done?'Готово':q.progress+'/'+q.goal}</span></div><p class="muted small">${q.desc}</p><div class="bar"><i style="width:${q.progress/q.goal*100}%"></i></div><div class="row"><span class="questreward">${q.reward}</span><button data-quest="${q.id}" ${q.done&&!claimed?'':'disabled'}>${claimed?'Получено':q.done?'Получить':'—'}</button></div></div>`;}).join(''));
   safeHTML('chainList', chain.map((c,i) => {let cur = state.counters[c.field] || 0;let done = cur >= c.goal;let unlocked = i <= state.chainIdx;let claimed = state.counters['chain_'+i];return `<div class="skillrow ${claimed?'on':''}" style="opacity:${unlocked?1:.5}"><div class="iconbox">${done?'✅':unlocked?'🎯':'🔒'}</div><div class="iteminfo"><strong>${i+1}. ${c.desc}</strong><small>${Math.min(cur,c.goal)}/${c.goal} · ${c.reward.xp} XP${c.reward.item?' · предмет':''}</small></div><button data-chain="${i}" ${done&&!claimed&&unlocked?'':'disabled'}>${claimed?'✓':done?'Забрать':'—'}</button></div>`;}).join(''));
   try{renderDaily()}catch(e){}try{renderGift()}catch(e){}
   safeHTML('achList', achievements.map(a => `<div class="ach ${state.achievements[a.id]?'on':''}"><div class="iconbox">${state.achievements[a.id]?'🏆':'🔒'}</div><div class="iteminfo"><strong>${a.name}</strong><small>${a.desc}</small></div></div>`).join(''));
-  safeHTML('bestiaryList', monsters.map((m,i) => `<div class="item"><div class="iconbox">${m.emoji}</div><div class="iteminfo"><strong>${m.name}</strong><small>Ур. ${m.level} · ${m.hp} HP</small></div><span class="pill">${state.seen.includes(i)?'✓':'???'}</span></div>`).join(''));
+  const seenSet = new Set((state.seen||[]).map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length));
+  safeHTML('bestiaryList', monsters.map((m,i) => `<div class="item"><div class="iconbox">${m.emoji}</div><div class="iteminfo"><strong>${m.name}</strong><small>Ур. ${m.level} · ${m.hp} HP</small></div><span class="pill">${seenSet.has(i)?'✓':'???'}</span></div>`).join(''));
   safeHTML('historyList', state.history.length ? state.history.map(h => `<div class="hrow"><span>${h.emoji} ${h.name}</span><span class="${h.win?'win':'lose'}">${h.win?'Победа':'Поражение'}</span></div>`).join('') : '<p class="muted small">Пусто.</p>');
   safeHTML('lbList', (() => {try {let lb = JSON.parse(localStorage.getItem('awakeningLB') || '[]');lb.push({name:'Ты', elo: state.elo});lb.sort((a,b) => b.elo - a.elo);let top = lb.slice(0,10);localStorage.setItem('awakeningLB', JSON.stringify(top));return top.map((x,i) => `<div class="hrow"><span>${i+1}. ${x.name}</span><span>${x.elo}</span></div>`).join('');} catch(e){ return ''; }})());
   safeHTML('shopList', shopItems.map(s => `<div class="craftrow"><div class="iconbox">${s.icon}</div><div class="iteminfo"><strong>${s.name}</strong><small>${s.price}◈</small></div><button data-shop="${s.id}" ${state.gold<s.price?'disabled':''}>Купить</button></div>`).join(''));
@@ -508,28 +556,72 @@ function renderDaily(){ensureDaily();let now=new Date();let t=new Date(now);t.se
 function renderGift(){let today=new Date().toISOString().slice(0,10);let last=state.dailyGift.last;let canClaim=last!==today;let streak=state.dailyGift.streak;safeHTML('dailyGift',`<div class="row"><span>Серия: <b>${streak}</b> дн.</span><button class="primary" id="giftBtn" ${canClaim?'':'disabled'}>${canClaim?'Забрать':'Уже сегодня'}</button></div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px">${[1,2,3,4,5,6,7].map(d=>`<div class="stat" style="text-align:center;padding:6px;${d<=streak?'border-color:#ffd36a':''}"><small>Д${d}</small><b style="font-size:12px">${[10,20,30,40,50,75,150][d-1]}◈</b></div>`).join('')}</div>`);let gb=$('giftBtn');if(gb)gb.onclick=()=>{if(!canClaim)return;let yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);streak=last===yesterday?streak+1:1;state.dailyGift={last:today,streak:Math.min(7,streak)};let reward=[10,20,30,40,50,75,150][state.dailyGift.streak-1];state.gold+=reward;beep(880,200,'sine',.08);toast('Награда: +'+reward+'◈');save()}}
 function setPage(p){document.querySelectorAll('.page').forEach(x=>{x.classList.toggle('active',x.id==='page-'+p)});document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('active',x.dataset.page===p)});if(p==='map'&&map)setTimeout(()=>{try{map.invalidateSize()}catch(e){}},100);if(p==='online') renderOnline();try{renderAll()}catch(e){console.warn('renderAll:',e)}}
 document.querySelectorAll('.tab').forEach(b=>{b.onclick=()=>setPage(b.dataset.page)});
+
 document.addEventListener('click',e=>{
-let eq=e.target.closest('[data-equip]');if(eq){let raw=eq.dataset.equip;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];if([POTION,BIG_POTION].includes(it.slot)){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+(it.heal||35));vibrate(20);save();return}if(it.slot===MANA_POTION){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.mp=Math.min(maxMp(),state.mp+(it.mana||50));vibrate(20);save();return}if(it.slot===XP_SCROLL){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}addXp(it.xp||500);vibrate(20);save();return}if(it.slot===SHARD)return;state.inventory.splice(idx,1);if(state.equipment[it.slot])state.inventory.push(state.equipment[it.slot]);state.equipment[it.slot]=it;state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save()}}
+let eq=e.target.closest('[data-equip]');if(eq){let raw=eq.dataset.equip;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];
+  if(HP_POTIONS.includes(it.slot)){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+(it.heal||35));vibrate(20);save();return}
+  if(it.slot===MANA_POTION){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.mp=Math.min(maxMp(),state.mp+(it.mana||50));vibrate(20);save();return}
+  if(it.slot===XP_SCROLL){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}addXp(it.xp||500);vibrate(20);save();return}
+  if(it.slot===SHARD)return;
+  state.inventory.splice(idx,1);if(state.equipment[it.slot])state.inventory.push(state.equipment[it.slot]);state.equipment[it.slot]=it;state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save()
+}}
 let un=e.target.closest('[data-unequip]');if(un){let s=un.dataset.unequip;if(state.equipment[s]){addToInventory(state.equipment[s]);delete state.equipment[s];state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save()}}
 let sl=e.target.closest('[data-sell]');if(sl){let raw=sl.dataset.sell;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];let price=Math.floor((it.rarity+1)*15*(it.level||1)*0.5)+10;if(it.qty && it.qty>1){it.qty--;state.gold+=price}else{state.inventory.splice(idx,1);state.gold+=price}toast('+'+price+'◈');save()}}
 let st=e.target.closest('[data-stat]');if(st&&state.points>0){state.stats[st.dataset.stat]++;state.points--;save()}
-let sk=e.target.closest('[data-skill]');if(sk){let id=sk.dataset.skill,skd=skills.find(x=>x.id===id),lvl=state.skills[id]||0;if(skd&&lvl<skd.max&&state.points>=skd.cost){state.points-=skd.cost;state.skills[id]=lvl+1;beep(700,100,'sine',.06);save()}}
+let sk=e.target.closest('[data-skill]');if(sk){
+  let id=sk.dataset.skill,skd=skills.find(x=>x.id===id),lvl=state.skills[id]||0;
+  if(skd && lvl<skd.max){
+    const cost = skillCost(lvl);
+    if(state.points>=cost){state.points-=cost;state.skills[id]=lvl+1;beep(700,100,'sine',.06);save();}
+    else toast(`Нужно ${cost} очк.`);
+  }
+}
 let pt=e.target.closest('[data-pet]');if(pt){let id=pt.dataset.pet;if(id==='release'){state.pet=null;save();return}if(state.gold>=200){state.gold-=200;state.pet=id;toast('Приручен: '+pets.find(p=>p.id===id).name);beep(880,150,'sine',.08);save()}else toast('Не хватает золота')}
 let q=e.target.closest('[data-quest]');if(q){let id=q.dataset.quest,done=id==='kills'?state.quests.kills>=3:id==='scans'?state.quests.scans>=2:state.level>=3;if(done&&!state.quests['claimed_'+id]){state.quests['claimed_'+id]=true;if(id==='kills'){addXp(120);state.gold+=50}else if(id==='scans'){addXp(80);state.gold+=30;addToInventory(makeItem(1))}else{addXp(200);addToInventory(makeItem(2))}save();notify('НАГРАДА','Получено.')}}
 let ch=e.target.closest('[data-chain]');if(ch){let i=Number(ch.dataset.chain);let c=chain[i];if(c&&(state.counters[c.field]||0)>=c.goal&&!state.counters['chain_'+i]&&i<=state.chainIdx){state.counters['chain_'+i]=true;state.gold+=c.reward.gold;addXp(c.reward.xp);if(c.reward.item!==undefined)addToInventory(makeItem(c.reward.item));if(i===state.chainIdx)state.chainIdx++;save();notify('ЦЕПОЧКА','Шаг выполнен.')}}
 let dq=e.target.closest('[data-daily]');if(dq){let id=dq.dataset.daily;let q=dailyPool.find(x=>x.id===id);if(!q)return;let cur=state.counters[q.field]||0;if(cur>=q.goal&&!state.daily.progress[id]){state.daily.progress[id]=true;state.gold+=q.reward.gold;addXp(q.reward.xp);if(q.reward.item!==undefined)addToInventory(makeItem(q.reward.item));save();toast('Ежедневка ✓')}}
-let cr=e.target.closest('[data-craft]');if(cr){let type=cr.dataset.craft;if(type==='big'){if(countBySlot(POTION)<3)return;for(let i=0;i<3;i++){let idx=state.inventory.findIndex(x=>x.slot===POTION);if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}addToInventory(makeBigPotion());state.counters.crafts++;save();notify('КРАФТ','Большое зелье ⚗️')}else if(type==='mana'){if(countBySlot(SHARD)<2)return;for(let i=0;i<2;i++){let idx=state.inventory.findIndex(x=>x.slot===SHARD);if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}addToInventory(makeManaPotion());state.counters.crafts++;save();notify('КРАФТ','Эликсир маны 🔮')}else if(type==='xp'){if(countBySlot(SHARD)<3||countBySlot(BIG_POTION)<1)return;for(let i=0;i<3;i++){let idx=state.inventory.findIndex(x=>x.slot===SHARD);if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}let idxP=state.inventory.findIndex(x=>x.slot===BIG_POTION);if(state.inventory[idxP].qty>1){state.inventory[idxP].qty--}else{state.inventory.splice(idxP,1)}addToInventory(makeXpScroll());state.counters.crafts++;save();notify('КРАФТ','Свиток опыта 📜')}else if(type==='item'){if(countBySlot(SHARD)<5)return;for(let i=0;i<5;i++){let idx=state.inventory.findIndex(x=>x.slot===SHARD);if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}let it=makeItem(1);addToInventory(it);state.counters.crafts++;save();notify('КРАФТ',`${it.name} (${rarity[it.rarity]})`)}}
+
+let cr=e.target.closest('[data-craft]');
+if(cr){
+  const type=cr.dataset.craft;
+  const take=(slot,n)=>{for(let i=0;i<n;i++){let idx=state.inventory.findIndex(x=>x.slot===slot);if(idx<0)return false;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}return true};
+
+  if(type==='big'){if(countBySlot(POTION)<3)return;if(!take(POTION,3))return;addToInventory(makeBigPotion());state.counters.crafts++;save();notify('КРАФТ','Большое зелье ⚗️')}
+  else if(type==='mana'){if(countBySlot(SHARD)<2)return;if(!take(SHARD,2))return;addToInventory(makeManaPotion());state.counters.crafts++;save();notify('КРАФТ','Эликсир маны 🔮')}
+  else if(type==='xp'){if(countBySlot(SHARD)<3||countBySlot(BIG_POTION)<1)return;if(!take(SHARD,3)||!take(BIG_POTION,1))return;addToInventory(makeXpScroll());state.counters.crafts++;save();notify('КРАФТ','Свиток опыта 📜')}
+  else if(type==='item'){if(countBySlot(SHARD)<5)return;if(!take(SHARD,5))return;let it=makeItem(1);addToInventory(it);state.counters.crafts++;save();notify('КРАФТ',`${it.name} (${rarity[it.rarity]})`)}
+  else if(type==='mid'){if(countBySlot(POTION)<2)return;if(!take(POTION,2))return;addToInventory(makeMidPotion());state.counters.crafts++;save();notify('КРАФТ','Среднее зелье 🩹')}
+  else if(type==='greater'){if(countBySlot(BIG_POTION)<2)return;if(!take(BIG_POTION,2))return;addToInventory(makeGreaterPotion());state.counters.crafts++;save();notify('КРАФТ','Сильное зелье 💊')}
+  else if(type==='elite'){if(countBySlot(GREATER_POTION)<2||countBySlot(SHARD)<1)return;if(!take(GREATER_POTION,2)||!take(SHARD,1))return;addToInventory(makeElitePotion());state.counters.crafts++;save();notify('КРАФТ','Элитное зелье 🌟')}
+  else if(type==='titan'){if(countBySlot(ELITE_POTION)<2||countBySlot(SHARD)<2)return;if(!take(ELITE_POTION,2)||!take(SHARD,2))return;addToInventory(makeTitanPotion());state.counters.crafts++;save();notify('КРАФТ','Титаническое зелье 🏆')}
+  else if(type==='immortal'){if(countBySlot(TITAN_POTION)<2||countBySlot(SHARD)<3)return;if(!take(TITAN_POTION,2)||!take(SHARD,3))return;addToInventory(makeImmortalPotion());state.counters.crafts++;save();notify('КРАФТ','Зелье бессмертия 👑')}
+}
+
 let shop=e.target.closest('[data-shop]');if(shop){let s=shopItems.find(x=>x.id===shop.dataset.shop);if(s&&state.gold>=s.price){state.gold-=s.price;s.fn();toast('Куплено: '+s.name);save()}}
 });
 safe('sortInventory',el=>{el.onclick=()=>{state.inventory.sort((a,b)=>b.rarity-a.rarity);save()}});
 safe('themeBtn',el=>{el.onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.body.classList.toggle('light',state.theme==='light');el.textContent=state.theme==='light'?'☀️':'🌙';save()}});
-function openBattle(m,index){let baseHp=m.hp,baseAtk=m.atk;if(m.isElite){baseHp=Math.floor(baseHp*1.5);baseAtk=Math.floor(baseAtk*1.3)}else if(m.tag==='boss'){baseHp=Math.floor(baseHp*2);baseAtk=Math.floor(baseAtk*1.5)}let lvlDiff=m.level-state.level,scale=1;if(lvlDiff>0)scale=1+lvlDiff*0.1;else if(lvlDiff<0){scale=1+lvlDiff*0.05;if(scale<0.5)scale=0.5}let finalHp=Math.floor(baseHp*scale),finalAtk=Math.floor(baseAtk*scale);battle={m:{...m,hp:finalHp,atk:finalAtk},index:index,hp:finalHp,log:`${m.name} преграждает путь!`,phase:1,baseLevel:m.level,turn:'player'};renderBattle()}
+
+/* ===================== БОЙ ===================== */
+function openBattle(m,index){
+  let baseHp=m.hp,baseAtk=m.atk;
+  if(m.isElite){baseHp=Math.floor(baseHp*1.5);baseAtk=Math.floor(baseAtk*1.3)}
+  else if(m.tag==='boss'){baseHp=Math.floor(baseHp*2);baseAtk=Math.floor(baseAtk*1.5)}
+  let lvlDiff=m.level-state.level,scale=1;
+  if(lvlDiff>0)scale=1+lvlDiff*0.1;
+  else if(lvlDiff<0){scale=1+lvlDiff*0.05;if(scale<0.5)scale=0.5}
+  let finalHp=Math.floor(baseHp*scale),finalAtk=Math.floor(baseAtk*scale);
+  const mi = monsters.findIndex(x => x.name === m.name && x.emoji === m.emoji);
+  battle={m:{...m,hp:finalHp,atk:finalAtk},index:index,mi:mi,hp:finalHp,log:`${m.name} преграждает путь!`,phase:1,baseLevel:m.level,turn:'player'};
+  renderBattle();
+}
+
 function renderBattle(){
   if(!battle)return;
   if(battle.pvp && pvp){
     const myTurn = !pvp.finished && pvp.turn==='me';
-    const pc = countBySlot(POTION)+countBySlot(BIG_POTION);
-    const sc = skillCost();
+    const pc = HP_POTIONS.reduce((n,s)=>n+countBySlot(s),0);
+    const sc = skillBaseCost();
     safeHTML('modalContent',`
       <div class="eyebrow">PvP · ур. ${pvp.enemyLevel} · раунд ${pvp.round}</div>
       <div class="battleenemy">
@@ -554,18 +646,199 @@ function renderBattle(){
     safe('runBtn',b=>{b.onclick=()=>{if(myTurn)pvpSurrender()}});
     return;
   }
-  let m=battle.m,pc=countBySlot(POTION)+countBySlot(BIG_POTION),sc=skillCost(),isMyTurn=battle.turn==='player';
-  safeHTML('modalContent',`<div class="eyebrow">Бой · ур. ${m.level}</div><div class="battleenemy"><div class="enemyemoji" id="enemyEmoji">${m.emoji}</div><h2>${m.name}</h2><div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div><small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small></div><div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div><div class="battlelog" id="blog">${battle.log}</div><div class="grid2"><button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button><button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button><button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button><button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button></div>`);
+
+  let m=battle.m;
+  const pc = HP_POTIONS.reduce((n,s)=>n+countBySlot(s),0);
+  const sc = skillBaseCost();
+  const isMyTurn=battle.turn==='player';
+  const canSuper1 = isMyTurn && state.mp >= SMASH_MP_COST;
+  const canSuper2 = isMyTurn && state.mp >= VOID_MP_COST;
+
+  safeHTML('modalContent',`
+    <div class="eyebrow">${battle.shadow?'Теневой бой':'Бой'} · ур. ${m.level}</div>
+    <div class="battleenemy"><div class="enemyemoji" id="enemyEmoji">${m.emoji}</div><h2>${m.name}</h2>
+      <div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div>
+      <small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small>
+    </div>
+    <div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div>
+    <div class="battlelog" id="blog">${battle.log}</div>
+    <div class="grid2">
+      <button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button>
+      <button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button>
+      <button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button>
+      <button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button>
+    </div>
+    <div class="supers">
+      <button class="btn-super" id="super1Btn" ${canSuper1?'':'disabled'}>💥 Разрушающий удар (${SMASH_MP_COST} MP)</button>
+      <button class="btn-super" id="super2Btn" ${canSuper2?'':'disabled'}>🕳️ Удар пустоты (${VOID_MP_COST} MP)</button>
+    </div>
+  `);
   let mm=$('modal');if(mm)mm.classList.add('show');
+
   safe('attackBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1)}});
   safe('skillBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1.5)}});
-  safe('potionBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+heal);battle.log=`+${heal} HP.`;enemyTurn()}});
+  safe('super1Btn',b=>{b.onclick=()=>{if(canSuper1)battleSuper('smash')}});
+  safe('super2Btn',b=>{b.onclick=()=>{if(canSuper2)battleSuper('void')}});
+  safe('potionBtn',b=>{b.onclick=()=>{
+    if(!isMyTurn)return;
+    if(state.hp>=maxHp())return battleMsg('HP полное.');
+    for(const sl of HP_POTIONS){
+      const idx=state.inventory.findIndex(i=>i.slot===sl);
+      if(idx>=0){
+        const heal=state.inventory[idx].heal||35;
+        if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}
+        state.hp=Math.min(maxHp(),state.hp+heal);
+        battle.log=`+${heal} HP.`;
+        enemyTurn();
+        return;
+      }
+    }
+    const mi=state.inventory.findIndex(i=>i.slot===MANA_POTION);
+    if(mi>=0){
+      const mp=state.inventory[mi].mana||50;
+      if(state.inventory[mi].qty>1){state.inventory[mi].qty--}else{state.inventory.splice(mi,1)}
+      state.mp=Math.min(maxMp(),state.mp+mp);
+      battle.log=`+${mp} MP.`;
+      enemyTurn();
+      return;
+    }
+    battleMsg('Зелий нет.');
+  }});
   safe('runBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
 }
 function battleMsg(msg){if(!battle)return;battle.log=msg;renderBattle()}
-function spawnDmg(amount,crit){let el=document.createElement('div');el.className='dmg'+(crit?' crit':'');el.textContent=(crit?'-':'')+amount;let em=$('enemyEmoji');if(em){let r=em.getBoundingClientRect();el.style.left=(r.left+r.width/2-20)+'px';el.style.top=(r.top+10)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000)}}
-function enemyTurn(){if(!battle||battle.pvp)return;battle.turn='enemy';renderBattle();setTimeout(()=>{if(!battle||battle.pvp)return;if(battle.m.tag==='boss'){let ratio=battle.hp/battle.m.hp;if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}}if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';battle.turn='player';renderBattle();return}let rawDmg=battle.m.atk-defense(),minDmg=Math.floor(maxHp()*0.05),dmg=Math.max(1,rawDmg,minDmg);state.hp-=dmg;vibrate(30);let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}if(state.hp<=0){state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p><button class="primary" id="cb" style="width:100%">Продолжить</button>`);safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return}battle.log+=` Враг: ${dmg}.`;battle.turn='player';renderBattle()},600)}
-function battleTurn(mult){if(!battle||battle.pvp||battle.turn!=='player')return;let sc=skillCost();if(mult>1){if(state.mp<sc)return;state.mp-=sc}let crit=Math.random()<critChance(),base=Math.floor(attack()*mult*(.85+Math.random()*.3)),dmg=crit?Math.floor(base*1.8):base;battle.hp-=dmg;spawnDmg(dmg,crit);beep(crit?1200:520,60,'square',.05);vibrate(crit?40:15);if(state.pet){let p=pets.find(x=>x.id===state.pet);if(p){let pdmg=Math.floor((p.base+state.level)*(applySkills().petMult||1));battle.hp-=pdmg;battle.log+=` ${p.emoji} бьёт на ${pdmg}. `}}if(battle.hp<=0){let m=battle.m;state.kills++;state.quests.kills++;if(battle.index>=0 && state.objects[battle.index]){let obj=state.objects[battle.index];if(!state.deadZones)state.deadZones=[];state.deadZones.push({lat:obj.pos.lat,lng:obj.pos.lng,respawnAt:Date.now()+86400000});state.objects.splice(battle.index,1);drawObjects();renderAll()}state.counters.wins++;if(m.tag)state.counters[m.tag]=(state.counters[m.tag]||0)+1;state.seen.push(monsters.indexOf(m));let goldGain=Math.floor(m.gold*(applySkills().goldMult||1));state.gold+=goldGain;addXp(m.xp);let extra='',dropChance=0.5+(m.tag==='boss'?0.4:(m.isElite?0.3:0));if(Math.random()<dropChance){let minRarity=m.tag==='boss'?3:(m.isElite?2:0);let it=makeItem(minRarity,battle.baseLevel);addToInventory(it);extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}).`}if(Math.random()<.25){addToInventory(makePotion());extra+=' +зелье.'}if(Math.random()<.15){addToInventory(makeShard());extra+=' +осколок.'}state.history.unshift({name:m.name,emoji:m.emoji,win:true});state.history=state.history.slice(0,20);checkAchievements();beep(880,200,'sine',.08);save();safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p><button class="primary" id="fb" style="width:100%">Забрать</button>`);safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return}battle.log=`${crit?'💥 КРИТ! ':''}Ты: ${dmg}.`;enemyTurn()}
+function spawnDmg(amount,crit,extraClass){let el=document.createElement('div');el.className='dmg'+(crit?' crit':'')+(extraClass?' '+extraClass:'');el.textContent=(crit?'-':'')+amount;let em=$('enemyEmoji');if(em){let r=em.getBoundingClientRect();el.style.left=(r.left+r.width/2-20)+'px';el.style.top=(r.top+10)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000)}}
+
+function enemyTurn(){
+  if(!battle) return;
+  if(pvp) return;
+  battle.turn='enemy';
+  renderBattle();
+  setTimeout(()=>{
+    if(!battle||pvp) return;
+    if(battle.m.tag==='boss'){
+      let ratio=battle.hp/battle.m.hp;
+      if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}
+      else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}
+    }
+    if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';battle.turn='player';renderBattle();return}
+    let rawDmg=battle.m.atk-defense(),minDmg=Math.floor(maxHp()*0.05),dmg=Math.max(1,rawDmg,minDmg);
+    state.hp-=dmg;vibrate(30);
+    let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}
+    if(state.hp<=0){
+      state.hp=Math.max(1,Math.floor(maxHp()*.25));
+      state.gold=Math.max(0,state.gold-10);
+      const isShadow=!!battle.shadow;
+      if(isShadow) state.elo = Math.max(0,(state.elo||1000)-10);
+      state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});
+      state.history=state.history.slice(0,20);
+      beep(120,300,'sawtooth',.1);
+      save();
+      const eloMsg = isShadow ? `<p class="muted">ELO: <b>${state.elo}</b> (−10)</p>` : '';
+      safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p>${eloMsg}<button class="primary" id="cb" style="width:100%">Продолжить</button>`);
+      safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
+      return;
+    }
+    battle.log+=` Враг: ${dmg}.`;
+    battle.turn='player';
+    renderBattle();
+  },600);
+}
+
+function battleTurn(mult){
+  if(!battle) return;
+  if(pvp) return;
+  if(battle.turn!=='player') return;
+  let sc=skillBaseCost();
+  if(mult>1){if(state.mp<sc)return;state.mp-=sc}
+  let crit=Math.random()<critChance();
+  let base=Math.floor(attack()*mult*(.85+Math.random()*.3));
+  let dmg=crit?Math.floor(base*1.8):base;
+  battle.hp-=dmg;
+  spawnDmg(dmg,crit);
+  beep(crit?1200:520,60,'square',.05);
+  vibrate(crit?40:15);
+  if(state.pet){
+    let p=pets.find(x=>x.id===state.pet);
+    if(p){let pdmg=Math.floor((p.base+state.level)*(applySkills().petMult||1));battle.hp-=pdmg;battle.log+=` ${p.emoji} бьёт на ${pdmg}. `}
+  }
+  if(battle.hp<=0){ finishBattleWin(); return; }
+  battle.log=`${crit?'💥 КРИТ! ':''}Ты: ${dmg}.`;
+  enemyTurn();
+}
+
+function battleSuper(kind){
+  if(!battle || pvp) return;
+  if(battle.turn!=='player') return;
+
+  const cost = kind==='smash' ? SMASH_MP_COST : VOID_MP_COST;
+  if(state.mp<cost) return;
+  state.mp-=cost;
+
+  let dmg;
+  let label;
+  if(kind==='smash'){
+    dmg = superDamage('smash');
+    dmg = Math.floor(dmg * (0.95 + Math.random()*0.15));
+    label = '💥 Разрушающий удар';
+  } else {
+    dmg = superDamage('void');
+    dmg = Math.floor(dmg * (0.9 + Math.random()*0.25));
+    label = '🕳️ Удар пустоты';
+  }
+  battle.hp -= dmg;
+  spawnDmg(dmg, true, 'super');
+  beep(kind==='void'?1400:1100,150,'sawtooth',.08);
+  vibrate(60);
+  battle.log = `${label}: ${dmg}!`;
+  if(battle.hp<=0){ finishBattleWin(); return; }
+  enemyTurn();
+}
+
+function finishBattleWin(){
+  let m=battle.m;
+  state.kills++;state.quests.kills++;
+  if(battle.index>=0 && state.objects[battle.index]){
+    let obj=state.objects[battle.index];
+    if(!state.deadZones)state.deadZones=[];
+    state.deadZones.push({lat:obj.pos.lat,lng:obj.pos.lng,respawnAt:Date.now()+86400000});
+    state.objects.splice(battle.index,1);
+    drawObjects();renderAll();
+  }
+  state.counters.wins++;
+  if(m.tag) state.counters[m.tag]=(state.counters[m.tag]||0)+1;
+  if(typeof battle.mi === 'number' && battle.mi >= 0 && !state.seen.includes(battle.mi)){
+    state.seen.push(battle.mi);
+  }
+  const isShadow=!!battle.shadow;
+  if(isShadow){
+    state.elo = Math.max(0,(state.elo||1000)+15);
+    state.counters.pvpWins = (state.counters.pvpWins||0)+1;
+  }
+  let goldGain=Math.floor(m.gold*(applySkills().goldMult||1));
+  state.gold+=goldGain;
+  addXp(m.xp);
+  let extra='';
+  let dropChance = isShadow ? 0 : (0.5+(m.tag==='boss'?0.4:(m.isElite?0.3:0)));
+  if(!isShadow && Math.random()<dropChance){
+    let minRarity=m.tag==='boss'?3:(m.isElite?2:0);
+    let it=makeItem(minRarity,battle.baseLevel);
+    addToInventory(it);
+    extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}).`;
+  }
+  if(!isShadow && Math.random()<.25){addToInventory(makePotion());extra+=' +зелье.'}
+  if(!isShadow && Math.random()<.15){addToInventory(makeShard());extra+=' +осколок.'}
+
+  state.history.unshift({name:m.name,emoji:m.emoji,win:true});
+  state.history=state.history.slice(0,20);
+  checkAchievements();
+  beep(880,200,'sine',.08);
+  save();
+
+  const eloMsg = isShadow ? `<p class="muted">ELO: <b>${state.elo}</b> (+15)</p>` : '';
+  safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p>${eloMsg}<button class="primary" id="fb" style="width:100%">Забрать</button>`);
+  safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
+}
 
 /* ============ PvP: реальный бой (хост-авторитет) ============ */
 let pvp = null;
@@ -663,69 +936,44 @@ function initChatAndFriends(){
   };});
 }
 
-/* --- Старт реального PvP --- */
 function startRealBattle(enemyName,enemyLevel,enemyHp,enemyAtk,bet,arenaId,isHost,enemyId){
   if(!window.FB){toast('Нет соединения');return;}
   if(battle||pvp)return;
   pvpCleanup();
   pvp = {
-    arenaId: arenaId,
-    isHost: !!isHost,
-    myId: myPlayerId,
-    enemyId: enemyId || null,
-    enemyName: enemyName,
-    enemyLevel: enemyLevel,
-    enemyMaxHp: enemyHp,
-    bet: bet || 0,
-    hpMe: maxHp(),
-    hpEnemy: enemyHp,
-    atkMe: attack(),
-    atkEnemy: enemyAtk,
+    arenaId: arenaId, isHost: !!isHost, myId: myPlayerId, enemyId: enemyId||null,
+    enemyName: enemyName, enemyLevel: enemyLevel, enemyMaxHp: enemyHp, bet: bet||0,
+    hpMe: maxHp(), hpEnemy: enemyHp, atkMe: attack(), atkEnemy: enemyAtk,
     turn: isHost ? 'me' : 'enemy',
     log: `Дуэль с ${enemyName}. Ставка: ${bet}◈. ${isHost?'Ваш ход.':'Ждём хода хоста...'}`,
-    round: 0,
-    finished: false,
-    baseLevel: enemyLevel,
+    round: 0, finished: false, baseLevel: enemyLevel,
     m: { name: enemyName, emoji: '👤', level: enemyLevel, xp: 50, gold: bet*2, drop: 0, tag: '' },
     index: -1
   };
   battle = { m: pvp.m, hp: pvp.hpEnemy, log: pvp.log, phase: 1, pvp: true, baseLevel: enemyLevel, turn: 'player', _pvp: pvp };
-
   if(isHost){
     window.FB.set(window.FB.ref(window.FB.db,'arenas/'+arenaId+'/battle'),{
-      hpA: pvp.hpMe, hpB: pvp.hpEnemy,
-      turn: 'A', round: 0, log: pvp.log,
-      finished: false, winner: null,
-      aId: myPlayerId, bId: enemyId || null,
-      lastAction: 'start'
+      hpA: pvp.hpMe, hpB: pvp.hpEnemy, turn: 'A', round: 0, log: pvp.log,
+      finished: false, winner: null, aId: myPlayerId, bId: enemyId||null, lastAction: 'start'
     }).then(()=>{ pvpBindBattle(); renderBattle(); }).catch(()=>{toast('Не удалось создать бой');});
-  } else {
-    pvpBindBattle();
-    renderBattle();
-  }
+  } else { pvpBindBattle(); renderBattle(); }
 }
 
 function pvpBindBattle(){
   if(!pvp||!window.FB)return;
   const bRef = window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle');
   const un = window.FB.onValue(bRef,(snap)=>{
-    const b = snap.val();
-    if(!b)return;
+    const b = snap.val(); if(!b)return;
     const amHost = pvp.isHost;
-    pvp.hpMe    = amHost ? b.hpA : b.hpB;
+    pvp.hpMe = amHost ? b.hpA : b.hpB;
     pvp.hpEnemy = amHost ? b.hpB : b.hpA;
-    pvp.turn    = (b.turn === (amHost?'A':'B')) ? 'me' : 'enemy';
-    pvp.log     = b.log || pvp.log;
-    pvp.round   = b.round || 0;
-    pvp.finished= !!b.finished;
-    battle.hp = pvp.hpEnemy;
-    battle.log = pvp.log;
+    pvp.turn = (b.turn === (amHost?'A':'B')) ? 'me' : 'enemy';
+    pvp.log = b.log || pvp.log;
+    pvp.round = b.round || 0;
+    pvp.finished = !!b.finished;
+    battle.hp = pvp.hpEnemy; battle.log = pvp.log;
     battle.turn = pvp.finished ? 'enemy' : (pvp.turn==='me'?'player':'enemy');
-    if(pvp.finished && !pvp._resolved){
-      pvp._resolved = true;
-      resolvePvpEnd(b.winner);
-      return;
-    }
+    if(pvp.finished && !pvp._resolved){ pvp._resolved = true; resolvePvpEnd(b.winner); return; }
     if(!pvp.finished) renderBattle();
   });
   pvpUnsub.push(()=>{try{un&&un();}catch(e){}});
@@ -733,36 +981,21 @@ function pvpBindBattle(){
 
 function resolvePvpEnd(winnerId){
   if(!pvp)return;
-  const iWon = winnerId === pvp.myId;
-  const bet = pvp.bet||0;
+  const iWon = winnerId === pvp.myId, bet = pvp.bet||0;
   if(iWon){
-    state.gold += bet*2;
-    addXp(80);
-    state.counters.wins++;
-    state.counters.pvpWins = (state.counters.pvpWins||0)+1;
-    toast('🏆 Победа! +'+(bet*2)+'◈');
-    beep(880,200,'sine',.08);
+    state.gold += bet*2; addXp(80);
+    state.counters.wins++; state.counters.pvpWins=(state.counters.pvpWins||0)+1;
+    toast('🏆 Победа! +'+(bet*2)+'◈'); beep(880,200,'sine',.08);
   } else {
-    addXp(20);
-    toast('💀 Поражение. -'+bet+'◈');
-    beep(120,300,'sawtooth',.1);
+    addXp(20); toast('💀 Поражение. -'+bet+'◈'); beep(120,300,'sawtooth',.1);
   }
   state.history.unshift({name:pvp.enemyName,emoji:'👤',win:iWon});
   state.history = state.history.slice(0,20);
   save();
-  safeHTML('modalContent',`
-    <div class="systemhead">▣ АРЕНА</div>
-    <div class="battleenemy"><div class="enemyemoji">${iWon?'✦':'💀'}</div><h2>${iWon?'Победа!':'Поражение'}</h2></div>
-    <p class="muted">${iWon?'+':'−'}${bet}◈</p>
-    <button class="primary" id="pvpEndBtn" style="width:100%">Продолжить</button>
-  `);
+  safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><div class="battleenemy"><div class="enemyemoji">${iWon?'✦':'💀'}</div><h2>${iWon?'Победа!':'Поражение'}</h2></div><p class="muted">${iWon?'+':'−'}${bet}◈</p><button class="primary" id="pvpEndBtn" style="width:100%">Продолжить</button>`);
   let mm=$('modal');if(mm)mm.classList.add('show');
   const aid = pvp.arenaId;
-  safe('pvpEndBtn',b=>{b.onclick=()=>{
-    let m=$('modal');if(m)m.classList.remove('show');
-    pvpCleanup(); pvp=null; battle=null;
-    try{window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+aid));}catch(e){}
-  };});
+  safe('pvpEndBtn',b=>{b.onclick=()=>{let m=$('modal');if(m)m.classList.remove('show');pvpCleanup();pvp=null;battle=null;try{window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+aid));}catch(e){}};});
   try{window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+aid));}catch(e){}
 }
 
@@ -775,83 +1008,56 @@ function calcPvpDmg(atkStat, defLevel){
 function pvpAction(action){
   if(!pvp||!window.FB)return;
   if(pvp.turn!=='me'||pvp.finished)return;
-
   if(pvp.isHost){
     let dmg=0, heal=0, log='';
     if(action==='attack'){ dmg=calcPvpDmg(pvp.atkMe, pvp.enemyLevel); log=`Вы бьёте на ${dmg}.`; }
-    else if(action==='skill'){ const cost=skillCost(); if(state.mp<cost)return; state.mp-=cost; dmg=Math.floor(calcPvpDmg(pvp.atkMe,pvp.enemyLevel)*1.5); log=`Импульс: ${dmg}.`; }
-    else if(action==='potion'){ const idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot)); if(idx<0)return; heal=state.inventory[idx].heal||35; if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)} log=`Зелье: +${heal} HP.`; }
+    else if(action==='skill'){ const cost=skillBaseCost(); if(state.mp<cost)return; state.mp-=cost; dmg=Math.floor(calcPvpDmg(pvp.atkMe,pvp.enemyLevel)*1.5); log=`Импульс: ${dmg}.`; }
+    else if(action==='potion'){ const idx=state.inventory.findIndex(i=>HP_POTIONS.includes(i.slot)); if(idx<0)return; heal=state.inventory[idx].heal||35; if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)} log=`Зелье: +${heal} HP.`; }
     pvp.hpEnemy -= dmg;
     pvp.hpMe = Math.min(maxHp(), pvp.hpMe + heal);
-
     if(pvp.hpEnemy<=0){
-      pvp.finished = true;
-      pvp.log = log + ' Противник повержен!';
-      battle.hp = pvp.hpEnemy; battle.log = pvp.log;
-      renderBattle();
+      pvp.finished = true; pvp.log = log + ' Противник повержен!';
+      battle.hp = pvp.hpEnemy; battle.log = pvp.log; renderBattle();
       window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{
         hpA: pvp.hpMe, hpB: 0, log: pvp.log, turn: 'B', round: pvp.round + 1,
         finished: true, winner: pvp.myId, lastAction: 'hostAttack'
       });
       return;
     }
-
     pvp.round++;
     pvp.log = log + ' Ход противника...';
-    battle.hp = pvp.hpEnemy; battle.log = pvp.log;
-    renderBattle();
-
+    battle.hp = pvp.hpEnemy; battle.log = pvp.log; renderBattle();
     window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{
-      hpA: pvp.hpMe, hpB: pvp.hpEnemy, log: pvp.log,
-      turn: 'B', round: pvp.round, finished: false, lastAction: 'hostAttack'
+      hpA: pvp.hpMe, hpB: pvp.hpEnemy, log: pvp.log, turn: 'B', round: pvp.round, finished: false, lastAction: 'hostAttack'
     });
-
     const moveRef = window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/moves/'+pvp.enemyId);
     const un = window.FB.onValue(moveRef,(snap)=>{
-      const mv = snap.val();
-      if(!mv)return;
-
+      const mv = snap.val(); if(!mv)return;
       let dmg2=0, heal2=0, log2=`${pvp.enemyName}: `;
       if(mv.action==='attack'){ dmg2=calcPvpDmg(pvp.atkEnemy, state.level); log2+=`бьёт на ${dmg2}.`; }
       else if(mv.action==='skill'){ dmg2=Math.floor(calcPvpDmg(pvp.atkEnemy,state.level)*1.5); log2+=`импульс на ${dmg2}.`; }
       else if(mv.action==='potion'){ heal2=mv.heal||35; log2+=`зелье +${heal2} HP.`; }
       else if(mv.action==='surrender'){ log2+='сдаётся.'; pvp.hpEnemy=0; }
-
       pvp.hpMe = Math.max(0, pvp.hpMe - dmg2);
       pvp.hpEnemy = Math.min(pvp.enemyMaxHp||pvp.hpEnemy, pvp.hpEnemy + heal2);
-
       let finished=false, winner=null;
       if(pvp.hpEnemy<=0){ finished=true; winner=pvp.myId; }
       else if(pvp.hpMe<=0){ finished=true; winner=pvp.enemyId; }
-
       pvp.log = log2 + (finished ? (winner===pvp.myId?' Противник повержен!':' Вы повержены.') : ' Ваш ход.');
       pvp.round++;
-
       window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{
-        hpA: pvp.hpMe, hpB: pvp.hpEnemy, log: pvp.log,
-        turn: 'A', round: pvp.round, finished: finished,
-        winner: winner, lastAction: 'challengerAttack'
+        hpA: pvp.hpMe, hpB: pvp.hpEnemy, log: pvp.log, turn: 'A', round: pvp.round,
+        finished: finished, winner: winner, lastAction: 'challengerAttack'
       });
       window.FB.remove(moveRef);
       try{un&&un();}catch(e){}
     });
     pvpUnsub.push(()=>{try{un&&un();}catch(e){}});
-
   } else {
     let payload = {action: action, ts: Date.now(), playerId: myPlayerId};
-    if(action==='potion'){
-      const idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));
-      if(idx<0)return;
-      payload.heal=state.inventory[idx].heal||35;
-      if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}
-    }
-    if(action==='skill'){
-      const cost=skillCost(); if(state.mp<cost)return; state.mp-=cost;
-    }
-    pvp.turn='enemy';
-    pvp.log='Ход отправлен. Ждём хоста...';
-    battle.log=pvp.log;
-    renderBattle();
+    if(action==='potion'){const idx=state.inventory.findIndex(i=>HP_POTIONS.includes(i.slot));if(idx<0)return;payload.heal=state.inventory[idx].heal||35;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}
+    if(action==='skill'){const cost=skillBaseCost();if(state.mp<cost)return;state.mp-=cost;}
+    pvp.turn='enemy'; pvp.log='Ход отправлен. Ждём хоста...'; battle.log=pvp.log; renderBattle();
     window.FB.set(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/moves/'+myPlayerId),payload).catch(()=>toast('Не отправлено'));
   }
 }
@@ -859,9 +1065,7 @@ function pvpAction(action){
 function pvpSurrender(){
   if(!pvp||!window.FB)return;
   if(pvp.isHost){
-    window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{
-      finished:true, winner: pvp.enemyId, log: 'Вы сдались.', lastAction:'hostSurrender'
-    });
+    window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{finished:true,winner:pvp.enemyId,log:'Вы сдались.',lastAction:'hostSurrender'});
   } else {
     window.FB.set(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/moves/'+myPlayerId),{action:'surrender',ts:Date.now(),playerId:myPlayerId});
   }
@@ -885,14 +1089,19 @@ safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatu
 safe('scanBtn',el=>{el.onclick=()=>scan();});
 safe('refreshObjects',el=>{el.onclick=()=>scan();});
 safe('spawnBtn',el=>{el.onclick=()=>{if(!state.position){state.position={lat:60.1699,lng:24.9384};if(map){map.setView([state.position.lat,state.position.lng],14);if(playerMarker)playerMarker.setLatLng([state.position.lat,state.position.lng]);else playerMarker=L.marker([state.position.lat,state.position.lng]).addTo(map);}}scan();sendPosition();};});
-safe('pvpBtn',el=>{el.onclick=()=>{let hpM=Math.floor(maxHp()*1.2),atkM=Math.floor(attack()*1.3);battle={m:{name:'Тень охотника',emoji:'👤',level:state.level,hp:hpM,atk:atkM,xp:Math.floor(state.level*20),gold:Math.floor(state.level*10),drop:0,tag:''},index:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,pvp:true,baseLevel:state.level,turn:'player'};renderBattle();};});
+safe('pvpBtn',el=>{el.onclick=()=>{
+  if(battle||pvp){toast('Сначала завершите текущий бой');return;}
+  let hpM=Math.floor(maxHp()*1.2),atkM=Math.floor(attack()*1.3);
+  battle={m:{name:'Тень охотника',emoji:'👤',level:state.level,hp:hpM,atk:atkM,xp:Math.floor(state.level*20),gold:Math.floor(state.level*10),drop:0,tag:''},index:-1,mi:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,shadow:true,baseLevel:state.level,turn:'player'};
+  renderBattle();
+};});
 safe('poiBtn',el=>{el.onclick=async()=>{if(!state.position){safeText('mapHint','Задай позицию.');return;}let{lat,lng}=state.position;let q=`[out:json];(node["amenity"](around:800,${lat},${lng});node["tourism"](around:800,${lat},${lng});node["leisure"](around:800,${lat},${lng}););out 15;`;safeText('mapHint','Запрос...');try{let r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:q});let j=await r.json();if(!j.elements||!j.elements.length){safeText('mapHint','POI не найдено.');return;}state.objects=state.objects.filter(o=>o.type!=='poi');j.elements.slice(0,10).forEach(el=>{let t=el.tags?.name||el.tags?.amenity||'Точка';let icon=el.tags?.amenity==='cafe'?'☕':el.tags?.tourism==='museum'?'🏛️':el.tags?.leisure==='park'?'🌳':'📍';state.objects.push({type:'poi',name:t,emoji:icon,pos:{lat:el.lat,lng:el.lon}});});drawObjects();save();safeText('mapHint',`POI: ${j.elements.length}`);}catch(err){safeText('mapHint','Ошибка Overpass (нет соединения).');}};});
 safe('arenaBtn',el=>{el.onclick=()=>{if(!map)return;arenaMarkers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});arenaMarkers=[];for(let i=0;i<3;i++){let p=randomPosition();let mk=L.circleMarker([p.lat,p.lng],{radius:20,color:'#ff8eaf',fillOpacity:.2}).addTo(map).bindPopup('🏟 Арена');arenaMarkers.push(mk);}safeText('mapHint','3 арены добавлены.');};});
 safe('storyBtn',el=>{el.onclick=()=>{let now=Date.now();if(now-state.lastStory<2*3600000){let rem=Math.ceil((2*3600000-(now-state.lastStory))/60000);notify('СОБЫТИЕ',`Следующее событие через ${rem} мин.`);return;}state.lastStory=now;let s=storyPool[Math.floor(Math.random()*storyPool.length)];safeHTML('modalContent',`<div class="systemhead">📖 СОБЫТИЕ</div><h2>${s.title}</h2><p class="muted">${s.text}</p><div class="grid2">${s.choices.map((c,i)=>`<button data-choice="${i}">${c.label}</button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-choice]').forEach(b=>{b.onclick=()=>{let r=s.choices[Number(b.dataset.choice)].fn();safeHTML('modalContent',`<div class="systemhead">📖 ИТОГ</div><p>${r}</p><button class="primary" id="cl">OK</button>`);safe('cl',bb=>{bb.onclick=()=>{let m=$('modal');if(m)m.classList.remove('show');save();}});};});};});
 safe('updatePosBtn',el=>{el.onclick=()=>{sendPosition();toast('Позиция обновлена');};});
 safe('createArenaBtn',el=>{el.onclick=()=>createArena();});
 safe('exportBtn',el=>{el.onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='awakening-save.json';a.click();toast('Сейв скачан');};});
-safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};save();toast('Загружено');}catch(e){toast('Ошибка файла');}};r.readAsText(f);};inp.click();};});
+safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};if(Array.isArray(state.seen)){state.seen=[...new Set(state.seen.map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length))];}save();toast('Загружено');}catch(e){toast('Ошибка файла');}};r.readAsText(f);};inp.click();};});
 safe('resetBtn',el=>{el.onclick=()=>{if(confirm('Удалить весь прогресс?')){localStorage.removeItem('awakeningSave');location.reload();}};});
 function showStartDialog(){safeHTML('modalContent',`<div class="systemhead">▣ ПРОБУЖДЕНИЕ</div><h2>Создание персонажа</h2><p class="muted small">Введи имя и выбери класс.</p><input type="text" id="startName" placeholder="Имя охотника" value="${state.name||'Охотник'}" style="margin-bottom:10px;"><div class="grid2">${Object.entries(classes).map(([id,c])=>`<button data-startclass="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-startclass]').forEach(b=>{b.onclick=()=>{let nameVal=$('startName').value.trim()||'Охотник';let classId=b.dataset.startclass;state.name=nameVal;state.class=classId;let c=classes[classId];for(let[k,v]of Object.entries(c.stats))state.stats[k]+=v;state.hp=maxHp();state.mp=maxMp();save();let mm=$('modal');if(mm)mm.classList.remove('show');toast('Добро пожаловать, '+state.name);sendPosition();};});}
 function initial(){document.body.classList.toggle('light',state.theme==='light');safeText('themeBtn',state.theme==='light'?'☀️':'🌙');initMap();try{renderAll()}catch(e){console.warn('renderAll initial:',e)}try{ensureDaily()}catch(e){}if(state.objects.length)try{drawObjects()}catch(e){}safeHTML('rankList',['E','D','C','B','A','S','SS','SSS'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));setInterval(()=>{try{renderDaily()}catch(e){}},60000);checkAchievements();if(!state.class)setTimeout(showStartDialog,1000);else setTimeout(sendPosition,2000);setTimeout(initOnline,1000);setTimeout(watchArena,1500);setTimeout(initChatAndFriends,2000);setInterval(()=>{try{sendPosition();}catch(e){}},120000);}
