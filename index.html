@@ -175,7 +175,7 @@ body.light .btn-super{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;"><p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p></div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.9.1 · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.9.2 · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -484,7 +484,12 @@ try{
   state.seenEliteBoss = [...new Set(norm(state.seenEliteBoss))];
 }catch(e){state=defaultState()}
 let map=null,playerMarker=null,markers=[],battle=null,arenaMarkers=[],onlineMarkers=[];
-const save=()=>{try{localStorage.setItem('awakeningSave',JSON.stringify(state))}catch(e){}try{renderAll()}catch(e){console.warn('renderAll fail',e)}};
+
+// save() больше не вызывает renderAll автоматически — только пишет в localStorage.
+const save=()=>{
+  try{localStorage.setItem('awakeningSave',JSON.stringify(state))}catch(e){}
+};
+
 const applySkills=()=>{let s={};for(let [id,lvl] of Object.entries(state.skills||{})){let sk=skills.find(x=>x.id===id);if(sk)for(let i=0;i<lvl;i++)sk.apply(s)}return s};
 const classBonus=key=>state.class?classes[state.class].stats[key]||0:0;
 const equipBonus=key=>Object.values(state.equipment).filter(Boolean).reduce((s,it)=>s+(it.bonus?.[key]||0),0);
@@ -509,7 +514,6 @@ const defense=()=>Math.floor(totalStat('Выносливость')*.8+equipBonus
 const xpNeed=()=>{const l=state.level;return Math.floor(100+(l-1)*65+l*l*0.5+Math.pow(l,2.4)*0.8)};
 const critChance=()=>Math.min(.6,totalStat('Ловкость')*.015+(applySkills().critAdd||0)+(state.pet==='cat'?.05:0));
 const dodgeChance=()=>Math.min(.4,totalStat('Ловкость')*.008);
-// Импульс: 16 MP базово, навык −1 за уровень, минимум 8
 const skillBaseCost=()=>{
   const sk = applySkills();
   const raw = sk.skillCost ?? 16;
@@ -615,7 +619,11 @@ function countBySlot(slot){return state.inventory.filter(i=>i.slot===slot).reduc
 function checkAchievements(){for(let a of achievements){if(state.achievements[a.id])continue;try{if(a.check(state)){state.achievements[a.id]=true;if(a.reward.gold)state.gold+=a.reward.gold;if(a.reward.xp)addXp(a.reward.xp);toast('🏆 '+a.name);beep(1200,150,'sine',.08)}}catch(e){}}}
 function addToInventory(item){let isStackable=[SHARD,XP_SCROLL,...POTION_SLOTS].includes(item.slot);if(isStackable){let existing=state.inventory.find(i=>i.slot===item.slot);if(existing){existing.qty=(existing.qty||1)+1;return}item.qty=1;state.inventory.push(item)}else{state.inventory.push(item)}}
 
+let __rendering = false;
 function renderAll(){
+  if (__rendering) return;
+  __rendering = true;
+  try {
   let need=xpNeed();
   safeText('levelText','УРОВЕНЬ '+state.level+(state.level>=MAX_LEVEL?' (MAX)':''));
   safeText('xpText', state.level>=MAX_LEVEL ? 'MAX' : `${state.xp} / ${need} XP`);
@@ -747,57 +755,60 @@ function renderAll(){
   safeHTML('lbList', (() => {try {let lb = JSON.parse(localStorage.getItem('awakeningLB') || '[]');lb.push({name:'Ты', elo: state.elo});lb.sort((a,b) => b.elo - a.elo);let top = lb.slice(0,10);localStorage.setItem('awakeningLB', JSON.stringify(top));return top.map((x,i) => `<div class="hrow"><span>${i+1}. ${x.name}</span><span>${x.elo}</span></div>`).join('');} catch(e){ return ''; }})());
   safeHTML('shopList', shopItems.map(s => `<div class="craftrow"><div class="iconbox">${s.icon}</div><div class="iteminfo"><strong>${s.name}</strong><small>${s.price}◈</small></div><button data-shop="${s.id}" ${state.gold<s.price?'disabled':''}>Купить</button></div>`).join(''));
   renderOnline();
+  } finally {
+    __rendering = false;
+  }
 }
 function ensureDaily(){let today=new Date().toISOString().slice(0,10);if(state.daily.date===today&&state.daily.pool.length)return;let pool=[...dailyPool].sort(()=>Math.random()-.5).slice(0,3);state.daily={date:today,pool:pool.map(p=>p.id),progress:{}};save()}
 function renderDaily(){ensureDaily();let now=new Date();let t=new Date(now);t.setHours(24,0,0,0);let ms=t-now;let h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000);safeText('dailyTimer',`${h}ч ${m}м`);safeHTML('dailyList',state.daily.pool.map(id=>{let q=dailyPool.find(x=>x.id===id);if(!q)return'';let cur=state.counters[q.field]||0;let prog=Math.min(q.goal,cur);let done=cur>=q.goal;let claimed=!!state.daily.progress[id];return `<div class="card"><div class="row"><strong>${q.desc}</strong><span class="pill">${claimed?'✓':done?'Готово':prog+'/'+q.goal}</span></div><div class="bar"><i style="width:${prog/q.goal*100}%"></i></div><div class="row"><span class="questreward">${q.reward.xp} XP · ${q.reward.gold}◈${q.reward.item!==undefined?' · предмет':''}</span><button data-daily="${id}" ${done&&!claimed?'':'disabled'}>${claimed?'✓':done?'Забрать':'—'}</button></div></div>`}).join(''))}
 function renderGift(){let today=new Date().toISOString().slice(0,10);let last=state.dailyGift.last;let canClaim=last!==today;let streak=state.dailyGift.streak;safeHTML('dailyGift',`<div class="row"><span>Серия: <b>${streak}</b> дн.</span><button class="primary" id="giftBtn" ${canClaim?'':'disabled'}>${canClaim?'Забрать':'Уже сегодня'}</button></div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px">${[1,2,3,4,5,6,7].map(d=>`<div class="stat" style="text-align:center;padding:6px;${d<=streak?'border-color:#ffd36a':''}"><small>Д${d}</small><b style="font-size:12px">${[10,20,30,40,50,75,150][d-1]}◈</b></div>`).join('')}</div>`);let gb=$('giftBtn');if(gb)gb.onclick=()=>{if(!canClaim)return;let yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);streak=last===yesterday?streak+1:1;state.dailyGift={last:today,streak:Math.min(7,streak)};let reward=[10,20,30,40,50,75,150][state.dailyGift.streak-1];state.gold+=reward;beep(880,200,'sine',.08);toast('Награда: +'+reward+'◈');save()}}
 function setPage(p){document.querySelectorAll('.page').forEach(x=>{x.classList.toggle('active',x.id==='page-'+p)});document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('active',x.dataset.page===p)});if(p==='map'&&map)setTimeout(()=>{try{map.invalidateSize()}catch(e){}},100);if(p==='online') renderOnline();try{renderAll()}catch(e){console.warn('renderAll:',e)}}
 document.querySelectorAll('.tab').forEach(b=>{b.onclick=()=>setPage(b.dataset.page)});
-safe('tabBeastNormal', el=>{el.onclick=()=>{state.beastMode='normal';save();}});
-safe('tabBeastElite', el=>{el.onclick=()=>{state.beastMode='elite';save();}});
-safe('tabBeastBoss', el=>{el.onclick=()=>{state.beastMode='boss';save();}});
-safe('tabBeastEliteBoss', el=>{el.onclick=()=>{state.beastMode='eliteBoss';save();}});
+safe('tabBeastNormal', el=>{el.onclick=()=>{state.beastMode='normal';save();renderAll();}});
+safe('tabBeastElite', el=>{el.onclick=()=>{state.beastMode='elite';save();renderAll();}});
+safe('tabBeastBoss', el=>{el.onclick=()=>{state.beastMode='boss';save();renderAll();}});
+safe('tabBeastEliteBoss', el=>{el.onclick=()=>{state.beastMode='eliteBoss';save();renderAll();}});
 
 document.addEventListener('click',e=>{
 let eq=e.target.closest('[data-equip]');if(eq){let raw=eq.dataset.equip;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];
-  if(HP_POTIONS.includes(it.slot)){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+(it.heal||35));vibrate(20);save();return}
-  if(it.slot===MANA_POTION){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.mp=Math.min(maxMp(),state.mp+(it.mana||50));vibrate(20);save();return}
-  if(it.slot===XP_SCROLL){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}addXp(it.xp||500);vibrate(20);save();return}
+  if(HP_POTIONS.includes(it.slot)){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+(it.heal||35));vibrate(20);save();renderAll();return}
+  if(it.slot===MANA_POTION){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}state.mp=Math.min(maxMp(),state.mp+(it.mana||50));vibrate(20);save();renderAll();return}
+  if(it.slot===XP_SCROLL){if(it.qty>1){it.qty--}else{state.inventory.splice(idx,1)}addXp(it.xp||500);vibrate(20);save();renderAll();return}
   if(it.slot===SHARD)return;
-  state.inventory.splice(idx,1);if(state.equipment[it.slot])state.inventory.push(state.equipment[it.slot]);state.equipment[it.slot]=it;state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save()
+  state.inventory.splice(idx,1);if(state.equipment[it.slot])state.inventory.push(state.equipment[it.slot]);state.equipment[it.slot]=it;state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save();renderAll()
 }}
-let un=e.target.closest('[data-unequip]');if(un){let s=un.dataset.unequip;if(state.equipment[s]){addToInventory(state.equipment[s]);delete state.equipment[s];state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save()}}
-let sl=e.target.closest('[data-sell]');if(sl){let raw=sl.dataset.sell;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];let price=Math.floor((it.rarity+1)*15*(it.level||1)*0.5)+10;if(it.qty && it.qty>1){it.qty--;state.gold+=price}else{state.inventory.splice(idx,1);state.gold+=price}toast('+'+price+'◈');save()}}
-let st=e.target.closest('[data-stat]');if(st&&state.points>0){state.stats[st.dataset.stat]++;state.points--;save()}
+let un=e.target.closest('[data-unequip]');if(un){let s=un.dataset.unequip;if(state.equipment[s]){addToInventory(state.equipment[s]);delete state.equipment[s];state.hp=Math.min(state.hp,maxHp());state.mp=Math.min(state.mp,maxMp());save();renderAll()}}
+let sl=e.target.closest('[data-sell]');if(sl){let raw=sl.dataset.sell;let idx=state.inventory.findIndex(x=>String(x.id)===String(raw));if(idx>=0){let it=state.inventory[idx];let price=Math.floor((it.rarity+1)*15*(it.level||1)*0.5)+10;if(it.qty && it.qty>1){it.qty--;state.gold+=price}else{state.inventory.splice(idx,1);state.gold+=price}toast('+'+price+'◈');save();renderAll()}}
+let st=e.target.closest('[data-stat]');if(st&&state.points>0){state.stats[st.dataset.stat]++;state.points--;save();renderAll()}
 let sk=e.target.closest('[data-skill]');if(sk){
   let id=sk.dataset.skill,skd=skills.find(x=>x.id===id),lvl=state.skills[id]||0;
   if(skd && lvl<skd.max){
     const cost = skillCost(lvl);
-    if(state.points>=cost){state.points-=cost;state.skills[id]=lvl+1;beep(700,100,'sine',.06);save();}
+    if(state.points>=cost){state.points-=cost;state.skills[id]=lvl+1;beep(700,100,'sine',.06);save();renderAll();}
     else toast(`Нужно ${cost} очк.`);
   }
 }
-let pt=e.target.closest('[data-pet]');if(pt){let id=pt.dataset.pet;if(id==='release'){state.pet=null;save();return}if(state.gold>=200){state.gold-=200;state.pet=id;toast('Приручен: '+pets.find(p=>p.id===id).name);beep(880,150,'sine',.08);save()}else toast('Не хватает золота')}
-let q=e.target.closest('[data-quest]');if(q){let id=q.dataset.quest,done=id==='kills'?state.quests.kills>=3:id==='scans'?state.quests.scans>=2:state.level>=3;if(done&&!state.quests['claimed_'+id]){state.quests['claimed_'+id]=true;if(id==='kills'){addXp(120);state.gold+=50}else if(id==='scans'){addXp(80);state.gold+=30;addToInventory(makeItem(1))}else{addXp(200);addToInventory(makeItem(2))}save();notify('НАГРАДА','Получено.')}}
-let ch=e.target.closest('[data-chain]');if(ch){let i=Number(ch.dataset.chain);let c=chain[i];if(c&&(state.counters[c.field]||0)>=c.goal&&!state.counters['chain_'+i]&&i<=state.chainIdx){state.counters['chain_'+i]=true;state.gold+=c.reward.gold;addXp(c.reward.xp);if(c.reward.item!==undefined)addToInventory(makeItem(c.reward.item));if(i===state.chainIdx)state.chainIdx++;save();notify('ЦЕПОЧКА','Шаг выполнен.')}}
-let dq=e.target.closest('[data-daily]');if(dq){let id=dq.dataset.daily;let q=dailyPool.find(x=>x.id===id);if(!q)return;let cur=state.counters[q.field]||0;if(cur>=q.goal&&!state.daily.progress[id]){state.daily.progress[id]=true;state.gold+=q.reward.gold;addXp(q.reward.xp);if(q.reward.item!==undefined)addToInventory(makeItem(q.reward.item));save();toast('Ежедневка ✓')}}
+let pt=e.target.closest('[data-pet]');if(pt){let id=pt.dataset.pet;if(id==='release'){state.pet=null;save();renderAll();return}if(state.gold>=200){state.gold-=200;state.pet=id;toast('Приручен: '+pets.find(p=>p.id===id).name);beep(880,150,'sine',.08);save();renderAll()}else toast('Не хватает золота')}
+let q=e.target.closest('[data-quest]');if(q){let id=q.dataset.quest,done=id==='kills'?state.quests.kills>=3:id==='scans'?state.quests.scans>=2:state.level>=3;if(done&&!state.quests['claimed_'+id]){state.quests['claimed_'+id]=true;if(id==='kills'){addXp(120);state.gold+=50}else if(id==='scans'){addXp(80);state.gold+=30;addToInventory(makeItem(1))}else{addXp(200);addToInventory(makeItem(2))}save();renderAll();notify('НАГРАДА','Получено.')}}
+let ch=e.target.closest('[data-chain]');if(ch){let i=Number(ch.dataset.chain);let c=chain[i];if(c&&(state.counters[c.field]||0)>=c.goal&&!state.counters['chain_'+i]&&i<=state.chainIdx){state.counters['chain_'+i]=true;state.gold+=c.reward.gold;addXp(c.reward.xp);if(c.reward.item!==undefined)addToInventory(makeItem(c.reward.item));if(i===state.chainIdx)state.chainIdx++;save();renderAll();notify('ЦЕПОЧКА','Шаг выполнен.')}}
+let dq=e.target.closest('[data-daily]');if(dq){let id=dq.dataset.daily;let q=dailyPool.find(x=>x.id===id);if(!q)return;let cur=state.counters[q.field]||0;if(cur>=q.goal&&!state.daily.progress[id]){state.daily.progress[id]=true;state.gold+=q.reward.gold;addXp(q.reward.xp);if(q.reward.item!==undefined)addToInventory(makeItem(q.reward.item));save();renderAll();toast('Ежедневка ✓')}}
 let cr=e.target.closest('[data-craft]');
 if(cr){
   const type=cr.dataset.craft;
   const take=(slot,n)=>{for(let i=0;i<n;i++){let idx=state.inventory.findIndex(x=>x.slot===slot);if(idx<0)return false;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}}return true};
-  if(type==='big'){if(countBySlot(POTION)<3)return;if(!take(POTION,3))return;addToInventory(makeBigPotion());state.counters.crafts++;save();notify('КРАФТ','Большое зелье ⚗️')}
-  else if(type==='mana'){if(countBySlot(SHARD)<2)return;if(!take(SHARD,2))return;addToInventory(makeManaPotion());state.counters.crafts++;save();notify('КРАФТ','Эликсир маны 🔮')}
-  else if(type==='xp'){if(countBySlot(SHARD)<3||countBySlot(BIG_POTION)<1)return;if(!take(SHARD,3)||!take(BIG_POTION,1))return;addToInventory(makeXpScroll());state.counters.crafts++;save();notify('КРАФТ','Свиток опыта 📜')}
-  else if(type==='item'){if(countBySlot(SHARD)<5)return;if(!take(SHARD,5))return;let it=makeItem(1);addToInventory(it);state.counters.crafts++;save();notify('КРАФТ',`${it.name} (${rarity[it.rarity]})`)}
-  else if(type==='mid'){if(countBySlot(POTION)<2)return;if(!take(POTION,2))return;addToInventory(makeMidPotion());state.counters.crafts++;save();notify('КРАФТ','Среднее зелье 🩹')}
-  else if(type==='greater'){if(countBySlot(BIG_POTION)<2)return;if(!take(BIG_POTION,2))return;addToInventory(makeGreaterPotion());state.counters.crafts++;save();notify('КРАФТ','Сильное зелье 💊')}
-  else if(type==='elite'){if(countBySlot(GREATER_POTION)<2||countBySlot(SHARD)<1)return;if(!take(GREATER_POTION,2)||!take(SHARD,1))return;addToInventory(makeElitePotion());state.counters.crafts++;save();notify('КРАФТ','Элитное зелье 🌟')}
-  else if(type==='titan'){if(countBySlot(ELITE_POTION)<2||countBySlot(SHARD)<2)return;if(!take(ELITE_POTION,2)||!take(SHARD,2))return;addToInventory(makeTitanPotion());state.counters.crafts++;save();notify('КРАФТ','Титаническое зелье 🏆')}
-  else if(type==='immortal'){if(countBySlot(TITAN_POTION)<2||countBySlot(SHARD)<3)return;if(!take(TITAN_POTION,2)||!take(SHARD,3))return;addToInventory(makeImmortalPotion());state.counters.crafts++;save();notify('КРАФТ','Зелье бессмертия 👑')}
+  if(type==='big'){if(countBySlot(POTION)<3)return;if(!take(POTION,3))return;addToInventory(makeBigPotion());state.counters.crafts++;save();renderAll();notify('КРАФТ','Большое зелье ⚗️')}
+  else if(type==='mana'){if(countBySlot(SHARD)<2)return;if(!take(SHARD,2))return;addToInventory(makeManaPotion());state.counters.crafts++;save();renderAll();notify('КРАФТ','Эликсир маны 🔮')}
+  else if(type==='xp'){if(countBySlot(SHARD)<3||countBySlot(BIG_POTION)<1)return;if(!take(SHARD,3)||!take(BIG_POTION,1))return;addToInventory(makeXpScroll());state.counters.crafts++;save();renderAll();notify('КРАФТ','Свиток опыта 📜')}
+  else if(type==='item'){if(countBySlot(SHARD)<5)return;if(!take(SHARD,5))return;let it=makeItem(1);addToInventory(it);state.counters.crafts++;save();renderAll();notify('КРАФТ',`${it.name} (${rarity[it.rarity]})`)}
+  else if(type==='mid'){if(countBySlot(POTION)<2)return;if(!take(POTION,2))return;addToInventory(makeMidPotion());state.counters.crafts++;save();renderAll();notify('КРАФТ','Среднее зелье 🩹')}
+  else if(type==='greater'){if(countBySlot(BIG_POTION)<2)return;if(!take(BIG_POTION,2))return;addToInventory(makeGreaterPotion());state.counters.crafts++;save();renderAll();notify('КРАФТ','Сильное зелье 💊')}
+  else if(type==='elite'){if(countBySlot(GREATER_POTION)<2||countBySlot(SHARD)<1)return;if(!take(GREATER_POTION,2)||!take(SHARD,1))return;addToInventory(makeElitePotion());state.counters.crafts++;save();renderAll();notify('КРАФТ','Элитное зелье 🌟')}
+  else if(type==='titan'){if(countBySlot(ELITE_POTION)<2||countBySlot(SHARD)<2)return;if(!take(ELITE_POTION,2)||!take(SHARD,2))return;addToInventory(makeTitanPotion());state.counters.crafts++;save();renderAll();notify('КРАФТ','Титаническое зелье 🏆')}
+  else if(type==='immortal'){if(countBySlot(TITAN_POTION)<2||countBySlot(SHARD)<3)return;if(!take(TITAN_POTION,2)||!take(SHARD,3))return;addToInventory(makeImmortalPotion());state.counters.crafts++;save();renderAll();notify('КРАФТ','Зелье бессмертия 👑')}
 }
-let shop=e.target.closest('[data-shop]');if(shop){let s=shopItems.find(x=>x.id===shop.dataset.shop);if(s&&state.gold>=s.price){state.gold-=s.price;s.fn();toast('Куплено: '+s.name);save()}}
+let shop=e.target.closest('[data-shop]');if(shop){let s=shopItems.find(x=>x.id===shop.dataset.shop);if(s&&state.gold>=s.price){state.gold-=s.price;s.fn();toast('Куплено: '+s.name);save();renderAll()}}
 });
-safe('sortInventory',el=>{el.onclick=()=>{state.inventory.sort((a,b)=>b.rarity-a.rarity);save()}});
+safe('sortInventory',el=>{el.onclick=()=>{state.inventory.sort((a,b)=>b.rarity-a.rarity);save();renderAll()}});
 safe('themeBtn',el=>{el.onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.body.classList.toggle('light',state.theme==='light');el.textContent=state.theme==='light'?'☀️':'🌙';save()}});
 
 /* ===================== БОЙ ===================== */
@@ -957,7 +968,7 @@ function enemyTurn(){
       save();
       const eloMsg = isShadow ? `<p class="muted">ELO: <b>${state.elo}</b> (−10)</p>` : '';
       safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p>${eloMsg}<button class="primary" id="cb" style="width:100%">Продолжить</button>`);
-      safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
+      safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null;renderAll();}});
       return;
     }
     battle.log+=` Враг: ${dmg}.`;
@@ -1021,7 +1032,7 @@ function finishBattleWin(){
     if(!state.deadZones)state.deadZones=[];
     state.deadZones.push({lat:obj.pos.lat,lng:obj.pos.lng,respawnAt:Date.now()+86400000});
     state.objects.splice(battle.index,1);
-    drawObjects();renderAll();
+    drawObjects();
   }
   state.counters.wins++;
   if(m.tag) state.counters[m.tag]=(state.counters[m.tag]||0)+1;
@@ -1076,6 +1087,7 @@ function finishBattleWin(){
   checkAchievements();
   beep(880,200,'sine',.08);
   save();
+  renderAll();
 
   const eloMsg = isShadow ? `<p class="muted">ELO: <b>${state.elo}</b> (+15)</p>` : '';
   const tierMsg = tier==='eliteBoss' ? '<p class="muted">🔥 Элит-босс повержен!</p>' :
@@ -1131,7 +1143,11 @@ function initOnline(){
   });
 }
 
+let __onlineRendering = false;
 function renderOnline(){
+  if (__onlineRendering) return;
+  __onlineRendering = true;
+  try {
   if(!window.FB){
     safeHTML('onlineList','<p class="muted small" style="padding:10px;text-align:center;">Подключение к серверу...</p>');
     return;
@@ -1152,6 +1168,9 @@ function renderOnline(){
   safeText('onlineCount',count);
   if(count>0)safeHTML('onlineList',listHtml);
   else safeHTML('onlineList','<p class="muted small" style="text-align:center; padding:20px;">Рядом пока никого нет. Пригласи друзей!</p>');
+  } finally {
+    __onlineRendering = false;
+  }
 }
 
 window.flyToPlayer=(lat,lng)=>{if(map)map.setView([lat,lng],16);setPage('map');};
@@ -1237,6 +1256,7 @@ function resolvePvpEnd(winnerId){
   state.history.unshift({name:pvp.enemyName,emoji:'👤',win:iWon});
   state.history = state.history.slice(0,20);
   save();
+  renderAll();
   safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><div class="battleenemy"><div class="enemyemoji">${iWon?'✦':'💀'}</div><h2>${iWon?'Победа!':'Поражение'}</h2></div><p class="muted">${iWon?'+':'−'}${bet}◈</p><button class="primary" id="pvpEndBtn" style="width:100%">Продолжить</button>`);
   let mm=$('modal');if(mm)mm.classList.add('show');
   const aid = pvp.arenaId;
@@ -1334,58 +1354,84 @@ function pickTier(){
   return 'normal';
 }
 
+// Оптимизированная версия scan()
 function scan(){
-  state.scans++;state.quests.scans++;state.objects=[];
+  state.scans++;state.quests.scans++;
+  state.objects=[];
   let now=Date.now();
   if(state.deadZones)state.deadZones=state.deadZones.filter(z=>z.respawnAt>now);
   else state.deadZones=[];
-  let n=3+Math.floor(Math.random()*3);
-  for(let i=0;i<n;i++){
-    let pos=randomPosition();
-    let inDeadZone=state.deadZones.some(z=>{let d=Math.sqrt(Math.pow(z.lat-pos.lat,2)+Math.pow(z.lng-pos.lng,2));return d<0.002;});
-    if(inDeadZone){i--;continue;}
-    if(Math.random()< (1-SCAN_CHEST_CHANCE)){
-      const lvlCap = Math.min(state.level, 500);
-      let av=monsters.filter(m=>m.level>=lvlCap-10 && m.level<=lvlCap+15);
-      if(!av.length) av=monsters.filter(m=>m.level<=lvlCap+15);
-      if(!av.length) av=[monsters[0]];
 
-      let poolNormal = av.filter(m=>m.tag!=='boss' && !m.isEliteBoss);
-      let poolBoss   = av.filter(m=>m.tag==='boss' && !m.isEliteBoss);
-      let poolEBoss  = av.filter(m=>m.isEliteBoss);
+  const lvlCap = Math.min(state.level, 500);
+  const lvlMin = Math.max(1, lvlCap - 10);
+  const lvlMax = lvlCap + 15;
 
-      const tier = pickTier();
-      let m;
-      if (tier==='eliteBoss' && poolEBoss.length) m = poolEBoss[Math.floor(Math.random()*poolEBoss.length)];
-      else if (tier==='boss' && poolBoss.length) m = poolBoss[Math.floor(Math.random()*poolBoss.length)];
-      else if (tier==='elite' && poolNormal.length) m = poolNormal[Math.floor(Math.random()*poolNormal.length)];
-      else if (poolNormal.length) m = poolNormal[Math.floor(Math.random()*poolNormal.length)];
-      else m = av[Math.floor(Math.random()*av.length)];
-
-      let actualTier = tier;
-      if (tier==='eliteBoss' && !poolEBoss.length) actualTier='boss';
-      if (tier==='elite' && !poolNormal.length) actualTier='normal';
-      if (tier==='boss' && !poolBoss.length) actualTier='normal';
-
-      let prefix = '';
-      if (actualTier==='elite') prefix='💀 ';
-      else if (actualTier==='boss') prefix='👹 ';
-      else if (actualTier==='eliteBoss') prefix='🔥 ';
-
-      state.objects.push({
-        type:'monster',
-        mi:monsters.indexOf(m),
-        name:prefix + m.name,
-        emoji:m.emoji,
-        pos:pos,
-        scaled:m,
-        tier:actualTier
-      });
-    } else {
-      state.objects.push({type:'chest',name:'Сундук',emoji:'🎁',pos:pos});
-    }
+  // Один раз готовим пулы индексов
+  const candidates = [];
+  for (let i=0;i<monsters.length;i++){
+    const lv = monsters[i].level;
+    if (lv >= lvlMin && lv <= lvlMax) candidates.push(i);
   }
-  drawObjects();save();safeText('mapHint','Найдено: '+state.objects.length);checkAchievements();
+  if (!candidates.length){
+    for (let i=0;i<monsters.length;i++) if (monsters[i].level <= lvlMax) candidates.push(i);
+  }
+  if (!candidates.length) candidates.push(0);
+
+  const normalIdx = [], bossIdx = [], ebossIdx = [];
+  for (const idx of candidates){
+    const m = monsters[idx];
+    if (m.isEliteBoss) ebossIdx.push(idx);
+    else if (m.tag === 'boss') bossIdx.push(idx);
+    else normalIdx.push(idx);
+  }
+
+  const n = 3 + Math.floor(Math.random()*3);
+  for (let i=0;i<n;i++){
+    let pos = randomPosition();
+
+    let inDeadZone = state.deadZones.some(z=>{
+      const d = Math.hypot(z.lat - pos.lat, z.lng - pos.lng);
+      return d < 0.002;
+    });
+    if (inDeadZone){ i--; continue; }
+
+    // Сундук 10% — раньше тира, чтобы не тратить время
+    if (Math.random() < SCAN_CHEST_CHANCE){
+      state.objects.push({type:'chest', name:'Сундук', emoji:'🎁', pos:pos});
+      continue;
+    }
+
+    // Тир
+    const tier = pickTier();
+    let pool = normalIdx, actualTier = tier;
+    if (tier==='eliteBoss' && ebossIdx.length){ pool = ebossIdx; }
+    else if (tier==='boss' && bossIdx.length){ pool = bossIdx; }
+    else if (tier==='elite' && normalIdx.length){ pool = normalIdx; }
+    else { pool = normalIdx.length ? normalIdx : candidates; actualTier = 'normal'; }
+
+    const mi = pool[Math.floor(Math.random()*pool.length)];
+    const m = monsters[mi];
+
+    let prefix = '';
+    if (actualTier==='elite') prefix='💀 ';
+    else if (actualTier==='boss') prefix='👹 ';
+    else if (actualTier==='eliteBoss') prefix='🔥 ';
+
+    state.objects.push({
+      type:'monster',
+      mi: mi,
+      name: prefix + m.name,
+      emoji: m.emoji,
+      pos: pos,
+      scaled: m,
+      tier: actualTier
+    });
+  }
+
+  drawObjects();
+  save();
+  safeText('mapHint','Найдено: '+state.objects.length);
+  checkAchievements();
 }
 function drawObjects(){
   markers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});markers=[];
@@ -1409,13 +1455,21 @@ function interact(i){
     let g=15+Math.floor(Math.random()*45);state.gold+=g;state.counters.chests++;
     let it=Math.random()<.7?makeItem(0):null;if(it)addToInventory(it);
     if(Math.random()<.3)addToInventory(makeShard());
-    state.objects.splice(i,1);drawObjects();save();
+    state.objects.splice(i,1);drawObjects();save();renderAll();
     notify('СУНДУК',`+${g}◈${it?' +'+it.name:''}`);checkAchievements();
   } else { notify('POI',o.name); }
 }
 safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatus','GPS недоступен');return;}navigator.geolocation.getCurrentPosition(pos=>{let p={lat:pos.coords.latitude,lng:pos.coords.longitude};state.position=p;safeText('gpsStatus','GPS ✓');if(map){map.setView([p.lat,p.lng],16);if(playerMarker)playerMarker.setLatLng([p.lat,p.lng]);else playerMarker=L.marker([p.lat,p.lng]).addTo(map).bindPopup('Ты').openPopup();}save();sendPosition();},()=>{safeText('gpsStatus','GPS ✗');},{enableHighAccuracy:true,timeout:12000,maximumAge:30000});};});
 safe('scanBtn',el=>{el.onclick=()=>scan();});
-safe('refreshObjects',el=>{el.onclick=()=>scan();});
+safe('refreshObjects',el=>{
+  el.onclick=()=>{
+    el.disabled = true;
+    el.textContent = '…';
+    try { scan(); } finally {
+      setTimeout(()=>{ el.disabled = false; el.textContent = 'Обновить'; }, 200);
+    }
+  };
+});
 safe('spawnBtn',el=>{el.onclick=()=>{if(!state.position){state.position={lat:60.1699,lng:24.9384};if(map){map.setView([state.position.lat,state.position.lng],14);if(playerMarker)playerMarker.setLatLng([state.position.lat,state.position.lng]);else playerMarker=L.marker([state.position.lat,state.position.lng]).addTo(map);}}scan();sendPosition();};});
 safe('pvpBtn',el=>{el.onclick=()=>{
   if(battle||pvp){toast('Сначала завершите текущий бой');return;}
@@ -1425,13 +1479,13 @@ safe('pvpBtn',el=>{el.onclick=()=>{
 };});
 safe('poiBtn',el=>{el.onclick=async()=>{if(!state.position){safeText('mapHint','Задай позицию.');return;}let{lat,lng}=state.position;let q=`[out:json];(node["amenity"](around:800,${lat},${lng});node["tourism"](around:800,${lat},${lng});node["leisure"](around:800,${lat},${lng}););out 15;`;safeText('mapHint','Запрос...');try{let r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:q});let j=await r.json();if(!j.elements||!j.elements.length){safeText('mapHint','POI не найдено.');return;}state.objects=state.objects.filter(o=>o.type!=='poi');j.elements.slice(0,10).forEach(el=>{let t=el.tags?.name||el.tags?.amenity||'Точка';let icon=el.tags?.amenity==='cafe'?'☕':el.tags?.tourism==='museum'?'🏛️':el.tags?.leisure==='park'?'🌳':'📍';state.objects.push({type:'poi',name:t,emoji:icon,pos:{lat:el.lat,lng:el.lon}});});drawObjects();save();safeText('mapHint',`POI: ${j.elements.length}`);}catch(err){safeText('mapHint','Ошибка Overpass (нет соединения).');}};});
 safe('arenaBtn',el=>{el.onclick=()=>{if(!map)return;arenaMarkers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});arenaMarkers=[];for(let i=0;i<3;i++){let p=randomPosition();let mk=L.circleMarker([p.lat,p.lng],{radius:20,color:'#ff8eaf',fillOpacity:.2}).addTo(map).bindPopup('🏟 Арена');arenaMarkers.push(mk);}safeText('mapHint','3 арены добавлены.');};});
-safe('storyBtn',el=>{el.onclick=()=>{let now=Date.now();if(now-state.lastStory<2*3600000){let rem=Math.ceil((2*3600000-(now-state.lastStory))/60000);notify('СОБЫТИЕ',`Следующее событие через ${rem} мин.`);return;}state.lastStory=now;let s=storyPool[Math.floor(Math.random()*storyPool.length)];safeHTML('modalContent',`<div class="systemhead">📖 СОБЫТИЕ</div><h2>${s.title}</h2><p class="muted">${s.text}</p><div class="grid2">${s.choices.map((c,i)=>`<button data-choice="${i}">${c.label}</button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-choice]').forEach(b=>{b.onclick=()=>{let r=s.choices[Number(b.dataset.choice)].fn();safeHTML('modalContent',`<div class="systemhead">📖 ИТОГ</div><p>${r}</p><button class="primary" id="cl">OK</button>`);safe('cl',bb=>{bb.onclick=()=>{let m=$('modal');if(m)m.classList.remove('show');save();}});};});};});
+safe('storyBtn',el=>{el.onclick=()=>{let now=Date.now();if(now-state.lastStory<2*3600000){let rem=Math.ceil((2*3600000-(now-state.lastStory))/60000);notify('СОБЫТИЕ',`Следующее событие через ${rem} мин.`);return;}state.lastStory=now;let s=storyPool[Math.floor(Math.random()*storyPool.length)];safeHTML('modalContent',`<div class="systemhead">📖 СОБЫТИЕ</div><h2>${s.title}</h2><p class="muted">${s.text}</p><div class="grid2">${s.choices.map((c,i)=>`<button data-choice="${i}">${c.label}</button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-choice]').forEach(b=>{b.onclick=()=>{let r=s.choices[Number(b.dataset.choice)].fn();safeHTML('modalContent',`<div class="systemhead">📖 ИТОГ</div><p>${r}</p><button class="primary" id="cl">OK</button>`);safe('cl',bb=>{bb.onclick=()=>{let m=$('modal');if(m)m.classList.remove('show');save();renderAll();}});};});};});
 safe('updatePosBtn',el=>{el.onclick=()=>{sendPosition();toast('Позиция обновлена');};});
 safe('createArenaBtn',el=>{el.onclick=()=>createArena();});
 safe('exportBtn',el=>{el.onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='awakening-save.json';a.click();toast('Сейв скачан');};});
-safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};const norm=(arr)=>(arr||[]).map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length);state.seen=[...new Set(norm(state.seen))];state.seenElite=[...new Set(norm(state.seenElite))];state.seenBoss=[...new Set(norm(state.seenBoss))];state.seenEliteBoss=[...new Set(norm(state.seenEliteBoss))];save();toast('Загружено');}catch(e){toast('Ошибка файла');}};r.readAsText(f);};inp.click();};});
+safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};const norm=(arr)=>(arr||[]).map(x=>Number(x)).filter(x=>Number.isInteger(x)&&x>=0&&x<monsters.length);state.seen=[...new Set(norm(state.seen))];state.seenElite=[...new Set(norm(state.seenElite))];state.seenBoss=[...new Set(norm(state.seenBoss))];state.seenEliteBoss=[...new Set(norm(state.seenEliteBoss))];save();renderAll();toast('Загружено');}catch(e){toast('Ошибка файла');}};r.readAsText(f);};inp.click();};});
 safe('resetBtn',el=>{el.onclick=()=>{if(confirm('Удалить весь прогресс?')){localStorage.removeItem('awakeningSave');location.reload();}};});
-function showStartDialog(){safeHTML('modalContent',`<div class="systemhead">▣ ПРОБУЖДЕНИЕ</div><h2>Создание персонажа</h2><p class="muted small">Введи имя и выбери класс.</p><input type="text" id="startName" placeholder="Имя охотника" value="${state.name||'Охотник'}" style="margin-bottom:10px;"><div class="grid2">${Object.entries(classes).map(([id,c])=>`<button data-startclass="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-startclass]').forEach(b=>{b.onclick=()=>{let nameVal=$('startName').value.trim()||'Охотник';let classId=b.dataset.startclass;state.name=nameVal;state.class=classId;let c=classes[classId];for(let[k,v]of Object.entries(c.stats))state.stats[k]+=v;state.hp=maxHp();state.mp=maxMp();save();let mm=$('modal');if(mm)mm.classList.remove('show');toast('Добро пожаловать, '+state.name);sendPosition();};});}
+function showStartDialog(){safeHTML('modalContent',`<div class="systemhead">▣ ПРОБУЖДЕНИЕ</div><h2>Создание персонажа</h2><p class="muted small">Введи имя и выбери класс.</p><input type="text" id="startName" placeholder="Имя охотника" value="${state.name||'Охотник'}" style="margin-bottom:10px;"><div class="grid2">${Object.entries(classes).map(([id,c])=>`<button data-startclass="${id}">${c.emoji} ${c.name}<br><small class="muted">${c.desc}</small></button>`).join('')}</div>`);let mm=$('modal');if(mm)mm.classList.add('show');document.querySelectorAll('[data-startclass]').forEach(b=>{b.onclick=()=>{let nameVal=$('startName').value.trim()||'Охотник';let classId=b.dataset.startclass;state.name=nameVal;state.class=classId;let c=classes[classId];for(let[k,v]of Object.entries(c.stats))state.stats[k]+=v;state.hp=maxHp();state.mp=maxMp();save();renderAll();let mm=$('modal');if(mm)mm.classList.remove('show');toast('Добро пожаловать, '+state.name);sendPosition();};});}
 function initial(){
   document.body.classList.toggle('light',state.theme==='light');
   safeText('themeBtn',state.theme==='light'?'☀️':'🌙');
