@@ -58,8 +58,8 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
 /* Чат: перенос строк с сохранением слов */
 #chatBox{overflow-wrap:break-word;word-break:normal;white-space:pre-wrap}
 #chatBox .chat-msg{margin-bottom:4px;overflow-wrap:break-word;word-break:normal;white-space:pre-wrap;max-width:100%}
-@media(max-width:649px){#chatBox .chat-msg{max-width:30ch;}}
-@media(min-width:650px){#chatBox .chat-msg{max-width:60ch;}}
+@media(max-width:649px){#chatBox .chat-msg{max-width:40ch;}}
+@media(min-width:650px){#chatBox .chat-msg{max-width:85ch;}}
 /* Тёмная тема попапов Leaflet */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip{
@@ -182,7 +182,7 @@ body.light .leaflet-popup-close-button{color:#102338!important}
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;"><p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p></div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.6.1 PvP · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.6.2 · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -442,8 +442,55 @@ function renderAll(){
   safeHTML('equipmentList', slots.map(s => {let it = state.equipment[s];let sb = setBonus('atk')||setBonus('def')||setBonus('mp') ? `<br><span class="set-bonus">Сет: +${setBonus('atk')?setBonus('atk')+' атк ':''}${setBonus('def')?setBonus('def')+' защ ':''}${setBonus('mp')?setBonus('mp')+' MP':''}</span>` : '';return `<div class="item"><div class="iconbox">${icons[s]}</div><div class="iteminfo"><strong>${s}</strong><small>${it ? `<span class="rarity ${rarityClass[it.rarity]}">${it.name} · ${rarity[it.rarity]}</span><br>${itemBonus(it)}${sb}` : 'Пусто'}</small></div>${it ? `<span class="pill" style="border-color:#73e0a1;color:#73e0a1;font-size:10px">Надето</span><button data-unequip="${s}">Снять</button>` : '<span class="muted small">—</span>'}</div>`;}).join(''));
   safeHTML('skillTree', skills.map(sk => {let lvl = state.skills[sk.id] || 0;let maxed = lvl >= sk.max;let canAfford = state.points >= sk.cost;return `<div class="skillrow ${lvl?'on':''}"><div class="iconbox">📘</div><div class="iteminfo"><strong>${sk.name}</strong><small>${sk.desc} · ур. ${lvl}/${sk.max}</small></div><button data-skill="${sk.id}" ${maxed||!canAfford?'disabled':''}>${maxed?'MAX':'+ '+sk.cost+' очк.'}</button></div>`;}).join(''));
   safeHTML('petCard', state.pet ? (() => {let p = pets.find(x => x.id === state.pet);return p ? `<div class="skillrow on"><div class="iconbox">${p.emoji}</div><div class="iteminfo"><strong>${p.name}</strong><small>${p.desc}</small></div><button data-pet="release">Отпустить</button></div>` : '';})() : pets.map(p => `<div class="skillrow"><div class="iconbox">${p.emoji}</div><div class="iteminfo"><strong>${p.name}</strong><small>${p.desc}</small></div><button data-pet="${p.id}">Приручить (200◈)</button></div>`).join(''));
+
+  /* === Инвентарь с сравнением экипировки === */
   safeText('inventoryCount', state.inventory.length + ' слотов');
-  safeHTML('inventoryList', state.inventory.length ? state.inventory.map(it => {let isP = [POTION, BIG_POTION, MANA_POTION].includes(it.slot);let isS = it.slot === SHARD;let isX = it.slot === XP_SCROLL;let qtyStr = it.qty && it.qty > 1 ? ` <b style="color:var(--gold)">x${it.qty}</b>` : '';let label = isP || isX ? 'Исп.' : isS ? '—' : 'Надеть';let sub = '';if (it.slot === POTION) sub = `Расходник · +${it.heal} HP`;else if (it.slot === BIG_POTION) sub = `Расходник · +${it.heal} HP`;else if (it.slot === MANA_POTION) sub = `Расходник · +${it.mana} MP`;else if (it.slot === XP_SCROLL) sub = `Расходник · +${it.xp} XP`;else if (it.slot === SHARD) sub = 'Материал для крафта';else sub = `${it.slot} · ур. ${it.level}<br><span class="rarity ${rarityClass[it.rarity]}">${rarity[it.rarity]}</span> · ${itemBonus(it)}`;let sellPrice = Math.floor((it.rarity + 1) * 15 * (it.level || 1) * 0.5) + 10;return `<div class="item"><div class="iconbox">${it.icon}</div><div class="iteminfo"><strong>${it.name}${qtyStr}</strong><small>${sub}</small></div>${isS ? `<button data-sell="${it.id}">Продать (${sellPrice}◈)</button>` : `<button data-equip="${it.id}">${label}</button>`}<button data-sell="${it.id}" style="background:#3a2a1a">💰</button></div>`;}).join('') : '<div class="card muted">Инвентарь пуст.</div>');
+  safeHTML('inventoryList', state.inventory.length ? state.inventory.map(it => {
+    let isP = [POTION, BIG_POTION, MANA_POTION].includes(it.slot);
+    let isS = it.slot === SHARD;
+    let isX = it.slot === XP_SCROLL;
+    let qtyStr = it.qty && it.qty > 1 ? ` <b style="color:var(--gold)">x${it.qty}</b>` : '';
+    let label = isP || isX ? 'Исп.' : isS ? '—' : 'Надеть';
+
+    let compareHtml = '';
+    if (!isP && !isS && !isX) {
+      let normSlot = String(it.slot).trim().toLowerCase();
+      let eq = null;
+      for (let s in state.equipment) {
+        if (String(s).trim().toLowerCase() === normSlot) { eq = state.equipment[s]; break; }
+      }
+      if (eq && eq.id !== it.id) {
+        const diffAtk = (it.bonus?.atk || 0) - (eq.bonus?.atk || 0);
+        const diffDef = (it.bonus?.def || 0) - (eq.bonus?.def || 0);
+        const diffHp  = (it.bonus?.hp  || 0) - (eq.bonus?.hp  || 0);
+        const diffMp  = (it.bonus?.mp  || 0) - (eq.bonus?.mp  || 0);
+        const diffSil = (it.bonus?.Сила        || 0) - (eq.bonus?.Сила        || 0);
+        const diffLov = (it.bonus?.Ловкость    || 0) - (eq.bonus?.Ловкость    || 0);
+        const diffInt = (it.bonus?.Интеллект   || 0) - (eq.bonus?.Интеллект   || 0);
+        const diffVyn = (it.bonus?.Выносливость|| 0) - (eq.bonus?.Выносливость|| 0);
+        const part = (val, name) => val !== 0
+          ? `<span style="color:${val > 0 ? '#73e0a1' : '#ff6d7c'}">${val > 0 ? '▲' : '▼'} ${Math.abs(val)} ${name}</span>`
+          : '';
+        const diffs = [
+          part(diffAtk,'атк'), part(diffDef,'защ'), part(diffHp,'HP'), part(diffMp,'MP'),
+          part(diffSil,'сил'), part(diffLov,'лов'), part(diffInt,'инт'), part(diffVyn,'вын')
+        ].filter(Boolean).join(' · ');
+        if (diffs) compareHtml = `<br><small style="font-size:10px">${diffs}</small>`;
+      }
+    }
+
+    let sub = '';
+    if (it.slot === POTION) sub = `Расходник · +${it.heal} HP`;
+    else if (it.slot === BIG_POTION) sub = `Расходник · +${it.heal} HP`;
+    else if (it.slot === MANA_POTION) sub = `Расходник · +${it.mana} MP`;
+    else if (it.slot === XP_SCROLL) sub = `Расходник · +${it.xp} XP`;
+    else if (it.slot === SHARD) sub = 'Материал для крафта';
+    else sub = `${it.slot} · ур. ${it.level}<br><span class="rarity ${rarityClass[it.rarity]}">${rarity[it.rarity]}</span> · ${itemBonus(it)}${compareHtml}`;
+
+    let sellPrice = Math.floor((it.rarity + 1) * 15 * (it.level || 1) * 0.5) + 10;
+    return `<div class="item"><div class="iconbox">${it.icon}</div><div class="iteminfo"><strong>${it.name}${qtyStr}</strong><small>${sub}</small></div>${isS ? `<button data-sell="${it.id}">Продать (${sellPrice}◈)</button>` : `<button data-equip="${it.id}">${label}</button>`}<button data-sell="${it.id}" style="background:#3a2a1a">💰</button></div>`;
+  }).join('') : '<div class="card muted">Инвентарь пуст.</div>');
+
   safeHTML('craftList', `<div class="actionlist" style="max-height:300px;"><div class="craftrow"><div class="iconbox">⚗️</div><div class="iteminfo"><strong>Большое зелье</strong><small>3× зелье</small></div><button data-craft="big" ${countBySlot(POTION)<3?'disabled':''}>Скрафтить</button></div><div class="craftrow"><div class="iconbox">🔮</div><div class="iteminfo"><strong>Эликсир маны</strong><small>2× осколок</small></div><button data-craft="mana" ${countBySlot(SHARD)<2?'disabled':''}>Скрафтить</button></div><div class="craftrow"><div class="iconbox">📜</div><div class="iteminfo"><strong>Свиток опыта</strong><small>3× осколок + 1× большое зелье</small></div><button data-craft="xp" ${countBySlot(SHARD)<3 || countBySlot(BIG_POTION)<1?'disabled':''}>Скрафтить</button></div><div class="craftrow"><div class="iconbox">🎁</div><div class="iteminfo"><strong>Случайный предмет</strong><small>5× осколок</small></div><button data-craft="item" ${countBySlot(SHARD)<5?'disabled':''}>Скрафтить</button></div></div>`);
   safeText('nearbyCount',state.objects.length);safeText('steps',state.steps);
   safeHTML('questList', [{name:'Первое истребление',desc:'Победи 3',progress:Math.min(3,state.quests.kills),goal:3,reward:'120 XP · 50◈',done:state.quests.kills>=3,id:'kills'},{name:'Исследователь',desc:'Сканируй 2',progress:Math.min(2,state.quests.scans),goal:2,reward:'80 XP · сундук',done:state.quests.scans>=2,id:'scans'},{name:'Пробуждение',desc:'Ур. 3',progress:Math.min(3,state.level),goal:3,reward:'200 XP · предмет',done:state.level>=3,id:'level'}].map(q => {let claimed = !!state.quests['claimed_'+q.id];return `<div class="card"><div class="row"><strong>${q.name}</strong><span class="pill">${claimed?'✓':q.done?'Готово':q.progress+'/'+q.goal}</span></div><p class="muted small">${q.desc}</p><div class="bar"><i style="width:${q.progress/q.goal*100}%"></i></div><div class="row"><span class="questreward">${q.reward}</span><button data-quest="${q.id}" ${q.done&&!claimed?'':'disabled'}>${claimed?'Получено':q.done?'Получить':'—'}</button></div></div>`;}).join(''));
@@ -730,7 +777,6 @@ function pvpAction(action){
   if(pvp.turn!=='me'||pvp.finished)return;
 
   if(pvp.isHost){
-    // === ХОСТ: применяем свой ход и передаём ход challenger'у ===
     let dmg=0, heal=0, log='';
     if(action==='attack'){ dmg=calcPvpDmg(pvp.atkMe, pvp.enemyLevel); log=`Вы бьёте на ${dmg}.`; }
     else if(action==='skill'){ const cost=skillCost(); if(state.mp<cost)return; state.mp-=cost; dmg=Math.floor(calcPvpDmg(pvp.atkMe,pvp.enemyLevel)*1.5); log=`Импульс: ${dmg}.`; }
@@ -792,7 +838,6 @@ function pvpAction(action){
     pvpUnsub.push(()=>{try{un&&un();}catch(e){}});
 
   } else {
-    // === CHALLENGER: шлём ход хосту ===
     let payload = {action: action, ts: Date.now(), playerId: myPlayerId};
     if(action==='potion'){
       const idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));
