@@ -55,9 +55,37 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
 .set-bonus{font-size:10px;color:var(--gold);margin-top:2px}
 .ach{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid #28435f;border-radius:12px;background:#0b1929;margin-bottom:6px;opacity:.5}body.light .ach{background:#f3f8ff;border-color:#c5d8ea}.ach.on{opacity:1;border-color:#ffd36a;box-shadow:0 0 12px #ffd36a33}
 .toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#0e1e31;border:1px solid #3983bd;color:#eaf6ff;padding:10px 16px;border-radius:30px;font-size:13px;z-index:99999;box-shadow:0 0 24px #1684d555;opacity:0;transition:opacity .2s;pointer-events:none}body.light .toast{background:#fff;color:#102338;border-color:#3b9ae0}.toast.show{opacity:1}
-.leaflet-popup-content button{color:#edf6ff!important;background:linear-gradient(135deg,#1764a8,#173e70)!important;border:1px solid #438acb!important;font-weight:700;padding:6px 10px;border-radius:8px;margin-top:4px;cursor:pointer}
+/* Тёмная тема попапов Leaflet */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip{
+  background:#0e1e31!important;
+  color:#edf6ff!important;
+  border:1px solid #3b6c98;
+  box-shadow:0 0 20px #1785d544;
+}
+body.light .leaflet-popup-content-wrapper,
+body.light .leaflet-popup-tip{
+  background:#fff!important;
+  color:#102338!important;
+  border-color:#a9c8e4;
+}
+.leaflet-popup-content{color:#edf6ff!important;margin:8px 10px;}
+body.light .leaflet-popup-content{color:#102338!important;}
+.leaflet-popup-content button{
+  color:#edf6ff!important;
+  background:linear-gradient(135deg,#1764a8,#173e70)!important;
+  border:1px solid #438acb!important;
+  font-weight:700;padding:6px 10px;border-radius:8px;
+  margin-top:4px;cursor:pointer;width:100%;
+}
+body.light .leaflet-popup-content button{
+  color:#fff!important;
+  background:linear-gradient(135deg,#3b9ae0,#1a5f9e)!important;
+  border-color:#3b9ae0!important;
+}
 .leaflet-popup-content button:active{transform:scale(.98)}
-.leaflet-popup-content{color:#102338}
+.leaflet-popup-close-button{color:#edf6ff!important}
+body.light .leaflet-popup-close-button{color:#102338!important}
 @media(min-width:650px){main{padding-top:18px}.tabs{left:50%;right:auto;transform:translateX(-50%);width:min(100%,760px);border:1px solid #29415e;border-bottom:0;border-radius:15px 15px 0 0}#map{height:440px}}
 </style>
 </head>
@@ -149,7 +177,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
  </div>
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;"><p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p></div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.5.3 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.6.0 PvP · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -444,14 +472,61 @@ let shop=e.target.closest('[data-shop]');if(shop){let s=shopItems.find(x=>x.id==
 safe('sortInventory',el=>{el.onclick=()=>{state.inventory.sort((a,b)=>b.rarity-a.rarity);save()}});
 safe('themeBtn',el=>{el.onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.body.classList.toggle('light',state.theme==='light');el.textContent=state.theme==='light'?'☀️':'🌙';save()}});
 function openBattle(m,index){let baseHp=m.hp,baseAtk=m.atk;if(m.isElite){baseHp=Math.floor(baseHp*1.5);baseAtk=Math.floor(baseAtk*1.3)}else if(m.tag==='boss'){baseHp=Math.floor(baseHp*2);baseAtk=Math.floor(baseAtk*1.5)}let lvlDiff=m.level-state.level,scale=1;if(lvlDiff>0)scale=1+lvlDiff*0.1;else if(lvlDiff<0){scale=1+lvlDiff*0.05;if(scale<0.5)scale=0.5}let finalHp=Math.floor(baseHp*scale),finalAtk=Math.floor(baseAtk*scale);battle={m:{...m,hp:finalHp,atk:finalAtk},index:index,hp:finalHp,log:`${m.name} преграждает путь!`,phase:1,baseLevel:m.level,turn:'player'};renderBattle()}
-function renderBattle(){if(!battle)return;let m=battle.m,pc=countBySlot(POTION)+countBySlot(BIG_POTION),sc=skillCost(),isMyTurn=battle.turn==='player';safeHTML('modalContent',`<div class="eyebrow">Бой · ур. ${m.level}</div><div class="battleenemy"><div class="enemyemoji" id="enemyEmoji">${m.emoji}</div><h2>${m.name}</h2><div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div><small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small></div><div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div><div class="battlelog" id="blog">${battle.log}</div><div class="grid2"><button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button><button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button><button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button><button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button></div>`);let mm=$('modal');if(mm)mm.classList.add('show');safe('attackBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1)}});safe('skillBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1.5)}});safe('potionBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+heal);battle.log=`+${heal} HP.`;enemyTurn()}});safe('runBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}})}
+function renderBattle(){
+  if(!battle)return;
+  // === PvP-режим ===
+  if(battle.pvp && pvp){
+    const myTurn = !pvp.finished && pvp.turn==='me';
+    const pc = countBySlot(POTION)+countBySlot(BIG_POTION);
+    const sc = skillCost();
+    safeHTML('modalContent',`
+      <div class="eyebrow">PvP · ур. ${pvp.enemyLevel} · раунд ${pvp.round}</div>
+      <div class="battleenemy">
+        <div class="enemyemoji" id="enemyEmoji">👤</div>
+        <h2>${pvp.enemyName}</h2>
+        <div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,Math.min(100,(pvp.hpEnemy/Math.max(1,pvp.enemyMaxHp||pvp.hpEnemy))*100))}%"></i></div>
+        <small class="muted">❤ ${Math.max(0,pvp.hpEnemy)}</small>
+      </div>
+      <div class="row"><span>HP: <b>${Math.max(0,pvp.hpMe)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div>
+      <div class="battlelog" id="blog">${pvp.log}</div>
+      <div class="grid2">
+        <button class="primary" id="attackBtn" ${!myTurn?'disabled':''}>⚔️ Атака</button>
+        <button id="skillBtn" ${!myTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button>
+        <button id="potionBtn" ${!myTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button>
+        <button id="runBtn" ${!myTurn?'disabled':''}>↩ Сдаться</button>
+      </div>
+    `);
+    let mm=$('modal');if(mm)mm.classList.add('show');
+    safe('attackBtn',b=>{b.onclick=()=>{if(myTurn)pvpAction('attack')}});
+    safe('skillBtn',b=>{b.onclick=()=>{if(myTurn)pvpAction('skill')}});
+    safe('potionBtn',b=>{b.onclick=()=>{if(myTurn)pvpAction('potion')}});
+    safe('runBtn',b=>{b.onclick=()=>{if(myTurn)pvpSurrender()}});
+    return;
+  }
+  // === Обычный бой ===
+  let m=battle.m,pc=countBySlot(POTION)+countBySlot(BIG_POTION),sc=skillCost(),isMyTurn=battle.turn==='player';
+  safeHTML('modalContent',`<div class="eyebrow">Бой · ур. ${m.level}</div><div class="battleenemy"><div class="enemyemoji" id="enemyEmoji">${m.emoji}</div><h2>${m.name}</h2><div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div><small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small></div><div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div><div class="battlelog" id="blog">${battle.log}</div><div class="grid2"><button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button><button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button><button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button><button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button></div>`);
+  let mm=$('modal');if(mm)mm.classList.add('show');
+  safe('attackBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1)}});
+  safe('skillBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1.5)}});
+  safe('potionBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}state.hp=Math.min(maxHp(),state.hp+heal);battle.log=`+${heal} HP.`;enemyTurn()}});
+  safe('runBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
+}
 function battleMsg(msg){if(!battle)return;battle.log=msg;renderBattle()}
 function spawnDmg(amount,crit){let el=document.createElement('div');el.className='dmg'+(crit?' crit':'');el.textContent=(crit?'-':'')+amount;let em=$('enemyEmoji');if(em){let r=em.getBoundingClientRect();el.style.left=(r.left+r.width/2-20)+'px';el.style.top=(r.top+10)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000)}}
-function enemyTurn(){if(!battle)return;battle.turn='enemy';renderBattle();setTimeout(()=>{if(!battle)return;if(battle.m.tag==='boss'){let ratio=battle.hp/battle.m.hp;if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}}if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';battle.turn='player';renderBattle();return}let rawDmg=battle.m.atk-defense(),minDmg=Math.floor(maxHp()*0.05),dmg=Math.max(1,rawDmg,minDmg);state.hp-=dmg;vibrate(30);let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}if(state.hp<=0){state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p><button class="primary" id="cb" style="width:100%">Продолжить</button>`);safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return}battle.log+=` Враг: ${dmg}.`;battle.turn='player';renderBattle()},600)}
-function battleTurn(mult){if(!battle||battle.turn!=='player')return;let sc=skillCost();if(mult>1){if(state.mp<sc)return;state.mp-=sc}let crit=Math.random()<critChance(),base=Math.floor(attack()*mult*(.85+Math.random()*.3)),dmg=crit?Math.floor(base*1.8):base;battle.hp-=dmg;spawnDmg(dmg,crit);beep(crit?1200:520,60,'square',.05);vibrate(crit?40:15);if(state.pet){let p=pets.find(x=>x.id===state.pet);if(p){let pdmg=Math.floor((p.base+state.level)*(applySkills().petMult||1));battle.hp-=pdmg;battle.log+=` ${p.emoji} бьёт на ${pdmg}. `}}if(battle.hp<=0){let m=battle.m;state.kills++;state.quests.kills++;if(battle.index>=0 && state.objects[battle.index]){let obj=state.objects[battle.index];if(!state.deadZones)state.deadZones=[];state.deadZones.push({lat:obj.pos.lat,lng:obj.pos.lng,respawnAt:Date.now()+86400000});state.objects.splice(battle.index,1);drawObjects();renderAll()}state.counters.wins++;if(m.tag)state.counters[m.tag]=(state.counters[m.tag]||0)+1;state.seen.push(monsters.indexOf(m));let goldGain=Math.floor(m.gold*(applySkills().goldMult||1));state.gold+=goldGain;addXp(m.xp);let extra='',dropChance=0.5+(m.tag==='boss'?0.4:(m.isElite?0.3:0));if(Math.random()<dropChance){let minRarity=m.tag==='boss'?3:(m.isElite?2:0);let it=makeItem(minRarity,battle.baseLevel);addToInventory(it);extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}).`}if(Math.random()<.25){addToInventory(makePotion());extra+=' +зелье.'}if(Math.random()<.15){addToInventory(makeShard());extra+=' +осколок.'}state.history.unshift({name:m.name,emoji:m.emoji,win:true});state.history=state.history.slice(0,20);checkAchievements();beep(880,200,'sine',.08);save();safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p><button class="primary" id="fb" style="width:100%">Забрать</button>`);safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return}battle.log=`${crit?'💥 КРИТ! ':''}Ты: ${dmg}.`;enemyTurn()}
+function enemyTurn(){if(!battle||battle.pvp)return;battle.turn='enemy';renderBattle();setTimeout(()=>{if(!battle||battle.pvp)return;if(battle.m.tag==='boss'){let ratio=battle.hp/battle.m.hp;if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}}if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';battle.turn='player';renderBattle();return}let rawDmg=battle.m.atk-defense(),minDmg=Math.floor(maxHp()*0.05),dmg=Math.max(1,rawDmg,minDmg);state.hp-=dmg;vibrate(30);let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}if(state.hp<=0){state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p><button class="primary" id="cb" style="width:100%">Продолжить</button>`);safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return}battle.log+=` Враг: ${dmg}.`;battle.turn='player';renderBattle()},600)}
+function battleTurn(mult){if(!battle||battle.pvp||battle.turn!=='player')return;let sc=skillCost();if(mult>1){if(state.mp<sc)return;state.mp-=sc}let crit=Math.random()<critChance(),base=Math.floor(attack()*mult*(.85+Math.random()*.3)),dmg=crit?Math.floor(base*1.8):base;battle.hp-=dmg;spawnDmg(dmg,crit);beep(crit?1200:520,60,'square',.05);vibrate(crit?40:15);if(state.pet){let p=pets.find(x=>x.id===state.pet);if(p){let pdmg=Math.floor((p.base+state.level)*(applySkills().petMult||1));battle.hp-=pdmg;battle.log+=` ${p.emoji} бьёт на ${pdmg}. `}}if(battle.hp<=0){let m=battle.m;state.kills++;state.quests.kills++;if(battle.index>=0 && state.objects[battle.index]){let obj=state.objects[battle.index];if(!state.deadZones)state.deadZones=[];state.deadZones.push({lat:obj.pos.lat,lng:obj.pos.lng,respawnAt:Date.now()+86400000});state.objects.splice(battle.index,1);drawObjects();renderAll()}state.counters.wins++;if(m.tag)state.counters[m.tag]=(state.counters[m.tag]||0)+1;state.seen.push(monsters.indexOf(m));let goldGain=Math.floor(m.gold*(applySkills().goldMult||1));state.gold+=goldGain;addXp(m.xp);let extra='',dropChance=0.5+(m.tag==='boss'?0.4:(m.isElite?0.3:0));if(Math.random()<dropChance){let minRarity=m.tag==='boss'?3:(m.isElite?2:0);let it=makeItem(minRarity,battle.baseLevel);addToInventory(it);extra+=` ${it.name} (${rarity[it.rarity]}, ур.${it.level}).`}if(Math.random()<.25){addToInventory(makePotion());extra+=' +зелье.'}if(Math.random()<.15){addToInventory(makeShard());extra+=' +осколок.'}state.history.unshift({name:m.name,emoji:m.emoji,win:true});state.history=state.history.slice(0,20);checkAchievements();beep(880,200,'sine',.08);save();safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p><button class="primary" id="fb" style="width:100%">Забрать</button>`);safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return}battle.log=`${crit?'💥 КРИТ! ':''}Ты: ${dmg}.`;enemyTurn()}
+
+/* ================== FIREBASE / ONLINE ================== */
 let onlinePlayers={},activeArena=null;
 let myPlayerId=localStorage.getItem('awakening_player_id');
 if(!myPlayerId){myPlayerId='p_'+Date.now()+'_'+Math.floor(Math.random()*1000);localStorage.setItem('awakening_player_id',myPlayerId);}
+
+/* ============ PvP: реальный бой (хост-авторитет) ============ */
+let pvp = null;
+let pvpUnsub = [];
+function pvpCleanup(){ try{pvpUnsub.forEach(f=>f&&f());}catch(e){} pvpUnsub=[]; }
+
 function sendPosition(){if(!state.position||!window.FB)return;window.FB.set(window.FB.ref(window.FB.db,'players/'+myPlayerId),{name:state.name||"Охотник",level:state.level,hp:maxHp(),atk:attack(),lat:state.position.lat,lng:state.position.lng,lastSeen:Date.now()}).catch(()=>{});}
 function createArena(){if(!state.position||!window.FB){toast('Сначала включи GPS или задай позицию на карте.');return;}let betInput=$('arenaBet');let bet=betInput?parseInt(betInput.value)||0:0;if(bet>state.gold){toast('Недостаточно золота для ставки!');return;}if(bet>0){state.gold-=bet;save();}let arenaId='a_'+Date.now();window.FB.set(window.FB.ref(window.FB.db,'arenas/'+arenaId),{lat:state.position.lat,lng:state.position.lng,creator:myPlayerId,creatorName:state.name||"Охотник",creatorLevel:state.level,hp:maxHp(),atk:attack(),bet:bet,status:'waiting'});if(map){let mk=L.marker([state.position.lat,state.position.lng],{icon:L.divIcon({className:'',html:`<div style="font-size:28px;text-shadow:0 0 10px #ffd36a">🏟</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindPopup(`Ваша арена · ставка ${bet}◈`);arenaMarkers.push(mk);}toast('Арена создана со ставкой '+bet+'◈. Жди соперников.');}
 function initOnline(){if(!window.FB){setTimeout(initOnline,500);return;}const playersRef=window.FB.ref(window.FB.db,'players');window.FB.onValue(playersRef,(snap)=>{onlinePlayers=snap.val()||{};try{renderOnline();}catch(e){console.warn('renderOnline',e);}});}
@@ -459,12 +534,190 @@ function renderOnline(){if(!window.FB){safeHTML('onlineList','<p class="muted sm
 window.flyToPlayer=(lat,lng)=>{if(map)map.setView([lat,lng],16);setPage('map');};
 let chatRef=null,chatInited=false;
 function initChatAndFriends(){if(!window.FB){setTimeout(initChatAndFriends,500);return;}if(chatInited)return;chatInited=true;chatRef=window.FB.ref(window.FB.db,'chat');window.FB.onValue(window.FB.query(chatRef,window.FB.limitToLast(50)),(snap)=>{const msgs=snap.val()||{};let html='';Object.keys(msgs).forEach((k)=>{const m=msgs[k];if(!m||!m.text)return;html+=`<div style="margin-bottom:4px;"><b style="color:var(--cyan)">${m.author||'Аноним'}:</b> ${m.text}</div>`;});safeHTML('chatBox',html||'<div class="muted small">Сообщений нет.</div>');const cb=$('chatBox');if(cb)cb.scrollTop=cb.scrollHeight;});safe('sendChatBtn',(b)=>{b.onclick=()=>{if(!window.FB||!chatRef){toast('Нет соединения');return;}const input=$('chatInput');const text=input&&input.value.trim();if(!text)return;window.FB.push(chatRef,{author:state.name||'Охотник',text:text,time:Date.now()}).catch(()=>toast('Не отправлено'));if(input)input.value='';};});}
+
+/* --- Старт реального PvP --- */
+function startRealBattle(enemyName,enemyLevel,enemyHp,enemyAtk,bet,arenaId,isHost,enemyId){
+  if(!window.FB){toast('Нет соединения');return;}
+  if(battle||pvp)return;
+  pvpCleanup();
+  pvp = {
+    arenaId: arenaId,
+    isHost: !!isHost,
+    myId: myPlayerId,
+    enemyId: enemyId || null,
+    enemyName: enemyName,
+    enemyLevel: enemyLevel,
+    enemyMaxHp: enemyHp,
+    enemyMaxMp: 100,
+    bet: bet || 0,
+    hpMe: maxHp(),
+    hpEnemy: enemyHp,
+    atkMe: attack(),
+    atkEnemy: enemyAtk,
+    turn: isHost ? 'me' : 'enemy',
+    log: `Дуэль с ${enemyName}. Ставка: ${bet}◈`,
+    round: 0,
+    finished: false,
+    baseLevel: enemyLevel,
+    m: { name: enemyName, emoji: '👤', level: enemyLevel, xp: 50, gold: bet*2, drop: 0, tag: '' },
+    index: -1
+  };
+  battle = {
+    m: pvp.m, hp: pvp.hpEnemy, log: pvp.log, phase: 1, pvp: true, baseLevel: enemyLevel, turn: 'player', _pvp: pvp
+  };
+  if(isHost){
+    window.FB.set(window.FB.ref(window.FB.db,'arenas/'+arenaId+'/battle'),{
+      hpA: pvp.hpMe, hpB: pvp.hpEnemy,
+      turn: 'A', round: 0, log: pvp.log,
+      finished: false, winner: null,
+      aId: myPlayerId, bId: enemyId || null
+    }).then(()=>{ pvpBindBattle(); renderBattle(); }).catch(()=>{toast('Не удалось создать бой');});
+  } else {
+    pvpBindBattle();
+    renderBattle();
+  }
+}
+
+function pvpBindBattle(){
+  if(!pvp||!window.FB)return;
+  const bRef = window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle');
+  const un = window.FB.onValue(bRef,(snap)=>{
+    const b = snap.val();
+    if(!b)return;
+    const amHost = pvp.isHost;
+    pvp.hpMe    = amHost ? b.hpA : b.hpB;
+    pvp.hpEnemy = amHost ? b.hpB : b.hpA;
+    pvp.turn    = (b.turn === (amHost?'A':'B')) ? 'me' : 'enemy';
+    pvp.log     = b.log || pvp.log;
+    pvp.round   = b.round || 0;
+    pvp.finished= !!b.finished;
+    battle.hp = pvp.hpEnemy;
+    battle.log = pvp.log;
+    battle.turn = pvp.finished ? 'enemy' : (pvp.turn==='me'?'player':'enemy');
+    if(pvp.finished && !pvp._resolved){
+      pvp._resolved = true;
+      resolvePvpEnd(b.winner);
+      return;
+    }
+    if(!pvp.finished) renderBattle();
+  });
+  pvpUnsub.push(()=>{try{un&&un();}catch(e){}});
+}
+
+function resolvePvpEnd(winnerId){
+  if(!pvp)return;
+  const iWon = winnerId === pvp.myId;
+  const bet = pvp.bet||0;
+  if(iWon){
+    state.gold += bet*2;
+    addXp(80);
+    state.counters.wins++;
+    state.counters.pvpWins = (state.counters.pvpWins||0)+1;
+    toast('🏆 Победа! +'+(bet*2)+'◈');
+    beep(880,200,'sine',.08);
+  } else {
+    addXp(20);
+    toast('💀 Поражение. -'+bet+'◈');
+    beep(120,300,'sawtooth',.1);
+  }
+  state.history.unshift({name:pvp.enemyName,emoji:'👤',win:iWon});
+  state.history = state.history.slice(0,20);
+  save();
+  safeHTML('modalContent',`
+    <div class="systemhead">▣ АРЕНА</div>
+    <div class="battleenemy"><div class="enemyemoji">${iWon?'✦':'💀'}</div><h2>${iWon?'Победа!':'Поражение'}</h2></div>
+    <p class="muted">${iWon?'+':'−'}${bet}◈</p>
+    <button class="primary" id="pvpEndBtn" style="width:100%">Продолжить</button>
+  `);
+  let mm=$('modal');if(mm)mm.classList.add('show');
+  safe('pvpEndBtn',b=>{b.onclick=()=>{
+    let m=$('modal');if(m)m.classList.remove('show');
+    const aid = pvp.arenaId;
+    pvpCleanup(); pvp=null; battle=null;
+    try{window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+aid));}catch(e){}
+  };});
+  try{window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId));}catch(e){}
+}
+
+function calcPvpDmg(atkStat, defLevel){
+  const base = atkStat * 0.6;
+  const variance = ((pvp.round * 37) % 21) / 100;
+  return Math.max(1, Math.floor(base * (1 + variance)));
+}
+
+function pvpAction(action){
+  if(!pvp||!window.FB)return;
+  if(pvp.turn!=='me'||pvp.finished)return;
+
+  if(pvp.isHost){
+    let dmg=0, heal=0, log='';
+    if(action==='attack'){ dmg=calcPvpDmg(pvp.atkMe, pvp.enemyLevel); log=`Вы бьёте на ${dmg}.`; }
+    else if(action==='skill'){ const cost=skillCost(); if(state.mp<cost)return; state.mp-=cost; dmg=Math.floor(calcPvpDmg(pvp.atkMe,pvp.enemyLevel)*1.5); log=`Импульс: ${dmg}.`; }
+    else if(action==='potion'){ const idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot)); if(idx<0)return; heal=state.inventory[idx].heal||35; if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)} log=`Зелье: +${heal} HP.`; }
+    pvp.hpEnemy -= dmg;
+    pvp.hpMe = Math.min(maxHp(), pvp.hpMe + heal);
+    pvp.log = log + ' Ждём хода противника...';
+    battle.hp = pvp.hpEnemy; battle.log = pvp.log;
+    renderBattle();
+
+    window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{
+      hpA: pvp.hpMe, hpB: pvp.hpEnemy, log: pvp.log
+    });
+
+    const moveRef = window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/moves/'+pvp.enemyId);
+    const un = window.FB.onValue(moveRef,(snap)=>{
+      const mv = snap.val();
+      if(!mv)return;
+      let dmg2=0, heal2=0, log2=`${pvp.enemyName}: `;
+      if(mv.action==='attack'){ dmg2=calcPvpDmg(pvp.atkEnemy, state.level); log2+=`бьёт на ${dmg2}.`; }
+      else if(mv.action==='skill'){ dmg2=Math.floor(calcPvpDmg(pvp.atkEnemy,state.level)*1.5); log2+=`импульс на ${dmg2}.`; }
+      else if(mv.action==='potion'){ heal2=mv.heal||35; log2+=`зелье +${heal2} HP.`; }
+      else if(mv.action==='surrender'){ log2+='сдаётся.'; pvp.hpEnemy=0; }
+      pvp.hpMe = Math.max(0, pvp.hpMe - dmg2);
+      pvp.hpEnemy = Math.min(pvp.enemyMaxHp||pvp.hpEnemy, pvp.hpEnemy + heal2);
+      pvp.log = log2;
+      pvp.round++;
+
+      let finished=false, winner=null;
+      if(pvp.hpEnemy<=0){ finished=true; winner=pvp.myId; }
+      else if(pvp.hpMe<=0){ finished=true; winner=pvp.enemyId; }
+
+      window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{
+        hpA: pvp.hpMe, hpB: pvp.hpEnemy, log: pvp.log,
+        turn: 'A', round: pvp.round, finished: finished, winner: winner
+      });
+      window.FB.remove(moveRef);
+      try{un&&un();}catch(e){}
+    });
+    pvpUnsub.push(()=>{try{un&&un();}catch(e){}});
+  } else {
+    let payload = {action: action, ts: Date.now(), playerId: myPlayerId};
+    if(action==='potion'){ const idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot)); if(idx<0)return; payload.heal=state.inventory[idx].heal||35; if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)} }
+    if(action==='skill'){ const cost=skillCost(); if(state.mp<cost)return; state.mp-=cost; }
+    pvp.turn='enemy';
+    pvp.log='Ход отправлен. Ждём...';
+    battle.log=pvp.log;
+    renderBattle();
+    window.FB.set(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/moves/'+myPlayerId),payload).catch(()=>toast('Не отправлено'));
+  }
+}
+
+function pvpSurrender(){
+  if(!pvp||!window.FB)return;
+  if(pvp.isHost){
+    window.FB.update(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/battle'),{finished:true, winner: pvp.enemyId});
+  } else {
+    window.FB.set(window.FB.ref(window.FB.db,'arenas/'+pvp.arenaId+'/moves/'+myPlayerId),{action:'surrender',ts:Date.now(),playerId:myPlayerId});
+  }
+}
+
 let arenaWatchInited=false;
-function watchArena(){if(!window.FB){setTimeout(watchArena,500);return;}if(arenaWatchInited)return;arenaWatchInited=true;window.FB.onValue(window.FB.ref(window.FB.db,'arenas'),(snapshot)=>{let arenas=snapshot.val()||{};let listHtml='';for(let id in arenas){let a=arenas[id];if(!a)continue;if(a.creator===myPlayerId&&a.status==='fighting'&&!battle){safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><h2>Вас вызывает ${a.challengerName}!</h2><p class="muted">Ставка: ${a.bet||0}◈ · Уровень ${a.challengerLevel}</p><div class="grid2"><button class="primary" id="acceptBtn">Принять</button><button id="declineBtn">Отклонить</button></div>`);let mm=$('modal');if(mm)mm.classList.add('show');safe('acceptBtn',b=>{b.onclick=()=>{window.FB.update(window.FB.ref(window.FB.db,'arenas/'+id),{status:'accepted'});startRealBattle(a.challengerName,a.challengerLevel,a.challengerHp,a.challengerAtk,a.bet||0,id);}});safe('declineBtn',b=>{b.onclick=()=>{window.FB.update(window.FB.ref(window.FB.db,'arenas/'+id),{status:'declined'});let mm=$('modal');if(mm)mm.classList.remove('show');toast('Вызов отклонён');}});return;}if(a.creator!==myPlayerId&&a.status==='waiting'){listHtml+=`<div class="item"><div class="iconbox">🏟</div><div class="iteminfo"><strong>${a.creatorName} (ур. ${a.creatorLevel})</strong><small>Ставка: ${a.bet||0}◈</small></div><button onclick="window.enterArena('${id}','${a.creator}','${a.creatorName}',${a.creatorLevel},${a.hp},${a.atk},${a.bet||0})">Бросить вызов</button></div>`;}}
+function watchArena(){if(!window.FB){setTimeout(watchArena,500);return;}if(arenaWatchInited)return;arenaWatchInited=true;window.FB.onValue(window.FB.ref(window.FB.db,'arenas'),(snapshot)=>{let arenas=snapshot.val()||{};let listHtml='';for(let id in arenas){let a=arenas[id];if(!a)continue;if(a.creator===myPlayerId&&a.status==='fighting'&&!battle&&!pvp){safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><h2>Вас вызывает ${a.challengerName}!</h2><p class="muted">Ставка: ${a.bet||0}◈ · Уровень ${a.challengerLevel}</p><div class="grid2"><button class="primary" id="acceptBtn">Принять</button><button id="declineBtn">Отклонить</button></div>`);let mm=$('modal');if(mm)mm.classList.add('show');safe('acceptBtn',b=>{b.onclick=()=>{window.FB.update(window.FB.ref(window.FB.db,'arenas/'+id),{status:'accepted'});startRealBattle(a.challengerName,a.challengerLevel,a.challengerHp,a.challengerAtk,a.bet||0,id,true,a.challenger);}});safe('declineBtn',b=>{b.onclick=()=>{window.FB.update(window.FB.ref(window.FB.db,'arenas/'+id),{status:'declined'});let mm=$('modal');if(mm)mm.classList.remove('show');toast('Вызов отклонён');}});return;}if(a.creator!==myPlayerId&&a.status==='waiting'){listHtml+=`<div class="item"><div class="iconbox">🏟</div><div class="iteminfo"><strong>${a.creatorName} (ур. ${a.creatorLevel})</strong><small>Ставка: ${a.bet||0}◈</small></div><button onclick="window.enterArena('${id}','${a.creator}','${a.creatorName}',${a.creatorLevel},${a.hp},${a.atk},${a.bet||0})">Бросить вызов</button></div>`;}}
 if(map){arenaMarkers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});arenaMarkers=[];for(let id in arenas){let a=arenas[id];if(!a||a.status!=='waiting'||!a.lat||!a.lng)continue;let mk=L.marker([a.lat,a.lng],{icon:L.divIcon({className:'',html:`<div style="font-size:28px;text-shadow:0 0 10px #ffd36a">🏟</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindPopup(`${a.creatorName} · ставка ${a.bet||0}◈<br><button onclick="window.enterArena('${id}','${a.creator}','${a.creatorName}',${a.creatorLevel},${a.hp},${a.atk},${a.bet||0})">Бросить вызов</button>`);arenaMarkers.push(mk);}}
 let box=$('arenaList');if(box)box.innerHTML=listHtml||'<p class="muted small" style="text-align:center; padding:10px;">Открытых арен нет. Создай свою!</p>';});}
-window.enterArena=(arenaId,creatorId,creatorName,creatorLevel,creatorHp,creatorAtk,bet)=>{if(!window.FB)return;if(bet>0&&state.gold<bet){toast('Недостаточно золота для ставки!');return;}if(bet>0){state.gold-=bet;save();}activeArena=arenaId;window.FB.update(window.FB.ref(window.FB.db,'arenas/'+arenaId),{status:'fighting',challenger:myPlayerId,challengerName:state.name||'Охотник',challengerLevel:state.level,challengerHp:maxHp(),challengerAtk:attack()});safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);let mm=$('modal');if(mm)mm.classList.add('show');const arRef=window.FB.ref(window.FB.db,'arenas/'+arenaId);window.FB.onValue(arRef,(snap)=>{const a=snap.val();if(!a)return;if(a.status==='accepted'){window.FB.remove(arRef);startRealBattle(a.creatorName,a.creatorLevel,a.hp,a.atk,a.bet||0,arenaId);}else if(a.status==='declined'){window.FB.remove(arRef);let mm=$('modal');if(mm)mm.classList.remove('show');toast('Вызов отклонён');}});};
-function startRealBattle(enemyName,enemyLevel,enemyHp,enemyAtk,bet,arenaId){if(battle)return;battle={m:{name:enemyName,emoji:'👤',level:enemyLevel,hp:enemyHp,atk:enemyAtk,xp:50,gold:bet*2,drop:0,tag:''},index:-1,hp:enemyHp,log:`Дуэль на арене со ставкой ${bet}◈!`,phase:1,pvp:true,baseLevel:enemyLevel,turn:'player'};window.FB.remove(window.FB.ref(window.FB.db,'arenas/'+arenaId));renderBattle();}
+window.enterArena=(arenaId,creatorId,creatorName,creatorLevel,creatorHp,creatorAtk,bet)=>{if(!window.FB)return;if(bet>0&&state.gold<bet){toast('Недостаточно золота для ставки!');return;}if(bet>0){state.gold-=bet;save();}activeArena=arenaId;window.FB.update(window.FB.ref(window.FB.db,'arenas/'+arenaId),{status:'fighting',challenger:myPlayerId,challengerName:state.name||'Охотник',challengerLevel:state.level,challengerHp:maxHp(),challengerAtk:attack()});safeHTML('modalContent',`<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);let mm=$('modal');if(mm)mm.classList.add('show');const arRef=window.FB.ref(window.FB.db,'arenas/'+arenaId);window.FB.onValue(arRef,(snap)=>{const a=snap.val();if(!a)return;if(a.status==='accepted'){window.FB.remove(arRef);startRealBattle(a.creatorName,a.creatorLevel,a.hp,a.atk,a.bet||0,arenaId,false,a.creator);}else if(a.status==='declined'){window.FB.remove(arRef);let mm=$('modal');if(mm)mm.classList.remove('show');toast('Вызов отклонён');}});};
+
+/* ================== КАРТА / СКАН / POI ================== */
 function initMap(){if(!window.L){safeHTML('map','<div class="mapfallback">Карта недоступна.</div>');return;}try{map=L.map('map',{attributionControl:false}).setView([60.1699,24.9384],14);L.tileLayer('https://core-renderer-tiles.maps.yandex.net/tiles?l=map&v=21.06.14&x={x}&y={y}&z={z}&scale=1&lang=ru_RU',{maxZoom:19,subdomains:['01','02','03','04']}).addTo(map);L.circle([60.1699,24.9384],{radius:350,color:'#4aaeff',fillOpacity:.04}).addTo(map);map.on('click',e=>{state.position={lat:e.latlng.lat,lng:e.latlng.lng};if(playerMarker)playerMarker.setLatLng(e.latlng);else playerMarker=L.marker(e.latlng).addTo(map).bindPopup('Ты');safeText('gpsStatus','Тест');save();sendPosition();});}catch(e){console.warn('initMap',e);}}
 function randomPosition(){let c=state.position||(map&&map.getCenter())||{lat:60.1699,lng:24.9384};let a=(Math.random()-.5)*.008,b=(Math.random()-.5)*.008;return{lat:c.lat+a,lng:c.lng+b};}
 function scan(){state.scans++;state.quests.scans++;state.objects=[];let now=Date.now();if(state.deadZones)state.deadZones=state.deadZones.filter(z=>z.respawnAt>now);else state.deadZones=[];let n=3+Math.floor(Math.random()*3);for(let i=0;i<n;i++){let pos=randomPosition();let inDeadZone=state.deadZones.some(z=>{let d=Math.sqrt(Math.pow(z.lat-pos.lat,2)+Math.pow(z.lng-pos.lng,2));return d<0.002;});if(inDeadZone){i--;continue;}if(Math.random()<.68){let av=monsters.filter(m=>m.level>=state.level-5&&m.level<=state.level+15);if(!av.length)av=[monsters[0]];let m=av[Math.floor(Math.random()*av.length)];let isElite=Math.random()<0.15;let scaledMonster={...m};if(isElite){scaledMonster.name='💀 [ЭЛИТА] '+m.name;scaledMonster.hp=Math.floor(m.hp*2);scaledMonster.atk=Math.floor(m.atk*2);scaledMonster.xp=Math.floor(m.xp*2.5);scaledMonster.gold=Math.floor(m.gold*2.5);scaledMonster.isElite=true;}state.objects.push({type:'monster',mi:monsters.indexOf(m),name:scaledMonster.name,emoji:m.emoji,pos:pos,scaled:scaledMonster,isElite:isElite});}else{state.objects.push({type:'chest',name:'Сундук',emoji:'🎁',pos:pos});}}drawObjects();save();safeText('mapHint','Найдено: '+state.objects.length);checkAchievements();}
