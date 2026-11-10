@@ -162,7 +162,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
    <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.0.2 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.2.0 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -697,28 +697,76 @@ function openBattle(m,index){
     hp: finalHp,
     log: `${m.name} преграждает путь!`,
     phase: 1,
-    baseLevel: m.level
+    baseLevel: m.level,
+    turn: 'player' // Кто ходит: player или enemy
   };
   renderBattle();
 }
-function renderBattle(){if(!battle)return;let m=battle.m;let pc=countBySlot(POTION)+countBySlot(BIG_POTION);let sc=skillCost();safeHTML('modalContent',`<div class="eyebrow">Бой · ур. ${m.level}</div><div class="battleenemy"><div class="enemyemoji" id="enemyEmoji">${m.emoji}</div><h2>${m.name}</h2><div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div><small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small></div><div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div><div class="battlelog" id="blog">${battle.log}</div><div class="grid2"><button class="primary" id="attackBtn">⚔️ Атака</button><button id="skillBtn" ${state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button><button id="potionBtn" ${pc<=0?'disabled':''}>🧪 Зелье (${pc})</button><button id="runBtn">↩ Отступить</button></div>`);let mm=$('modal');if(mm)mm.classList.add('show');
-safe('attackBtn',b=>{b.onclick=()=>battleTurn(1)});safe('skillBtn',b=>{b.onclick=()=>battleTurn(1.5)});safe('potionBtn',b=>{b.onclick=()=>{if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;
-  if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}
-  state.hp=Math.min(maxHp(),state.hp+heal);battle.log=`+${heal} HP.`;enemyTurn()}});safe('runBtn',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}})}
+function renderBattle(){
+  if(!battle)return;
+  let m=battle.m;
+  let pc=countBySlot(POTION)+countBySlot(BIG_POTION);
+  let sc=skillCost();
+  let isMyTurn = battle.turn === 'player';
+  
+  safeHTML('modalContent',`
+    <div class="eyebrow">Бой · ур. ${m.level}</div>
+    <div class="battleenemy">
+      <div class="enemyemoji" id="enemyEmoji">${m.emoji}</div>
+      <h2>${m.name}</h2>
+      <div class="bar hp"><i id="enemyHpBar" style="width:${Math.max(0,battle.hp/m.hp*100)}%"></i></div>
+      <small class="muted">❤ ${Math.max(0,battle.hp)} / ${m.hp}</small>
+    </div>
+    <div class="row"><span>HP: <b>${Math.max(0,state.hp)}/${maxHp()}</b></span><span>MP: <b>${state.mp}/${maxMp()}</b></span></div>
+    <div class="battlelog" id="blog">${battle.log}</div>
+    <div class="grid2">
+      <button class="primary" id="attackBtn" ${!isMyTurn?'disabled':''}>⚔️ Атака</button>
+      <button id="skillBtn" ${!isMyTurn || state.mp<sc?'disabled':''}>⚡ Импульс (${sc})</button>
+      <button id="potionBtn" ${!isMyTurn || pc<=0?'disabled':''}>🧪 Зелье (${pc})</button>
+      <button id="runBtn" ${!isMyTurn?'disabled':''}>↩ Отступить</button>
+    </div>
+  `);
+  let mm=$('modal');if(mm)mm.classList.add('show');
+  
+  safe('attackBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1)}});
+  safe('skillBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1.5)}});
+  safe('potionBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;
+    if(state.inventory[idx].qty>1){state.inventory[idx].qty--}else{state.inventory.splice(idx,1)}
+    state.hp=Math.min(maxHp(),state.hp+heal);battle.log=`+${heal} HP.`;enemyTurn()}});
+  safe('runBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
+}
 function battleMsg(msg){if(!battle)return;battle.log=msg;renderBattle()}
 function spawnDmg(amount,crit){let el=document.createElement('div');el.className='dmg'+(crit?' crit':'');el.textContent=(crit?'-':'')+amount;let em=$('enemyEmoji');if(em){let r=em.getBoundingClientRect();el.style.left=(r.left+r.width/2-20)+'px';el.style.top=(r.top+10)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000)}}
 function enemyTurn(){if(!battle)return;
- if(battle.m.tag==='boss'){let ratio=battle.hp/battle.m.hp;if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}}
- if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';renderBattle();return}
- let rawDmg = battle.m.atk - defense();
- let minDmg = Math.floor(maxHp() * 0.05);
- let dmg = Math.max(1, rawDmg, minDmg);
- state.hp-=dmg;vibrate(30);let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}
- if(state.hp<=0){state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p><button class="primary" id="cb" style="width:100%">Продолжить</button>`);safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return}battle.log+=` Враг: ${dmg}.`;renderBattle()}
+  battle.turn = 'enemy';
+  renderBattle();
+  
+  setTimeout(() => {
+    if(!battle) return;
+    if(battle.m.tag==='boss'){let ratio=battle.hp/battle.m.hp;if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}}
+    
+    if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';battle.turn='player';renderBattle();return}
+    let rawDmg = battle.m.atk - defense();
+    let minDmg = Math.floor(maxHp() * 0.05);
+    let dmg = Math.max(1, rawDmg, minDmg);
+    state.hp-=dmg;vibrate(30);let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}
+    
+    if(state.hp<=0){
+      state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();
+      safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p><button class="primary" id="cb" style="width:100%">Продолжить</button>`);
+      safe('cb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});return;
+    }
+    battle.log+=` Враг: ${dmg}.`;
+    battle.turn = 'player';
+    renderBattle();
+  }, 600);
+}
 function battleTurn(mult){
- if(!battle)return;let sc=skillCost();if(mult>1){if(state.mp<sc)return;state.mp-=sc}
+ if(!battle || battle.turn !== 'player')return;
+ let sc=skillCost();if(mult>1){if(state.mp<sc)return;state.mp-=sc}
  let crit=Math.random()<critChance();let base=Math.floor(attack()*mult*(.85+Math.random()*.3));let dmg=crit?Math.floor(base*1.8):base;battle.hp-=dmg;spawnDmg(dmg,crit);beep(crit?1200:520,60,'square',.05);vibrate(crit?40:15);
  if(state.pet){let p=pets.find(x=>x.id===state.pet);if(p){let pdmg=Math.floor((p.base+state.level)*(applySkills().petMult||1));battle.hp-=pdmg;battle.log+=` ${p.emoji} бьёт на ${pdmg}. `}}
+ 
  if(battle.hp<=0){
    let m=battle.m;state.kills++;state.quests.kills++;
    
@@ -927,7 +975,9 @@ window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, creatorHp, c
         status: 'fighting',
         challenger: myPlayerId,
         challengerName: state.class ? classes[state.class].name : "Охотник",
-        challengerLevel: state.level
+        challengerLevel: state.level,
+        challengerHp: maxHp(),
+        challengerAtk: attack()
     });
     
     safeHTML('modalContent', `<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);
@@ -954,7 +1004,7 @@ function startRealBattle(enemyName, enemyLevel, enemyHp, enemyAtk, bet, arenaId)
     
     battle = {
         m: {name: enemyName, emoji: '👤', level: enemyLevel, hp: enemyHp, atk: enemyAtk, xp: 50, gold: bet * 2, drop: 0, tag: ''},
-        index: -1, hp: enemyHp, log: `Дуэль на арене со ставкой ${bet}◈!`, phase: 1, pvp: true, baseLevel: enemyLevel
+        index: -1, hp: enemyHp, log: `Дуэль на арене со ставкой ${bet}◈!`, phase: 1, pvp: true, baseLevel: enemyLevel, turn: 'player'
     };
     
     window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
@@ -1056,7 +1106,7 @@ safe('pvpBtn',el=>{el.onclick=()=>{
   let atkM = Math.floor(attack() * 1.3);
   battle={
     m:{name:'Тень охотника',emoji:'👤',level:state.level,hp:hpM,atk:atkM,xp:Math.floor(state.level*20),gold:Math.floor(state.level*10),drop:0,tag:''},
-    index:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,pvp:true,baseLevel:state.level
+    index:-1,hp:hpM,log:'Тень копирует статы и усиливается.',phase:1,pvp:true,baseLevel:state.level,turn:'player'
   };
   renderBattle();
 }});
