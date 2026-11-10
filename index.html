@@ -156,11 +156,21 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
      <button id="createArenaBtn" style="width:50%; background:#3a2a1a; border-color:#ffd36a; color:#ffd36a;">🏟 Создать</button>
    </div>
  </div>
+ 
+ <div class="card">
+   <h3>Чат</h3>
+   <div id="chatBox" style="height:150px; overflow-y:auto; border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:8px; background:#0b1929; font-size:12px;"></div>
+   <div class="row" style="gap:8px;">
+     <input type="text" id="chatInput" placeholder="Сообщение..." style="width:80%;">
+     <button id="sendChatBtn" style="width:20%;">➤</button>
+   </div>
+ </div>
+
  <div id="onlineList" class="actionlist" style="max-height:400px; overflow-y:auto;">
    <p class="muted small" style="text-align:center; padding:20px;">Ищем игроков...</p>
  </div>
 </section>
-<footer>ПРОБУЖДЕНИЕ · 1.4.0 Online · Карта © Яндекс · Играй безопасно.</footer>
+<footer>ПРОБУЖДЕНИЕ · 1.5.0 Online · Карта © Яндекс · Играй безопасно.</footer>
 </main>
 <nav class="tabs">
  <button class="tab active" data-page="map"><span>⌖</span>Карта</button>
@@ -176,7 +186,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, set, onValue, remove, update, push, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBZ0l0wbtUao4Drg8PtzP87-b7qwvscnj8",
@@ -191,7 +201,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   
-  window.FB = { db, ref, set, onValue, remove, update };
+  window.FB = { db, ref, set, onValue, remove, update, push, query, orderByChild, limitToLast };
 </script>
 <script>
 (()=>{
@@ -915,49 +925,38 @@ window.flyToPlayer = (lat, lng) => {
   setPage('map');
 };
 
-function initOnline() {
-  if (!window.FB) return;
-  
-  window.FB.onValue(window.FB.ref(window.FB.db, 'players'), (snapshot) => {
-    onlinePlayers = snapshot.val() || {};
-    if (document.getElementById('page-online').classList.contains('active')) {
-      renderOnline();
-    }
-  });
+// --- CHAT & FRIENDS ---
+let chatRef = null;
+let friendsRef = null;
 
-  window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
-    onlineArenas = snapshot.val() || {};
-    
-    arenaZoneMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} });
-    arenaZoneMarkers = [];
-    
-    for(let id in onlineArenas) {
-        let a = onlineArenas[id];
-        if (a.status !== 'waiting') continue;
-        if (a.creator === myPlayerId) continue;
-        
-        if (map) {
-            let mk = L.marker([a.lat, a.lng], {
-                icon: L.divIcon({
-                  className: '',
-                  html: `<div style="font-size:30px;filter:drop-shadow(0 0 10px #ffd36a)">🏟</div>`,
-                  iconSize: [30, 30],
-                  iconAnchor: [15, 15]
-                })
-            }).addTo(map).bindPopup(`Арена: ${a.creatorName} (Ур. ${a.creatorLevel})<br>Ставка: ${a.bet}◈<br><button onclick="window.enterArena('${id}', '${a.creator}', '${a.creatorName}', ${a.creatorLevel}, ${a.hp}, ${a.atk}, ${a.bet})">Принять вызов</button>`);
-            arenaZoneMarkers.push(mk);
+function initChatAndFriends() {
+    if (!window.FB) return;
+    chatRef = window.FB.ref(window.FB.db, 'chat');
+    window.FB.onValue(window.FB.query(chatRef, window.FB.limitToLast(50)), (snap) => {
+        let msgs = snap.val() || {};
+        let html = '';
+        for (let key in msgs) {
+            let m = msgs[key];
+            html += `<div style="margin-bottom:4px;"><b style="color:var(--cyan)">${m.author}:</b> ${m.text}</div>`;
         }
-    }
-  });
-  
-  setInterval(sendPosition, 30000);
-  setTimeout(sendPosition, 2000);
-  
-  safe('updatePosBtn', el => { el.onclick = () => { sendPosition(); toast('Позиция обновлена в сети'); }; });
-  safe('createArenaBtn', el => { el.onclick = () => { createArena(); }; });
-}
+        safeHTML('chatBox', html);
+        let cb = $('chatBox'); if(cb) cb.scrollTop = cb.scrollHeight;
+    });
+    
+    safe('sendChatBtn', b => {
+        b.onclick = () => {
+            let text = $('chatInput').value.trim();
+            if (!text) return;
+            window.FB.push(chatRef, { author: state.name || "Охотник", text: text, time: Date.now() });
+            $('chatInput').value = '';
+        }
+    });
 
-// Добавлено окно подтверждения для создателя арены
+    // Добавление друзей (заглушка интерфейса, логика будет в следующем обновлении)
+    // В этом обновлении мы просто добавили чат
+}
+// ----------------------
+
 function watchArena() {
     if (!window.FB) return;
     window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
@@ -1244,6 +1243,7 @@ function initial(){
   
   setTimeout(initOnline, 1000);
   setTimeout(watchArena, 1500);
+  setTimeout(initChatAndFriends, 2000);
 }
 setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save()},60000);
 initial();
