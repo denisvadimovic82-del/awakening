@@ -88,7 +88,7 @@ footer{text-align:center;color:#69829d;font-size:10px;padding:10px}
 <main>
 <section class="page active" id="page-map">
  <div class="card">
-  <div class="row"><div><div class="eyebrow">Зона охотника</div><h2 style="margin:4px 0">Окрестности</h2></div><span class="pill" id="gpsStatus">GPS не выключен</span></div>
+  <div class="row"><div><div class="eyebrow">Зона охотника</div><h2 style="margin:4px 0">Окрестности</h2></div><span class="pill" id="gpsStatus">GPS не включён</span></div>
   <div id="map"><div class="mapfallback">🗺️<br><br>Карта загружается…</div></div>
   <div class="mapcontrols"><button class="primary" id="gpsBtn">⌖ Моё местоположение</button><button id="scanBtn">◉ Сканировать</button><button id="spawnBtn">✦ Найти событие</button></div>
   <div class="mapcontrols"><button id="poiBtn">📍 Рядом (OSM)</button><button id="arenaBtn">🏟 Арены</button><button id="storyBtn">📖 Событие</button></div>
@@ -421,7 +421,6 @@ function itemBonus(it){return Object.entries(it.bonus||{}).map(([k,v])=>`${k==='
 function countBySlot(slot){return state.inventory.filter(i=>i.slot===slot).reduce((sum,item)=>sum+(item.qty||1),0)}
 function checkAchievements(){for(let a of achievements){if(state.achievements[a.id])continue;try{if(a.check(state)){state.achievements[a.id]=true;if(a.reward.gold)state.gold+=a.reward.gold;if(a.reward.xp)addXp(a.reward.xp);toast('🏆 '+a.name);beep(1200,150,'sine',.08)}}catch(e){}}}
 
-// Функция добавления предметов со стаком
 function addToInventory(item) {
   let isStackable = [POTION, BIG_POTION, MANA_POTION, XP_SCROLL, SHARD].includes(item.slot);
   if (isStackable) {
@@ -436,7 +435,6 @@ function addToInventory(item) {
     state.inventory.push(item);
   }
 }
-
 function renderAll(){
   let need=xpNeed();
   safeText('levelText','УРОВЕНЬ '+state.level);
@@ -448,25 +446,18 @@ function renderAll(){
   safeText('hpText',`${Math.min(state.hp,maxHp())}/${maxHp()}`);
   safeText('mpText',`${state.mp}/${maxMp()}`);
   safeStyle('hpbar','width',(Math.max(0,state.hp)/maxHp()*100)+'%');
-  
-  // Имя
   safeText('heroNameText', state.name || "Охотник");
-
   safeText('hudHpText',`${Math.min(state.hp,maxHp())}/${maxHp()}`);
   safeText('hudMpText',`${state.mp}/${maxMp()}`);
   safeStyle('hudHpBar','width',(Math.max(0,state.hp)/maxHp()*100)+'%');
   safeStyle('hudMpBar','width',(Math.max(0,state.mp)/maxMp()*100)+'%');
-
   safeText('pointsText',state.points);
   safeText('eloText',state.elo);
   safeText('classText',state.class?classes[state.class].name:'Не выбран');
   safeText('heroEmoji',state.class?classes[state.class].emoji:'🧙');
-  
-  // Общие характеристики
+
   let s={};
-  for(let k of ['Сила','Ловкость','Интеллект','Выносливость']){
-    s[k] = totalStat(k);
-  }
+  for(let k of ['Сила','Ловкость','Интеллект','Выносливость']) s[k] = totalStat(k);
   safeHTML('totalStatsGrid', `
     <div class="stat" style="grid-column:span 3"><small>⚔️ Атака</small><b>${attack()}</b></div>
     <div class="stat" style="grid-column:span 3"><small>🛡️ Защита</small><b>${defense()}</b></div>
@@ -514,46 +505,35 @@ function renderAll(){
     let isS = it.slot === SHARD;
     let isX = it.slot === XP_SCROLL;
     let qtyStr = it.qty && it.qty > 1 ? ` <b style="color:var(--gold)">x${it.qty}</b>` : '';
-    
     let compareHtml = '';
     if (!isP && !isS && !isX) {
       let normSlot = String(it.slot).trim().toLowerCase();
       let eq = null;
       for(let s in state.equipment) {
-        if (s.trim().toLowerCase() === normSlot) {
-          eq = state.equipment[s];
-          break;
-        }
+        if (s.trim().toLowerCase() === normSlot) { eq = state.equipment[s]; break; }
       }
-
       if (eq) {
         let diffAtk = (it.bonus?.atk || 0) - (eq.bonus?.atk || 0);
         let diffDef = (it.bonus?.def || 0) - (eq.bonus?.def || 0);
         let diffHp = (it.bonus?.hp || 0) - (eq.bonus?.hp || 0);
         let diffMp = (it.bonus?.mp || 0) - (eq.bonus?.mp || 0);
-        
         let diffSil = (it.bonus?.Сила || 0) - (eq.bonus?.Сила || 0);
         let diffLov = (it.bonus?.Ловкость || 0) - (eq.bonus?.Ловкость || 0);
         let diffInt = (it.bonus?.Интеллект || 0) - (eq.bonus?.Интеллект || 0);
         let diffVyn = (it.bonus?.Выносливость || 0) - (eq.bonus?.Выносливость || 0);
-
         let diffs = [];
         if (diffAtk !== 0) diffs.push(`<span style="color:${diffAtk > 0 ? '#73e0a1' : '#ff6d7c'}">${diffAtk > 0 ? '▲' : '▼'} ${Math.abs(diffAtk)} атк</span>`);
         if (diffDef !== 0) diffs.push(`<span style="color:${diffDef > 0 ? '#73e0a1' : '#ff6d7c'}">${diffDef > 0 ? '▲' : '▼'} ${Math.abs(diffDef)} защ</span>`);
         if (diffHp !== 0) diffs.push(`<span style="color:${diffHp > 0 ? '#73e0a1' : '#ff6d7c'}">${diffHp > 0 ? '▲' : '▼'} ${Math.abs(diffHp)} HP</span>`);
         if (diffMp !== 0) diffs.push(`<span style="color:${diffMp > 0 ? '#73e0a1' : '#ff6d7c'}">${diffMp > 0 ? '▲' : '▼'} ${Math.abs(diffMp)} MP</span>`);
-        
         if (diffSil !== 0) diffs.push(`<span style="color:${diffSil > 0 ? '#73e0a1' : '#ff6d7c'}">${diffSil > 0 ? '▲' : '▼'} ${Math.abs(diffSil)} сил</span>`);
         if (diffLov !== 0) diffs.push(`<span style="color:${diffLov > 0 ? '#73e0a1' : '#ff6d7c'}">${diffLov > 0 ? '▲' : '▼'} ${Math.abs(diffLov)} лов</span>`);
         if (diffInt !== 0) diffs.push(`<span style="color:${diffInt > 0 ? '#73e0a1' : '#ff6d7c'}">${diffInt > 0 ? '▲' : '▼'} ${Math.abs(diffInt)} инт</span>`);
         if (diffVyn !== 0) diffs.push(`<span style="color:${diffVyn > 0 ? '#73e0a1' : '#ff6d7c'}">${diffVyn > 0 ? '▲' : '▼'} ${Math.abs(diffVyn)} вын</span>`);
-
         if (diffs.length > 0) compareHtml = `<br><small style="font-size:10px">${diffs.join(' · ')}</small>`;
       }
     }
-
     let label = isP || isX ? 'Исп.' : isS ? '—' : state.equipment[it.slot]?.id === it.id ? 'Снято' : 'Надеть';
-    
     let sub = '';
     if (it.slot === POTION) sub = `Расходник · +${it.heal} HP`;
     else if (it.slot === BIG_POTION) sub = `Расходник · +${it.heal} HP`;
@@ -561,9 +541,7 @@ function renderAll(){
     else if (it.slot === XP_SCROLL) sub = `Расходник · +${it.xp} XP`;
     else if (it.slot === SHARD) sub = 'Материал для крафта';
     else sub = `${it.slot} · ур. ${it.level}<br><span class="rarity ${rarityClass[it.rarity]}">${rarity[it.rarity]}</span> · ${itemBonus(it)}${compareHtml}`;
-    
     let sellPrice = Math.floor((it.rarity + 1) * 15 * (it.level || 1) * 0.5) + 10;
-
     return `<div class="item">
       <div class="iconbox">${it.icon}</div>
       <div class="iteminfo"><strong>${it.name}${qtyStr}</strong><small>${sub}</small></div>
@@ -605,9 +583,7 @@ function renderAll(){
   try{renderGift()}catch(e){}
 
   safeHTML('achList', achievements.map(a => `<div class="ach ${state.achievements[a.id]?'on':''}"><div class="iconbox">${state.achievements[a.id]?'🏆':'🔒'}</div><div class="iteminfo"><strong>${a.name}</strong><small>${a.desc}</small></div></div>`).join(''));
-
   safeHTML('bestiaryList', monsters.map((m,i) => `<div class="item"><div class="iconbox">${m.emoji}</div><div class="iteminfo"><strong>${m.name}</strong><small>Ур. ${m.level} · ${m.hp} HP</small></div><span class="pill">${state.seen.includes(i)?'✓':'???'}</span></div>`).join(''));
-
   safeHTML('historyList', state.history.length ? state.history.map(h => `<div class="hrow"><span>${h.emoji} ${h.name}</span><span class="${h.win?'win':'lose'}">${h.win?'Победа':'Поражение'}</span></div>`).join('') : '<p class="muted small">Пусто.</p>');
 
   safeHTML('lbList', (() => {
@@ -622,7 +598,6 @@ function renderAll(){
   })());
 
   safeHTML('shopList', shopItems.map(s => `<div class="craftrow"><div class="iconbox">${s.icon}</div><div class="iteminfo"><strong>${s.name}</strong><small>${s.price}◈</small></div><button data-shop="${s.id}" ${state.gold<s.price?'disabled':''}>Купить</button></div>`).join(''));
-  
   renderOnline();
 }
 function ensureDaily(){let today=new Date().toISOString().slice(0,10);if(state.daily.date===today&&state.daily.pool.length)return;let pool=[...dailyPool].sort(()=>Math.random()-.5).slice(0,3);state.daily={date:today,pool:pool.map(p=>p.id),progress:{}};save()}
@@ -676,31 +651,17 @@ safe('sortInventory',el=>{el.onclick=()=>{
   save()
 }});
 safe('themeBtn',el=>{el.onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.body.classList.toggle('light',state.theme==='light');el.textContent=state.theme==='light'?'☀️':'🌙';save()}});
-
 function openBattle(m,index){
   let baseHp = m.hp;
   let baseAtk = m.atk;
-  
-  if (m.isElite) {
-    baseHp = Math.floor(baseHp * 1.5);
-    baseAtk = Math.floor(baseAtk * 1.3);
-  } else if (m.tag === 'boss') {
-    baseHp = Math.floor(baseHp * 2);
-    baseAtk = Math.floor(baseAtk * 1.5);
-  }
-
+  if (m.isElite) { baseHp = Math.floor(baseHp * 1.5); baseAtk = Math.floor(baseAtk * 1.3); }
+  else if (m.tag === 'boss') { baseHp = Math.floor(baseHp * 2); baseAtk = Math.floor(baseAtk * 1.5); }
   let lvlDiff = m.level - state.level;
   let scale = 1;
-  if (lvlDiff > 0) {
-    scale = 1 + (lvlDiff * 0.1);
-  } else if (lvlDiff < 0) {
-    scale = 1 + (lvlDiff * 0.05);
-    if (scale < 0.5) scale = 0.5;
-  }
-
+  if (lvlDiff > 0) scale = 1 + (lvlDiff * 0.1);
+  else if (lvlDiff < 0) { scale = 1 + (lvlDiff * 0.05); if (scale < 0.5) scale = 0.5; }
   let finalHp = Math.floor(baseHp * scale);
   let finalAtk = Math.floor(baseAtk * scale);
-
   battle = {
     m: {...m, hp: finalHp, atk: finalAtk},
     index: index,
@@ -708,7 +669,7 @@ function openBattle(m,index){
     log: `${m.name} преграждает путь!`,
     phase: 1,
     baseLevel: m.level,
-    turn: 'player' // Кто ходит: player или enemy
+    turn: 'player'
   };
   renderBattle();
 }
@@ -718,7 +679,6 @@ function renderBattle(){
   let pc=countBySlot(POTION)+countBySlot(BIG_POTION);
   let sc=skillCost();
   let isMyTurn = battle.turn === 'player';
-  
   safeHTML('modalContent',`
     <div class="eyebrow">Бой · ур. ${m.level}</div>
     <div class="battleenemy">
@@ -737,7 +697,6 @@ function renderBattle(){
     </div>
   `);
   let mm=$('modal');if(mm)mm.classList.add('show');
-  
   safe('attackBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1)}});
   safe('skillBtn',b=>{b.onclick=()=>{if(isMyTurn)battleTurn(1.5)}});
   safe('potionBtn',b=>{b.onclick=()=>{if(!isMyTurn)return;if(state.hp>=maxHp())return battleMsg('HP полное.');let idx=state.inventory.findIndex(i=>[POTION,BIG_POTION].includes(i.slot));if(idx<0)return battleMsg('Зелий нет.');let heal=state.inventory[idx].heal||35;
@@ -750,17 +709,14 @@ function spawnDmg(amount,crit){let el=document.createElement('div');el.className
 function enemyTurn(){if(!battle)return;
   battle.turn = 'enemy';
   renderBattle();
-  
   setTimeout(() => {
     if(!battle) return;
     if(battle.m.tag==='boss'){let ratio=battle.hp/battle.m.hp;if(ratio<.5&&battle.phase===1){battle.phase=2;battle.m.atk=Math.floor(battle.m.atk*1.3);battle.log+=' Босс в ярости! '}else if(ratio<.25&&battle.phase===2){battle.phase=3;battle.m.atk=Math.floor(battle.m.atk*1.4);battle.log+=' ФИНАЛЬНАЯ ФАЗА! '}}
-    
     if(Math.random()<dodgeChance()){battle.log+=' Уклонение!';battle.turn='player';renderBattle();return}
     let rawDmg = battle.m.atk - defense();
     let minDmg = Math.floor(maxHp() * 0.05);
     let dmg = Math.max(1, rawDmg, minDmg);
     state.hp-=dmg;vibrate(30);let box=document.querySelector('.modalbox');if(box){box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300)}
-    
     if(state.hp<=0){
       state.hp=Math.max(1,Math.floor(maxHp()*.25));state.gold=Math.max(0,state.gold-10);state.history.unshift({name:battle.m.name,emoji:battle.m.emoji,win:false});state.history=state.history.slice(0,20);beep(120,300,'sawtooth',.1);save();
       safeHTML('modalContent',`<div class="systemhead">▣ СИСТЕМА</div><h2>Поражение</h2><p class="muted">Эвакуация. -10◈</p><button class="primary" id="cb" style="width:100%">Продолжить</button>`);
@@ -776,10 +732,8 @@ function battleTurn(mult){
  let sc=skillCost();if(mult>1){if(state.mp<sc)return;state.mp-=sc}
  let crit=Math.random()<critChance();let base=Math.floor(attack()*mult*(.85+Math.random()*.3));let dmg=crit?Math.floor(base*1.8):base;battle.hp-=dmg;spawnDmg(dmg,crit);beep(crit?1200:520,60,'square',.05);vibrate(crit?40:15);
  if(state.pet){let p=pets.find(x=>x.id===state.pet);if(p){let pdmg=Math.floor((p.base+state.level)*(applySkills().petMult||1));battle.hp-=pdmg;battle.log+=` ${p.emoji} бьёт на ${pdmg}. `}}
- 
  if(battle.hp<=0){
    let m=battle.m;state.kills++;state.quests.kills++;
-   
    if (battle.index >= 0 && state.objects[battle.index]) {
      let obj = state.objects[battle.index];
      if (!state.deadZones) state.deadZones = [];
@@ -788,7 +742,6 @@ function battleTurn(mult){
      drawObjects();
      renderAll();
    }
-   
    state.counters.wins++;if(m.tag)state.counters[m.tag]=(state.counters[m.tag]||0)+1;
    state.seen.push(monsters.indexOf(m));
    let goldGain=Math.floor(m.gold*(applySkills().goldMult||1));state.gold+=goldGain;addXp(m.xp);
@@ -802,10 +755,8 @@ function battleTurn(mult){
    }
    if(Math.random()<.25){addToInventory(makePotion());extra+=' +зелье.'}
    if(Math.random()<.15){addToInventory(makeShard());extra+=' +осколок.'}
-   
    state.history.unshift({name:m.name,emoji:m.emoji,win:true});state.history=state.history.slice(0,20);
    checkAchievements();beep(880,200,'sine',.08);save();
-   
    safeHTML('modalContent',`<div class="systemhead">▣ ПОБЕДА</div><div class="battleenemy"><div class="enemyemoji">✦</div><h2>Победа!</h2></div><p>+${m.xp} XP, +${goldGain}◈.${extra}</p><button class="primary" id="fb" style="width:100%">Забрать</button>`);
    safe('fb',b=>{b.onclick=()=>{let mm=$('modal');if(mm)mm.classList.remove('show');battle=null}});
    return;
@@ -827,7 +778,6 @@ if (!myPlayerId) {
 
 function sendPosition() {
   if (!state.position || !window.FB) return;
-  
   window.FB.set(window.FB.ref(window.FB.db, 'players/' + myPlayerId), {
     name: state.name || "Охотник",
     level: state.level,
@@ -836,40 +786,32 @@ function sendPosition() {
     lat: state.position.lat,
     lng: state.position.lng,
     lastSeen: Date.now()
-  });
+  }).catch(() => {});
 }
 
 function createArena() {
-  if (!state.position || !window.FB) {
-    toast('Сначала включи GPS или задай позицию на карте.');
-    return;
-  }
+  if (!state.position || !window.FB) { toast('Сначала включи GPS или задай позицию на карте.'); return; }
   let betInput = $('arenaBet');
   let bet = betInput ? parseInt(betInput.value) || 0 : 0;
-  
-  if (bet > state.gold) {
-    toast('Недостаточно золота для ставки!');
-    return;
-  }
-  
-  if (bet > 0) {
-    state.gold -= bet;
-    save();
-  }
-
+  if (bet > state.gold) { toast('Недостаточно золота для ставки!'); return; }
+  if (bet > 0) { state.gold -= bet; save(); }
   let arenaId = 'a_' + Date.now();
   window.FB.set(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
-    lat: state.position.lat,
-    lng: state.position.lng,
-    creator: myPlayerId,
-    creatorName: state.name || "Охотник",
-    creatorLevel: state.level,
-    hp: maxHp(),
-    atk: attack(),
-    bet: bet,
-    status: 'waiting'
+    lat: state.position.lat, lng: state.position.lng,
+    creator: myPlayerId, creatorName: state.name || "Охотник",
+    creatorLevel: state.level, hp: maxHp(), atk: attack(),
+    bet: bet, status: 'waiting'
   });
   toast('Арена создана со ставкой ' + bet + '◈. Жди соперников.');
+}
+
+function initOnline() {
+  if (!window.FB) { setTimeout(initOnline, 500); return; }
+  const playersRef = window.FB.ref(window.FB.db, 'players');
+  window.FB.onValue(playersRef, (snap) => {
+    onlinePlayers = snap.val() || {};
+    try { renderOnline(); } catch (e) { console.warn('renderOnline', e); }
+  });
 }
 
 function renderOnline() {
@@ -877,47 +819,34 @@ function renderOnline() {
     safeHTML('onlineList', '<p class="muted small" style="padding:10px;text-align:center;">Подключение к серверу...</p>');
     return;
   }
-  
-  onlineMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} });
+  if (map) { onlineMarkers.forEach(m => { try { map.removeLayer(m) } catch(e){} }); }
   onlineMarkers = [];
-  
   let listHtml = '';
   let count = 0;
   let now = Date.now();
-  
   for (let id in onlinePlayers) {
     let p = onlinePlayers[id];
-    if (now - p.lastSeen > 300000) continue;
-    
+    if (!p || now - (p.lastSeen || 0) > 300000) continue;
     count++;
-    
     listHtml += `<div class="item">
       <div class="iconbox">👤</div>
       <div class="iteminfo"><strong>${p.name} ${id===myPlayerId?'(Ты)':''}</strong><small>Уровень ${p.level}</small></div>
       <button onclick="window.flyToPlayer(${p.lat}, ${p.lng})">Найти</button>
     </div>`;
-    
-    // Не рисуем маркер для себя
-    if (map && id !== myPlayerId) {
+    if (map && id !== myPlayerId && p.lat && p.lng) {
       let mk = L.marker([p.lat, p.lng], {
         icon: L.divIcon({
           className: '',
           html: `<div style="background:#17304b;border:2px solid #62b5ff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:16px;box-shadow:0 0 10px #62b5ff">👤</div>`,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15]
+          iconSize: [30, 30], iconAnchor: [15, 15]
         })
       }).addTo(map).bindPopup(`${p.name} (Ур. ${p.level})`);
       onlineMarkers.push(mk);
     }
   }
-  
   safeText('onlineCount', count);
-  
-  if (count > 0) {
-    safeHTML('onlineList', listHtml);
-  } else {
-    safeHTML('onlineList', '<p class="muted small" style="text-align:center; padding:20px;">Рядом пока никого нет. Пригласи друзей!</p>');
-  }
+  if (count > 0) safeHTML('onlineList', listHtml);
+  else safeHTML('onlineList', '<p class="muted small" style="text-align:center; padding:20px;">Рядом пока никого нет. Пригласи друзей!</p>');
 }
 
 window.flyToPlayer = (lat, lng) => {
@@ -925,120 +854,96 @@ window.flyToPlayer = (lat, lng) => {
   setPage('map');
 };
 
-// --- CHAT & FRIENDS ---
+// ---- Чат ----
 let chatRef = null;
-let friendsRef = null;
+let chatInited = false;
 
 function initChatAndFriends() {
-    if (!window.FB) return;
-    chatRef = window.FB.ref(window.FB.db, 'chat');
-    window.FB.onValue(window.FB.query(chatRef, window.FB.limitToLast(50)), (snap) => {
-        let msgs = snap.val() || {};
-        let html = '';
-        for (let key in msgs) {
-            let m = msgs[key];
-            html += `<div style="margin-bottom:4px;"><b style="color:var(--cyan)">${m.author}:</b> ${m.text}</div>`;
-        }
-        safeHTML('chatBox', html);
-        let cb = $('chatBox'); if(cb) cb.scrollTop = cb.scrollHeight;
-    });
-    
-    safe('sendChatBtn', b => {
-        b.onclick = () => {
-            let text = $('chatInput').value.trim();
-            if (!text) return;
-            window.FB.push(chatRef, { author: state.name || "Охотник", text: text, time: Date.now() });
-            $('chatInput').value = '';
-        }
-    });
-
-    // Добавление друзей (заглушка интерфейса, логика будет в следующем обновлении)
-    // В этом обновлении мы просто добавили чат
+  if (!window.FB) { setTimeout(initChatAndFriends, 500); return; }
+  if (chatInited) return;
+  chatInited = true;
+  chatRef = window.FB.ref(window.FB.db, 'chat');
+  window.FB.onValue(
+    window.FB.query(chatRef, window.FB.limitToLast(50)),
+    (snap) => {
+      const msgs = snap.val() || {};
+      let html = '';
+      Object.keys(msgs).forEach((k) => {
+        const m = msgs[k];
+        if (!m || !m.text) return;
+        html += `<div style="margin-bottom:4px;"><b style="color:var(--cyan)">${m.author || 'Аноним'}:</b> ${m.text}</div>`;
+      });
+      safeHTML('chatBox', html || '<div class="muted small">Сообщений нет.</div>');
+      const cb = $('chatBox'); if (cb) cb.scrollTop = cb.scrollHeight;
+    }
+  );
+  safe('sendChatBtn', (b) => {
+    b.onclick = () => {
+      if (!window.FB || !chatRef) { toast('Нет соединения'); return; }
+      const input = $('chatInput');
+      const text = input && input.value.trim();
+      if (!text) return;
+      window.FB.push(chatRef, { author: state.name || 'Охотник', text: text, time: Date.now() }).catch(() => toast('Не отправлено'));
+      if (input) input.value = '';
+    };
+  });
 }
-// ----------------------
 
+// ---- Арены ----
 function watchArena() {
-    if (!window.FB) return;
-    window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
-        let arenas = snapshot.val() || {};
-        
-        for (let id in arenas) {
-            let a = arenas[id];
-            if (a.creator === myPlayerId && a.status === 'fighting' && !battle) {
-                // Если мы создатель и кто-то бросил нам вызов
-                safeHTML('modalContent', `
-                  <div class="systemhead">▣ АРЕНА</div>
-                  <h2>Вас вызывает ${a.challengerName}!</h2>
-                  <p class="muted">Ставка: ${a.bet}◈</p>
-                  <div class="grid2">
-                    <button class="primary" id="acceptBtn">Принять</button>
-                    <button id="declineBtn">Отклонить</button>
-                  </div>
-                `);
-                let mm=$('modal');if(mm)mm.classList.add('show');
-                
-                safe('acceptBtn', b => {
-                  b.onclick = () => {
-                    let enemyName = a.challengerName;
-                    let enemyLevel = a.challengerLevel;
-                    let enemyHp = a.challengerHp;
-                    let enemyAtk = a.challengerAtk;
-                    startRealBattle(enemyName, enemyLevel, enemyHp, enemyAtk, a.bet, id);
-                  }
-                });
-                safe('declineBtn', b => {
-                  b.onclick = () => {
-                    window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + id));
-                    let mm=$('modal');if(mm)mm.classList.remove('show');
-                    toast('Вызов отклонен');
-                  }
-                });
-                return;
-            }
-        }
-    });
+  if (!window.FB) { setTimeout(watchArena, 500); return; }
+  window.FB.onValue(window.FB.ref(window.FB.db, 'arenas'), (snapshot) => {
+    let arenas = snapshot.val() || {};
+    for (let id in arenas) {
+      let a = arenas[id];
+      if (a.creator === myPlayerId && a.status === 'fighting' && !battle) {
+        safeHTML('modalContent', `
+          <div class="systemhead">▣ АРЕНА</div>
+          <h2>Вас вызывает ${a.challengerName}!</h2>
+          <p class="muted">Ставка: ${a.bet}◈</p>
+          <div class="grid2">
+            <button class="primary" id="acceptBtn">Принять</button>
+            <button id="declineBtn">Отклонить</button>
+          </div>
+        `);
+        let mm=$('modal'); if(mm)mm.classList.add('show');
+        safe('acceptBtn', b => { b.onclick = () => {
+          startRealBattle(a.challengerName, a.challengerLevel, a.challengerHp, a.challengerAtk, a.bet, id);
+        }});
+        safe('declineBtn', b => { b.onclick = () => {
+          window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + id));
+          let mm=$('modal'); if(mm)mm.classList.remove('show');
+          toast('Вызов отклонен');
+        }});
+        return;
+      }
+    }
+  });
 }
 
 window.enterArena = (arenaId, creatorId, creatorName, creatorLevel, creatorHp, creatorAtk, bet) => {
-    if (!window.FB) return;
-    
-    if (bet > 0 && state.gold < bet) {
-        toast('У тебя недостаточно золота для этой ставки!');
-        return;
-    }
-    
-    if (bet > 0) {
-        state.gold -= bet;
-        save();
-    }
-    
-    activeArena = arenaId;
-    
-    window.FB.update(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
-        status: 'fighting',
-        challenger: myPlayerId,
-        challengerName: state.name || "Охотник",
-        challengerLevel: state.level,
-        challengerHp: maxHp(),
-        challengerAtk: attack()
-    });
-    
-    safeHTML('modalContent', `<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);
-    let mm=$('modal');if(mm)mm.classList.add('show');
+  if (!window.FB) return;
+  if (bet > 0 && state.gold < bet) { toast('У тебя недостаточно золота для этой ставки!'); return; }
+  if (bet > 0) { state.gold -= bet; save(); }
+  activeArena = arenaId;
+  window.FB.update(window.FB.ref(window.FB.db, 'arenas/' + arenaId), {
+    status: 'fighting', challenger: myPlayerId,
+    challengerName: state.name || "Охотник", challengerLevel: state.level,
+    challengerHp: maxHp(), challengerAtk: attack()
+  });
+  safeHTML('modalContent', `<div class="systemhead">▣ АРЕНА</div><h2>Вызов брошен!</h2><p class="muted">Ожидаем подтверждения от ${creatorName}...</p>`);
+  let mm=$('modal'); if(mm)mm.classList.add('show');
 };
 
 function startRealBattle(enemyName, enemyLevel, enemyHp, enemyAtk, bet, arenaId) {
-    if (battle) return;
-    
-    battle = {
-        m: {name: enemyName, emoji: '👤', level: enemyLevel, hp: enemyHp, atk: enemyAtk, xp: 50, gold: bet * 2, drop: 0, tag: ''},
-        index: -1, hp: enemyHp, log: `Дуэль на арене со ставкой ${bet}◈!`, phase: 1, pvp: true, baseLevel: enemyLevel, turn: 'player'
-    };
-    
-    window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
-    renderBattle();
+  if (battle) return;
+  battle = {
+    m: {name: enemyName, emoji: '👤', level: enemyLevel, hp: enemyHp, atk: enemyAtk, xp: 50, gold: bet * 2, drop: 0, tag: ''},
+    index: -1, hp: enemyHp, log: `Дуэль на арене со ставкой ${bet}◈!`, phase: 1, pvp: true, baseLevel: enemyLevel, turn: 'player'
+  };
+  window.FB.remove(window.FB.ref(window.FB.db, 'arenas/' + arenaId));
+  renderBattle();
 }
-// ----------------------
 
 function initMap(){
   if(!window.L){safeHTML('map','<div class="mapfallback">Карта недоступна.</div>');return}
@@ -1053,12 +958,10 @@ function randomPosition(){let c=state.position||(map&&map.getCenter())||{lat:60.
 
 function scan(){
   state.scans++;state.quests.scans++;
-  state.objects = []; 
-  
+  state.objects = [];
   let now = Date.now();
   if (state.deadZones) state.deadZones = state.deadZones.filter(z => z.respawnAt > now);
   else state.deadZones = [];
-  
   let n=3+Math.floor(Math.random()*3);
   for(let i=0;i<n;i++){
     let pos = randomPosition();
@@ -1067,15 +970,12 @@ function scan(){
       return d < 0.002;
     });
     if (inDeadZone) { i--; continue; }
-
     if(Math.random()<.68){
       let av = monsters.filter(m => m.level >= state.level - 5 && m.level <= state.level + 15);
       if(!av.length) av = [monsters[0]];
       let m=av[Math.floor(Math.random()*av.length)];
-      
       let isElite = Math.random() < 0.15;
       let scaledMonster = {...m};
-      
       if (isElite) {
         scaledMonster.name = '💀 [ЭЛИТА] ' + m.name;
         scaledMonster.hp = Math.floor(m.hp * 2);
@@ -1084,16 +984,7 @@ function scan(){
         scaledMonster.gold = Math.floor(m.gold * 2.5);
         scaledMonster.isElite = true;
       }
-      
-      state.objects.push({
-        type:'monster',
-        mi:monsters.indexOf(m),
-        name:scaledMonster.name,
-        emoji:m.emoji,
-        pos:pos, 
-        scaled: scaledMonster,
-        isElite: isElite
-      });
+      state.objects.push({type:'monster', mi:monsters.indexOf(m), name:scaledMonster.name, emoji:m.emoji, pos:pos, scaled: scaledMonster, isElite: isElite});
     } else {
       state.objects.push({type:'chest',name:'Сундук',emoji:'🎁',pos:pos});
     }
@@ -1117,13 +1008,10 @@ document.addEventListener('click',e=>{let o=e.target.closest('[data-object]');if
 function interact(i){
   let o=state.objects[i];
   if(!o)return;
-  if(o.type==='monster'){
-    openBattle(o.scaled || monsters[o.mi], i);
-  } else if(o.type==='chest'){
+  if(o.type==='monster'){ openBattle(o.scaled || monsters[o.mi], i); }
+  else if(o.type==='chest'){
     let g=15+Math.floor(Math.random()*45);state.gold+=g;state.counters.chests++;let it=Math.random()<.7?makeItem(0):null;if(it)addToInventory(it);if(Math.random()<.3)addToInventory(makeShard());state.objects.splice(i,1);drawObjects();save();notify('СУНДУК',`+${g}◈${it?' +'+it.name:''}`);checkAchievements()
-  } else {
-    notify('POI',o.name)
-  }
+  } else { notify('POI',o.name) }
 }
 safe('gpsBtn',el=>{el.onclick=()=>{if(!navigator.geolocation){safeText('gpsStatus','GPS недоступен');return}navigator.geolocation.getCurrentPosition(pos=>{let p={lat:pos.coords.latitude,lng:pos.coords.longitude};state.position=p;safeText('gpsStatus','GPS ✓');if(map){map.setView([p.lat,p.lng],16);if(playerMarker)playerMarker.setLatLng([p.lat,p.lng]);else playerMarker=L.marker([p.lat,p.lng]).addTo(map).bindPopup('Ты').openPopup()}save();sendPosition();},()=>{safeText('gpsStatus','GPS ✗')},{enableHighAccuracy:true,timeout:12000,maximumAge:30000})}});
 safe('scanBtn',el=>{el.onclick=()=>scan()});
@@ -1146,10 +1034,7 @@ safe('poiBtn',el=>{el.onclick=async()=>{
   try{
     let r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:q});
     let j=await r.json();
-    if (!j.elements || !j.elements.length) {
-        safeText('mapHint','POI не найдено.');
-        return;
-    }
+    if (!j.elements || !j.elements.length) { safeText('mapHint','POI не найдено.'); return; }
     state.objects=state.objects.filter(o=>o.type!=='poi');
     j.elements.slice(0,10).forEach(el=>{
         let t=el.tags?.name||el.tags?.amenity||'Точка';
@@ -1165,7 +1050,6 @@ safe('arenaBtn',el=>{el.onclick=()=>{
   if(!map)return;
   arenaMarkers.forEach(m=>{try{map.removeLayer(m)}catch(e){}});
   arenaMarkers = [];
-  
   for(let i=0;i<3;i++){
     let p=randomPosition();
     let mk = L.circleMarker([p.lat,p.lng],{radius:20,color:'#ff8eaf',fillOpacity:.2}).addTo(map).bindPopup('🏟 Арена');
@@ -1190,6 +1074,8 @@ safe('storyBtn',el=>{el.onclick=()=>{
     safe('cl',bb=>{bb.onclick=()=>{let m=$('modal');if(m)m.classList.remove('show');save()}});
   }});
 }});
+safe('updatePosBtn',el=>{el.onclick=()=>{sendPosition();toast('Позиция обновлена')}});
+safe('createArenaBtn',el=>{el.onclick=()=>createArena()});
 safe('exportBtn',el=>{el.onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='awakening-save.json';a.click();toast('Сейв скачан')}});
 safe('importBtn',el=>{el.onclick=()=>{let inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState(),...d};state.stats={...defaultState().stats,...(d.stats||{})};state.counters={...defaultState().counters,...(d.counters||{})};save();toast('Загружено')}catch(e){toast('Ошибка файла')}};r.readAsText(f)};inp.click()}});
 safe('resetBtn',el=>{el.onclick=()=>{if(confirm('Удалить весь прогресс?')){localStorage.removeItem('awakeningSave');location.reload()}}});
@@ -1205,7 +1091,6 @@ function showStartDialog() {
     </div>
   `);
   let mm=$('modal');if(mm)mm.classList.add('show');
-  
   document.querySelectorAll('[data-startclass]').forEach(b => {
     b.onclick = () => {
       let nameVal = $('startName').value.trim() || 'Охотник';
@@ -1233,17 +1118,12 @@ function initial(){
   safeHTML('rankList',['E','D','C','B','A','S','SS','SSS'].map((r,i)=>`<div class="item"><div class="iconbox">${['▫️','🔹','🔷','💠','💎','🌟','🌌','👑'][i]}</div><div class="iteminfo"><strong>Ранг ${r}</strong><small>${['Новичок','Ученик','Опытный','Ветеран','Элита','Высший','Легендарный','Мифический'][i]}</small></div><span class="pill">${rank()===r?'Текущий':''}</span></div>`).join(''));
   setInterval(()=>{try{renderDaily()}catch(e){}},60000);
   checkAchievements();
-  
-  // Если класс не выбран, показываем окно старта
-  if(!state.class) {
-    setTimeout(showStartDialog, 1000);
-  } else {
-    setTimeout(sendPosition, 2000);
-  }
-  
+  if(!state.class) setTimeout(showStartDialog, 1000);
+  else setTimeout(sendPosition, 2000);
   setTimeout(initOnline, 1000);
   setTimeout(watchArena, 1500);
   setTimeout(initChatAndFriends, 2000);
+  setInterval(()=>{ try{sendPosition();}catch(e){} }, 120000);
 }
 setInterval(()=>{if(battle)return;let now=Date.now();let dt=(now-(state.lastRegen||now))/60000;if(dt<1)return;state.lastRegen=now;let rm=applySkills().regenMult||1;let rh=Math.max(1,Math.floor(maxHp()*.01*rm)),rmp=Math.max(1,Math.floor(maxMp()*.01*rm));state.hp=Math.min(maxHp(),state.hp+rh);state.mp=Math.min(maxMp(),state.mp+rmp);save()},60000);
 initial();
